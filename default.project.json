@@ -1,0 +1,53 @@
+{
+  "name": "Project-Arena",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "RepFiles": {
+        "$className": "Folder",
+        "$path": "src/ReplicatedStorage"
+      }
+    },
+    "ServerStorage": {
+      "$className": "ServerStorage",
+      "ServerFiles": {
+        "$className": "Folder",
+        "$path": "src/ServerStorage"
+      }
+    },
+    "StarterGui": {
+      "$className": "StarterGui",
+      "StartGuiScripts": {
+        "$className": "Folder",
+        "$path": "src/StarterGui"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "PlayerScripts": {
+        "$className": "Folder",
+        "$path": "src/StarterPlayer/PlayerScripts"
+      },
+      "StarterCharacterScripts": {
+        "$className": "StarterCharacterScripts",
+        "$path": "src/StarterCharacterScripts"
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "ServerFiles": {
+        "$className": "Folder",
+        "$path": "src/ServerScriptService"
+      }
+    },
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "LocalFiles": {
+        "$className": "Folder",
+        "$path": "src/ReplicatedFirst"
+      }
+    }
+  }
+}
