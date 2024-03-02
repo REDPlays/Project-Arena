@@ -10,12 +10,16 @@ ServerGameManager:Init()
 
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
+        ServerGameManager:PlayerJoin(player)
+
+        ServerGameManager:ConfigureCharacter(character)
+
         Events.Server_Client.PlayerLoaded:FireClient(player)
     end)
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-    
+    ServerGameManager:PlayerLeave(player)
 end)
 
 RunService.Heartbeat:Connect(function(deltaTime)
