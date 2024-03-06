@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 local CharacterSelectServer = require(ServerStorage.ServerFiles.Player.CharacterSelect_Server)
+local InputManager = require(ServerStorage.ServerFiles.Player.InputManager)
 
 local Lobby = workspace.Lobby
 

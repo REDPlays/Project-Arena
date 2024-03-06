@@ -10,6 +10,12 @@ ClassData["AngelKnight"] = {
         ["Q"] = 5,
         ["E"] = 5,
         ["F"] = 5,
+    },
+    Cooldowns = {
+        ["LMBMove"] = 1,
+        ["QMove"] = 1,
+        ["EMove"] = 1,
+        ["FMove"] = 1,
     }
 }
 

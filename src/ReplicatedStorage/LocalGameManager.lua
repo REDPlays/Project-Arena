@@ -20,13 +20,13 @@ function LocalGameManager:Setup()
     LocalGameManager.cameraSystem = CameraManager.new()
     LocalGameManager.cameraSystem:Init(LocalGameManager.player, LocalGameManager.character)
 
-    LocalGameManager.uiController = UIController.new()
-    LocalGameManager.uiController:Init(LocalGameManager.player, LocalGameManager.character)
-
     LocalGameManager.animationSystem = AnimationSystem.new()
     LocalGameManager.animationSystem:Init(LocalGameManager.player, LocalGameManager.character)
 
-    CharacterSelectClient:Init(Lobby)
+    LocalGameManager.uiController = UIController.new()
+    LocalGameManager.uiController:Init(LocalGameManager.player, LocalGameManager.character, LocalGameManager.animationSystem)
+
+    CharacterSelectClient:Init(Lobby, LocalGameManager.uiController, LocalGameManager.animationSystem)
 end
 
 function LocalGameManager:Update(deltaTime)
@@ -36,6 +36,10 @@ function LocalGameManager:Update(deltaTime)
 
     if LocalGameManager.animationSystem then
         LocalGameManager.animationSystem:Update(deltaTime)
+    end
+
+    if LocalGameManager.uiController then
+        LocalGameManager.uiController:Update(deltaTime)
     end
 end
 

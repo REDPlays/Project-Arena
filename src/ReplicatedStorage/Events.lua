@@ -13,7 +13,8 @@ Events.Client_Client = {
 }
 
 Events.Client_Server = {
-    CharacterSelect = Client_Server:WaitForChild("CharacterSelect")
+    CharacterSelect = Client_Server:WaitForChild("CharacterSelect"),
+    Input = Client_Server:WaitForChild("Input"),
 }
 
 Events.Server_Client = {

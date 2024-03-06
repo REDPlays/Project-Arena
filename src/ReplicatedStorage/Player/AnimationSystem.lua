@@ -38,6 +38,90 @@ function AnimationSystem:Setup()
     self.currentAnimations.Walk.Priority = Enum.AnimationPriority.Movement
 end
 
+function AnimationSystem:animInfo(class, animName, animCount)
+    local anim = AnimationData[class][animName]
+    if type(anim) == "table" then
+        anim = AnimationData[class][animName][animCount]
+    end
+
+    local animId = anim.AnimationId
+    if not animId then
+        return 0
+    end
+
+    if self.cache[animId] then
+        return self.cache[animId]
+    end
+
+    local newSequence = KeyProvider:GetKeyframeSequenceAsync(animId)
+    local Keyframes = newSequence:GetKeyframes()
+
+    local length = 0
+    for i=1, #Keyframes do
+        local Time = Keyframes[i].Time
+        if Time > length then
+            length = Time
+        end
+    end
+
+    newSequence:Destroy()
+
+    self.cache[animId] = length
+
+    return self.cache[animId]
+end
+
+function AnimationSystem:CreateConditionalData()
+    local conditionalData = {
+        priority = Enum.AnimationPriority.Action,
+        weight = defaultWeight,
+        speed = defaultSpeed,
+        fadeTime = defaultFadeTime,
+        loop = false,
+        isAttack = false
+    }
+
+    return conditionalData
+end
+
+function AnimationSystem:Play(class, animName, animCount, conditionalData)
+    conditionalData = conditionalData or self:CreateConditionalData()
+
+    conditionalData.weight = conditionalData.weight or defaultWeight
+    conditionalData.speed = conditionalData.speed or defaultSpeed
+    conditionalData.fadeTime = conditionalData.fadeTime or defaultFadeTime
+    conditionalData.loop = conditionalData.loop or false
+    conditionalData.isAttack = conditionalData.isAttack or false
+
+    local anim = AnimationData[class][animName]
+    if type(anim) == "table" then
+        anim = AnimationData[class][animName][animCount]
+    end
+
+    self.currentAnimations[animName] = self.animator:LoadAnimation(anim)
+    self.currentAnimations[animName].Priority = conditionalData.priority
+    self.currentAnimations[animName].Looped = conditionalData.loop
+    self.currentAnimations[animName]:Play(conditionalData.fadeTime, conditionalData.weight, conditionalData.speed)
+
+    if conditionalData.isAttack then
+        self:HitBoxEvent(self.currentAnimations[animName]) 
+    end
+end
+
+function AnimationSystem:HitBoxEvent(animation: AnimationTrack)
+    local marker = animation:GetMarkerReachedSignal("Attack"):Connect(function()
+        --spawnHitbox
+        warn("SpawnHitbox")
+
+    end)
+
+    animation.Stopped:Connect(function()
+        if marker then
+            marker:Disconnect()
+        end
+    end)
+end
+
 function AnimationSystem:Update(deltaTime)
     if not self.humanoid then
         return

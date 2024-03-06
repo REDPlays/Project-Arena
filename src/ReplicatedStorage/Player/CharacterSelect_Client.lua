@@ -3,9 +3,12 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local CharacterSelectClient = {}
 
-function CharacterSelectClient:Init(lobby)
+function CharacterSelectClient:Init(lobby, uiController, animationSystem)
     CharacterSelectClient.Lobby = lobby
     CharacterSelectClient.Classes = lobby:WaitForChild("Classes")
+
+    CharacterSelectClient.uiController = uiController
+    CharacterSelectClient.animationSystem = animationSystem
 
     CharacterSelectClient:Setup()
 end
@@ -43,9 +46,11 @@ function CharacterSelectClient:Setup()
                 if valid then
                     alreadyTouched = false
 
-                    --Setup Animations
-
                     --Setup UI
+                    CharacterSelectClient.uiController:LoadCharacter(class:GetAttribute("ClassID"))
+
+                    --Setup Animations
+                    
                 else
                     warn("invalid classname and ID")
                     alreadyTouched = false
