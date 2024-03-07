@@ -10,11 +10,21 @@ ServerGameManager:Init()
 
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        ServerGameManager:PlayerJoin(player)
+        local isNew = ServerGameManager:PlayerJoin(player)
+        
+        if not isNew then
+            ServerGameManager:PlayerRespawn(player)
 
-        ServerGameManager:ConfigureCharacter(character)
+            task.delay(1, function()
+                ServerGameManager:ConfigureCharacter(player, character)
+                
+                Events.Server_Client.PlayerLoaded:FireClient(player)
+            end)
+        else
+            ServerGameManager:ConfigureCharacter(player, character)
 
-        Events.Server_Client.PlayerLoaded:FireClient(player)
+            Events.Server_Client.PlayerLoaded:FireClient(player)
+        end
     end)
 end)
 

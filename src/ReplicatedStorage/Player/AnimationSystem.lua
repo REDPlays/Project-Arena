@@ -65,8 +65,6 @@ function AnimationSystem:animInfo(class, animName, animCount)
         end
     end
 
-    newSequence:Destroy()
-
     self.cache[animId] = length
 
     return self.cache[animId]
@@ -121,11 +119,25 @@ function AnimationSystem:HitBoxEvent(animation: AnimationTrack, hitBoxCallBack)
         hitBoxCallBack()
     end)
 
-    animation.Stopped:Connect(function()
+    local stopped
+    stopped = animation.Stopped:Connect(function()
+        if stopped then
+            stopped:Disconnect()
+        end
+
         if marker then
             marker:Disconnect()
         end
     end)
+end
+
+function AnimationSystem:Disconnect()
+    for animName, track in pairs(self.currentAnimations) do
+        if track then
+            track:Stop()
+            self.currentAnimations[animName] = nil
+        end
+    end
 end
 
 function AnimationSystem:Update(deltaTime)

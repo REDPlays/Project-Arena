@@ -199,7 +199,7 @@ function UIController:Connect()
         end
     end)
 
-    Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType)
+    self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType)
         if moveType == "LMBMove" then
             self.prevTime = self.currTime
             self.debounces.LMBMove = false
@@ -213,6 +213,33 @@ end
 
 function UIController:LoadCharacter(class)
     self.class = class
+end
+
+function UIController:Disconnect()
+    if self.healthDisplay then
+        self.healthDisplay:Disconnect()
+        self.healthDisplay = nil
+    end
+
+    if self.defenseDisplay then
+        self.defenseDisplay:Disconnect()
+        self.defenseDisplay = nil
+    end
+
+    if self.input then
+        self.input:Disconnect()
+        self.input = nil
+    end
+
+    if self.input2 then
+        self.input2:Disconnect()
+        self.input2 = nil
+    end
+
+    if self.cooldownEvent then
+        self.cooldownEvent:Disconnect()
+        self.cooldownEvent = nil
+    end
 end
 
 function UIController:Update(deltaTime)

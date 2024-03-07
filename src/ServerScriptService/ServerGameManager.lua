@@ -2,6 +2,8 @@ local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
+local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
+
 local AnimationData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Player"):WaitForChild("AnimationData"))
 
 local CharacterSelectServer = require(ServerStorage.ServerFiles.Player.CharacterSelect_Server)
@@ -58,8 +60,8 @@ function ServerGameManager:ConfigureDummies()
     }
 end
 
-function ServerGameManager:ConfigureCharacter(character: Model)
-    local humanoid = character:FindFirstChild("Humanoid")
+function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
+    local humanoid: Humanoid = character:FindFirstChild("Humanoid")
     if not humanoid then
         return
     end
@@ -75,6 +77,17 @@ function ServerGameManager:ConfigureCharacter(character: Model)
         HealthScript.Disabled = false
         Debris:AddItem(HealthScript, 1)
     end
+
+    local isDead
+    isDead = humanoid.Died:Connect(function()
+        player:SetAttribute("CurrentClass", nil)
+
+        Events.Server_Client.Death:FireClient(player)
+
+        if isDead then
+            isDead:Disconnect()
+        end
+    end)
 end
 
 function ServerGameManager:PlayerJoin(player: Player)
@@ -85,6 +98,12 @@ function ServerGameManager:PlayerJoin(player: Player)
     ServerGameManager.playerList[player.UserId] = player
     ServerGameManager.playerCount += 1
 
+    CharacterSelectServer:PlayerJoined(player)
+
+    return true
+end
+
+function ServerGameManager:PlayerRespawn(player: Player)
     CharacterSelectServer:PlayerJoined(player)
 end
 

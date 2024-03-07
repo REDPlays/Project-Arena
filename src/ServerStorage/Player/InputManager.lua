@@ -52,6 +52,7 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
 
         InputManager.ServerLMBDebounces[player.UserId] = true
 
+
         if moveCount and moveCount >= 3 then
             animInfo = currentClassData.Cooldowns.LMBMove
         end

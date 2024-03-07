@@ -48,8 +48,6 @@ function CharacterSelectClient:Setup()
 
                     --Setup UI
                     CharacterSelectClient.uiController:LoadCharacter(class:GetAttribute("ClassID"))
-
-                    --Setup Animations
                     
                 else
                     warn("invalid classname and ID")
@@ -58,8 +56,19 @@ function CharacterSelectClient:Setup()
             end)
         end
     end
+end
 
+function CharacterSelectClient:Disconnect()
+    CharacterSelectClient.uiController = nil
+    CharacterSelectClient.animationSystem = nil
 
+    for className, event in pairs(CharacterSelectClient.Bounds) do
+        if event then
+            event:Disconnect()
+        end
+
+        CharacterSelectClient.Bounds[className] = nil
+    end
 end
 
 return CharacterSelectClient

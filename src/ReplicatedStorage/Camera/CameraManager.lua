@@ -4,6 +4,8 @@ local UserInputService = game:GetService("UserInputService")
 local CameraManager = {}
 CameraManager.__index = CameraManager
 
+CameraManager.input = nil
+
 function CameraManager.new()
     local newCamera = {}
     setmetatable(newCamera, CameraManager)
@@ -49,7 +51,7 @@ function CameraManager:OutsideToggle(bool)
 end
 
 function CameraManager:Connections()
-    UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    CameraManager.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         if not gameProcessedEvent then
             if input.KeyCode == Enum.KeyCode.LeftControl then
                 if self.lockCamera then
@@ -76,6 +78,12 @@ function CameraManager:Connections()
             end
         end
     end)
+end
+
+function CameraManager:Disconnect()
+    if CameraManager.input then
+        CameraManager.input:Disconnect()
+    end
 end
 
 function CameraManager:Update(deltaTime)

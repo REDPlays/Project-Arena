@@ -29,6 +29,25 @@ function LocalGameManager:Setup()
     CharacterSelectClient:Init(Lobby, LocalGameManager.uiController, LocalGameManager.animationSystem)
 end
 
+function LocalGameManager:Disconnect(player: Player)
+    if LocalGameManager.cameraSystem then
+        LocalGameManager.cameraSystem:Disconnect()
+        LocalGameManager.cameraSystem = nil
+    end
+
+    if LocalGameManager.animationSystem then
+        LocalGameManager.animationSystem:Disconnect()
+        LocalGameManager.animationSystem = nil
+    end
+
+    if LocalGameManager.uiController then
+        LocalGameManager.uiController:Disconnect()
+        LocalGameManager.uiController = nil
+    end
+
+    CharacterSelectClient:Disconnect()
+end
+
 function LocalGameManager:Update(deltaTime)
     if LocalGameManager.cameraSystem then
         LocalGameManager.cameraSystem:Update(deltaTime)

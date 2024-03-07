@@ -9,10 +9,15 @@ local LocalGameManager = require(ReplicatedStorage:WaitForChild("RepFiles"):Wait
 local function PlayerAdded()
     LocalGameManager:Init(Players.LocalPlayer)
 
-
     RunService.Heartbeat:Connect(function(deltaTime)
         LocalGameManager:Update(deltaTime)
     end)
 end
 
+local function Respawn()
+    LocalGameManager:Disconnect(Players.LocalPlayer)
+end
+
 Events.Server_Client.PlayerLoaded.OnClientEvent:Connect(PlayerAdded)
+
+Events.Server_Client.Death.OnClientEvent:Connect(Respawn)
