@@ -27,4 +27,21 @@ AnimationData["AngelKnight"] = {
     Run = Animations:WaitForChild("AngelKnight"):WaitForChild("Run"),
 }
 
+AnimationData["DevilKnight"] = {
+    LMBMove = {
+        Animations:WaitForChild("DevilKnight"):WaitForChild("M1_1"),
+        Animations:WaitForChild("DevilKnight"):WaitForChild("M1_2"),
+        Animations:WaitForChild("DevilKnight"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("DevilKnight"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("DevilKnight"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("DevilKnight"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("DevilKnight"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("DevilKnight"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("DevilKnight"):WaitForChild("Run"),
+}
+
 return AnimationData
