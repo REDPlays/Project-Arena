@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local KeyProvider = game:GetService("KeyframeSequenceProvider")
 
 local AnimationData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Player"):WaitForChild("AnimationData"))
+local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
 local AnimationSystem = {}
 AnimationSystem.__index = AnimationSystem
@@ -84,7 +85,7 @@ function AnimationSystem:CreateConditionalData()
     return conditionalData
 end
 
-function AnimationSystem:Play(class, animName, animCount, conditionalData)
+function AnimationSystem:Play(class, animName, animCount, conditionalData, hitBoxCallBack)
     conditionalData = conditionalData or self:CreateConditionalData()
 
     conditionalData.weight = conditionalData.weight or defaultWeight
@@ -104,15 +105,20 @@ function AnimationSystem:Play(class, animName, animCount, conditionalData)
     self.currentAnimations[animName]:Play(conditionalData.fadeTime, conditionalData.weight, conditionalData.speed)
 
     if conditionalData.isAttack then
-        self:HitBoxEvent(self.currentAnimations[animName]) 
+        self:HitBoxEvent(self.currentAnimations[animName], hitBoxCallBack) 
     end
 end
 
-function AnimationSystem:HitBoxEvent(animation: AnimationTrack)
+function AnimationSystem:Stop(class, animName)
+    if self.currentAnimations[animName] then
+        self.currentAnimations[animName]:Stop()
+    end
+end
+
+function AnimationSystem:HitBoxEvent(animation: AnimationTrack, hitBoxCallBack)
     local marker = animation:GetMarkerReachedSignal("Attack"):Connect(function()
         --spawnHitbox
-        warn("SpawnHitbox")
-
+        hitBoxCallBack()
     end)
 
     animation.Stopped:Connect(function()
@@ -136,6 +142,16 @@ function AnimationSystem:Update(deltaTime)
     elseif moveDir > 0.5 then
         if not self.currentAnimations.Walk.IsPlaying then
             self.currentAnimations.Walk:Play()
+        elseif self.currentAnimations.Walk.IsPlaying then
+            local class = self.player:GetAttribute("CurrentClass")
+            local currentClassData = ClassData[class]
+            if not currentClassData then
+                return
+            end
+
+            local animSpeed = (self.humanoid.WalkSpeed / currentClassData.Speed) * 1
+
+            self.currentAnimations.Walk:AdjustSpeed(animSpeed)
         end
     end
 end

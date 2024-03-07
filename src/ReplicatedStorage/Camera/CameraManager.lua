@@ -24,6 +24,30 @@ function CameraManager:Init(player: Player, character: Model)
     self:Connections()
 end
 
+function CameraManager:OutsideToggle(bool)
+    if bool then
+        if not self.isActive then
+            self.isActive = true
+
+            self.activeMouseLock:DoMouseLockSwitch(
+                "MouseLockSwitchAction",
+                Enum.UserInputState.Begin,
+                Enum.KeyCode.LeftControl
+            )
+        end
+    else
+        if self.isActive then
+            self.isActive = false
+
+            self.activeMouseLock:DoMouseLockSwitch(
+                "MouseLockSwitchAction",
+                Enum.UserInputState.Begin,
+                Enum.KeyCode.LeftControl
+            )
+        end
+    end
+end
+
 function CameraManager:Connections()
     UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         if not gameProcessedEvent then

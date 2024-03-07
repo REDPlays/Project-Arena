@@ -7,6 +7,7 @@ local AnimationData = {}
 AnimationData["Base"] = {
     Idle = Animations:WaitForChild("Base"):WaitForChild("Idle"),
     Walk = Animations:WaitForChild("Base"):WaitForChild("Walk"),
+    DummyAttack = Animations:WaitForChild("Base"):WaitForChild("DummyAttack"),
 }
 
 AnimationData["AngelKnight"] = {

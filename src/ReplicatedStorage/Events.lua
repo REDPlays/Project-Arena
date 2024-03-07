@@ -15,10 +15,12 @@ Events.Client_Client = {
 Events.Client_Server = {
     CharacterSelect = Client_Server:WaitForChild("CharacterSelect"),
     Input = Client_Server:WaitForChild("Input"),
+    Hitbox = Client_Server:WaitForChild("Hitbox"),
 }
 
 Events.Server_Client = {
     PlayerLoaded = Server_Client:WaitForChild("PlayerLoaded"),
+    Cooldown = Server_Client:WaitForChild("Cooldown"),
 }
 
 Events.Server_Server = {

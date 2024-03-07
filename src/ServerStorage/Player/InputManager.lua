@@ -4,8 +4,11 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
+local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
+
 local InputManager = {}
 
+InputManager.ServerBlockDebounces = {}
 InputManager.ServerLMBDebounces = {}
 InputManager.ServerQDebounces = {}
 InputManager.ServerEDebounces = {}
@@ -25,6 +28,23 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
         return
     end
 
+    local character = player.Character
+    if not character then
+        return
+    end
+
+    if moveType == "Block" then
+        if InputManager.ServerBlockDebounces[player.UserId] then
+            InputManager.ServerBlockDebounces[player.UserId] = nil
+
+            StateManager:RemoveTarget(character, "Blocking")
+        elseif not InputManager.ServerBlockDebounces[player.UserId] then
+            InputManager.ServerBlockDebounces[player.UserId] = true
+
+            StateManager:AddTarget(character, "Blocking")
+        end
+    end
+
     if moveType == "LMBMove" then
         if InputManager.ServerLMBDebounces[player.UserId] then
             return
@@ -40,6 +60,8 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
             if InputManager.ServerLMBDebounces[player.UserId] then
                 InputManager.ServerLMBDebounces[player.UserId] = nil
             end
+
+            Events.Server_Client.Cooldown:FireClient(player, "LMBMove")
         end)
     end
 

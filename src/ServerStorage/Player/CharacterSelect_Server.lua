@@ -32,9 +32,14 @@ function CharacterSelectServer:Setup()
 end
 
 function CharacterSelectServer:PlayerJoined(player)
+    local character = player.Character
+    if not character then
+        return
+    end
+
     local Stats = Instance.new("Folder")
     Stats.Name = "Stats"
-    Stats.Parent = player
+    Stats.Parent = character
 
     Stats:SetAttribute("Health", 50)
     Stats:SetAttribute("MaxHealth", 50)
@@ -44,6 +49,10 @@ function CharacterSelectServer:PlayerJoined(player)
 
     --60 being lobbySpeed
     Stats:SetAttribute("Speed", 60)
+
+    Stats:SetAttribute("Blocking", false)
+    Stats:SetAttribute("Stunned", false)
+    Stats:SetAttribute("Attacked", false)
 
     --Set Stats
     CharacterSelectServer:SetStats(player, nil)
@@ -60,7 +69,7 @@ function CharacterSelectServer:SetStats(player, className)
         return
     end
 
-    local Stats = player:FindFirstChild("Stats")
+    local Stats = character:FindFirstChild("Stats")
     if not Stats then
         CharacterSelectServer:PlayerJoined(player)
     end
@@ -141,9 +150,9 @@ function CharacterSelectServer:SetCharacter(player, group, className)
                 if not piece then continue end
 
                 piece = piece:Clone()
-                piece.PrimaryPart.CFrame = obj.CFrame
                 piece.PrimaryPart.Transparency = 1
                 piece.Parent = Folder
+                piece.PrimaryPart.CFrame = obj.CFrame
 
                 local weld = Instance.new("WeldConstraint")
                 weld.Part0 = piece.PrimaryPart
