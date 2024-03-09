@@ -72,11 +72,12 @@ end
 
 function Stunned:Update(deltaTime)
     for targetId, data in pairs(Stunned.InState) do
-        data.currTime += deltaTime
-
         if data.currTime >= data.duration then
             Stunned:RemoveTarget(targetId)
+            continue
         end
+
+        data.currTime += deltaTime
     end
 end
 

@@ -10,6 +10,7 @@ local CharacterSelectServer = require(ServerStorage.ServerFiles.Player.Character
 local InputManager = require(ServerStorage.ServerFiles.Player.InputManager)
 local HitboxManager = require(ReplicatedStorage.RepFiles.Combat.HitboxManager)
 local StateManager = require(ReplicatedStorage.RepFiles.Combat.StateManager)
+local MoveManager = require(ReplicatedStorage.RepFiles.Combat.MoveManager)
 
 local Lobby = workspace.Lobby
 local Dummies = workspace.Dummies
@@ -58,6 +59,12 @@ function ServerGameManager:ConfigureDummies()
         currTime = 0,
         maxTime = 3,
     }
+
+    ServerGameManager.dummyTimers[Dummies.DummyBurn] = {
+        dummy = Dummies.DummyBurn,
+        currTime = 0,
+        maxTime = 1,
+    }
 end
 
 function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
@@ -81,6 +88,8 @@ function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
     local isDead
     isDead = humanoid.Died:Connect(function()
         player:SetAttribute("CurrentClass", nil)
+
+        StateManager:RemoveAll(character)
 
         Events.Server_Client.Death:FireClient(player)
 
@@ -119,6 +128,7 @@ end
 function ServerGameManager:Update(deltaTime)
     HitboxManager:Update(deltaTime)
     StateManager:Update(deltaTime)
+    MoveManager:Update(deltaTime)
 
     for dummyId, data in pairs(ServerGameManager.dummyTimers) do
         data.currTime += deltaTime
@@ -128,13 +138,18 @@ function ServerGameManager:Update(deltaTime)
             isStun = true
         end
 
+        local isBurn = false
+        if data.dummy.Name == "DummyBurn" then
+            isBurn = true
+        end
+
         if data.currTime >= data.maxTime then
             data.currTime = 0
 
             local animation = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData.Base.DummyAttack)
             animation:Play()
 
-            HitboxManager:HitboxDebugger(data.dummy, isStun)
+            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn)
         end
     end
 end

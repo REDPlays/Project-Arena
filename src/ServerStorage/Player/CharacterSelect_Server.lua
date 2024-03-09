@@ -53,6 +53,7 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("Blocking", false)
     Stats:SetAttribute("Stunned", false)
     Stats:SetAttribute("Attacked", false)
+    Stats:SetAttribute("Burn", false)
 
     --Set Stats
     CharacterSelectServer:SetStats(player, nil)

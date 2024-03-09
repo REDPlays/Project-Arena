@@ -67,15 +67,63 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
     end
 
     if moveType == "QMove" then
-        
+        if InputManager.ServerQDebounces[player.UserId] then
+            return
+        end
+
+        InputManager.ServerQDebounces[player.UserId] = true
+
+        if moveCount and moveCount >= 3 then
+            animInfo = currentClassData.Cooldowns.QMove
+        end
+
+        task.delay(animInfo, function()
+            if InputManager.ServerQDebounces[player.UserId] then
+                InputManager.ServerQDebounces[player.UserId] = nil
+            end
+
+            Events.Server_Client.Cooldown:FireClient(player, "QMove")
+        end)
     end
 
     if moveType == "EMove" then
-        
+        if InputManager.ServerEDebounces[player.UserId] then
+            return
+        end
+
+        InputManager.ServerEDebounces[player.UserId] = true
+
+        if moveCount and moveCount >= 3 then
+            animInfo = currentClassData.Cooldowns.EMove
+        end
+
+        task.delay(animInfo, function()
+            if InputManager.ServerEDebounces[player.UserId] then
+                InputManager.ServerEDebounces[player.UserId] = nil
+            end
+
+            Events.Server_Client.Cooldown:FireClient(player, "EMove")
+        end)
     end
 
     if moveType == "FMove" then
-        
+        if InputManager.ServerFDebounces[player.UserId] then
+            return
+        end
+
+        InputManager.ServerFDebounces[player.UserId] = true
+
+        if moveCount and moveCount >= 3 then
+            animInfo = currentClassData.Cooldowns.FMove
+        end
+
+        task.delay(animInfo, function()
+            if InputManager.ServerFDebounces[player.UserId] then
+                InputManager.ServerFDebounces[player.UserId] = nil
+            end
+
+            Events.Server_Client.Cooldown:FireClient(player, "FMove")
+        end)
     end
 
     return true

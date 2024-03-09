@@ -64,11 +64,12 @@ end
 
 function Attacked:Update(deltaTime)
     for targetId, data in pairs(Attacked.InState) do
-        data.currTime += deltaTime
-
         if data.currTime >= data.duration then
             Attacked:RemoveTarget(targetId)
+            continue
         end
+
+        data.currTime += deltaTime
     end
 end
 

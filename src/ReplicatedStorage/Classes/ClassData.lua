@@ -28,7 +28,7 @@ ClassData["AngelKnight"] = {
     Role = "Support",
     DamageList = {
         ["LMBMove"] = {5, 5 ,5 ,10},
-        ["QMove"] = 5,
+        ["QMove"] = 15,
         ["EMove"] = 5,
         ["FMove"] = 5,
     },
@@ -59,15 +59,19 @@ ClassData["AngelKnight"] = {
     MoveData = {
         ["LMBMove"] = {
             Stunned = false,
+            Burn = false,
         },
         ["QMove"] = {
             Stunned = false,
+            Burn = false,
         },
         ["EMove"] = {
             Stunned = false,
+            Burn = false,
         },
         ["FMove"] = {
             Stunned = false,
+            Burn = false,
         },
     }
 }
@@ -110,15 +114,19 @@ ClassData["DevilKnight"] = {
     MoveData = {
         ["LMBMove"] = {
             Stunned = false,
+            Burn = true,
         },
         ["QMove"] = {
             Stunned = false,
+            Burn = false,
         },
         ["EMove"] = {
             Stunned = false,
+            Burn = false,
         },
         ["FMove"] = {
             Stunned = false,
+            Burn = false,
         },
     }
 }

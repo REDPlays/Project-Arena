@@ -1,6 +1,9 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Dummies = workspace.Dummies
+
+local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local HealthRegen = {}
 
@@ -68,6 +71,13 @@ function HealthRegen:Update(deltaTime)
             continue
         end
 
+        if Stats:GetAttribute("Burn") and Stats:GetAttribute("Burn") == true then
+            continue
+        end
+
+        HealthManager:Heal(character, HealthRegen.rateRegen * deltaTime)
+
+        --[==[
         local health = humanoid.Health 
         local maxHealth = humanoid.MaxHealth
 
@@ -77,6 +87,7 @@ function HealthRegen:Update(deltaTime)
             Stats:SetAttribute("Health", health)
             Stats:SetAttribute("MaxHealth", maxHealth)
         end
+        ]==]
     end
 
     --regenerate health (dummy)
@@ -103,6 +114,13 @@ function HealthRegen:Update(deltaTime)
             continue
         end
 
+        if Stats:GetAttribute("Burn") and Stats:GetAttribute("Burn") == true then
+            continue
+        end
+
+        HealthManager:Heal(dummy, HealthRegen.rateRegen * deltaTime)
+
+        --[==[
         local health = humanoid.Health 
         local maxHealth = humanoid.MaxHealth
 
@@ -112,6 +130,7 @@ function HealthRegen:Update(deltaTime)
             Stats:SetAttribute("Health", health)
             Stats:SetAttribute("MaxHealth", maxHealth)
         end
+        ]==]
     end
 
     for targetId, data in pairs(HealthRegen.InState) do
@@ -125,6 +144,21 @@ function HealthRegen:Update(deltaTime)
             continue
         end
 
+        if Stats:GetAttribute("Stunned") and Stats:GetAttribute("Stunned") == true then
+            continue
+        end
+
+        if Stats:GetAttribute("Attacked") and Stats:GetAttribute("Attacked") == true then
+            continue
+        end
+
+        if Stats:GetAttribute("Burn") and Stats:GetAttribute("Burn") == true then
+            continue
+        end
+
+        HealthManager:Heal(data.target, HealthRegen.rateRegen * deltaTime)
+
+        --[==[
         local health = humanoid.Health 
         local maxHealth = humanoid.MaxHealth
 
@@ -134,6 +168,7 @@ function HealthRegen:Update(deltaTime)
             Stats:SetAttribute("Health", health)
             Stats:SetAttribute("MaxHealth", maxHealth)
         end
+        ]==]
     end
 end
 

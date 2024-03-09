@@ -16,6 +16,7 @@ end
 function UIController:Init(player, character, animationSystem, cameraSystem)
     self.player = player
     self.character = character
+    self.humanoid = character:WaitForChild("Humanoid")
 
     self.animationSystem = animationSystem
     self.cameraSystem = cameraSystem
@@ -67,7 +68,7 @@ function UIController:StatConnect()
     local maxDefense = self.statsFolder:GetAttribute("MaxDefense")
     self.DefenseBar.Bar.Size = UDim2.new((defense / maxDefense) * 1, 0, 1, 0)
 
-    self.healthDisplay = self.statsFolder:GetAttributeChangedSignal("Health"):Connect(function()
+    self.healthDisplay = self.humanoid.HealthChanged:Connect(function()
         local health = self.statsFolder:GetAttribute("Health")
         local maxHealth = self.statsFolder:GetAttribute("MaxHealth")
 
@@ -153,29 +154,89 @@ function UIController:Connect()
         end
 
         if input.KeyCode == Enum.KeyCode.Q then
+            if self.debounces.QMove then
+                return
+            end
+
             local animInfo = self.animationSystem:animInfo(self.class, "QMove")
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "QMove", animInfo)
             if canAttack then
                 warn("Can QMove")
+                self.debounces.QMove = true
+
+                local conditionalData = {
+                    priority = Enum.AnimationPriority.Action,
+                    isAttack = true,
+                }
+
+                local function hitBoxCallBack()
+                    local moveData = {
+                        isAOE = false,
+                        isProjectile = false,
+                    }
+                    Events.Client_Server.Moves:FireServer(self.class, "QMove", moveData)
+                end
+
+                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack)
             end
         end
 
         if input.KeyCode == Enum.KeyCode.E then
+            if self.debounces.EMove then
+                return
+            end
+
             local animInfo = self.animationSystem:animInfo(self.class, "EMove")
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "EMove", animInfo)
             if canAttack then
                 warn("Can EMove")
+                self.debounces.EMove = true
+
+                local conditionalData = {
+                    priority = Enum.AnimationPriority.Action,
+                    isAttack = true,
+                }
+
+                local function hitBoxCallBack()
+                    local moveData = {
+                        isAOE = false,
+                        isProjectile = false,
+                    }
+                    Events.Client_Server.Moves:FireServer(self.class, "EMove", moveData)
+                end
+
+                self.animationSystem:Play(self.class, "EMove", nil, conditionalData, hitBoxCallBack)
             end
         end
 
         if input.KeyCode == Enum.KeyCode.F then
+            if self.debounces.FMove then
+                return
+            end
+
             local animInfo = self.animationSystem:animInfo(self.class, "FMove")
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "FMove", animInfo)
             if canAttack then
                 warn("Can FMove")
+                self.debounces.FMove = true
+
+                local conditionalData = {
+                    priority = Enum.AnimationPriority.Action,
+                    isAttack = true,
+                }
+
+                local function hitBoxCallBack()
+                    local moveData = {
+                        isAOE = false,
+                        isProjectile = false,
+                    }
+                    Events.Client_Server.Moves:FireServer(self.class, "FMove", moveData)
+                end
+
+                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack)
             end
         end
     end)
@@ -207,6 +268,10 @@ function UIController:Connect()
 
         if moveType == "Block" then
             self.animationSystem:Stop(self.class, "Block")
+        end
+
+        if moveType == "QMove" then
+            self.debounces.QMove = false
         end
     end)
 end

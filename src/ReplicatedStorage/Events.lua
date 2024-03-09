@@ -16,6 +16,7 @@ Events.Client_Server = {
     CharacterSelect = Client_Server:WaitForChild("CharacterSelect"),
     Input = Client_Server:WaitForChild("Input"),
     Hitbox = Client_Server:WaitForChild("Hitbox"),
+    Moves = Client_Server:WaitForChild("Moves"),
 }
 
 Events.Server_Client = {

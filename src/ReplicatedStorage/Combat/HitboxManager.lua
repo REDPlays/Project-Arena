@@ -6,10 +6,9 @@ local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
-
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
-
 local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
+local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local IgnoreFolder = workspace.Ignore
 
@@ -17,7 +16,7 @@ local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
 local HitboxManager = {}
 
-function HitboxManager:HitboxDebugger(character, isStun)
+function HitboxManager:HitboxDebugger(character, isStun, isBurn)
     local currentClassData = ClassData["Base"]
     if not currentClassData then
         return
@@ -28,7 +27,10 @@ function HitboxManager:HitboxDebugger(character, isStun)
         return
     end
 
-    local damage = 10
+    local damage = 2
+    if character.Name == "DummyAttacker" then
+        damage = 10
+    end
 
     local placementCFrame = character:GetPivot() * currentClassData.Hitboxes["LMBMove"].Offset
 
@@ -108,16 +110,14 @@ function HitboxManager:HitboxDebugger(character, isStun)
         if isStun then
             StateManager:AddTarget(parent, "Stunned", 1)
         end
-        StateManager:AddTarget(parent, "Attacked", 1)
 
-        local currentHealth = enemyHum.Health
-        if currentHealth <= damage then
-            enemyHum:TakeDamage(0)
-        else
-            enemyHum:TakeDamage(damage)
+        if isBurn then
+            StateManager:AddTarget(parent, "Burn", 3)
         end
 
-        Stats:SetAttribute("Health", enemyHum.Health)
+        StateManager:AddTarget(parent, "Attacked", 1)
+
+        HealthManager:Damage(parent, damage)
     end
 end
 
@@ -226,20 +226,14 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
             continue
         end
 
-        local currentHealth = enemyHum.Health
-        StateManager:AddTarget(parent, "Attacked", 1)
-        
-        if CollectionService:HasTag(parent, "Dummies") then
-            if currentHealth <= damage then
-                enemyHum:TakeDamage(0)
-            else
-                enemyHum:TakeDamage(damage)
-            end
-        else
-            enemyHum:TakeDamage(damage)
+        --apply burn
+        if currentClassData.MoveData[moveType].Burn then
+            StateManager:AddTarget(parent, "Burn", 3)
         end
 
-        Stats:SetAttribute("Health", enemyHum.Health)
+        StateManager:AddTarget(parent, "Attacked", 1)
+
+        HealthManager:Damage(parent, damage)
     end
 end
 

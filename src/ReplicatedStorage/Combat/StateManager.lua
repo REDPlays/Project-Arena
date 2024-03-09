@@ -8,6 +8,7 @@ local states = {
     Stunned = require(States:WaitForChild("Stunned")),
     Blocking = require(States:WaitForChild("Blocking")),
     Attacked = require(States:WaitForChild("Attacked")),
+    Burn = require(States:WaitForChild("Burn")),
 }
 
 local StateManager = {}
@@ -37,11 +38,20 @@ if RunService:IsServer() then
         states[currState]:RemoveTarget(target)
     end
 
+    function StateManager:RemoveAll(target: Model)
+        for state, _ in pairs(states) do
+            if states[state]:CheckState(target) then
+                states[state]:RemoveTarget(target)
+            end
+        end
+    end
+
     function StateManager:Update(deltaTime)
         states.HealthRegen:Update(deltaTime)
         states.Stunned:Update(deltaTime)
         states.Blocking:Update(deltaTime)
         states.Attacked:Update(deltaTime)
+        states.Burn:Update(deltaTime)
     end
 end
 

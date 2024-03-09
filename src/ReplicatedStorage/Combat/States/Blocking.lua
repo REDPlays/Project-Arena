@@ -122,6 +122,7 @@ function Blocking:Update(deltaTime)
             Stats:SetAttribute("Defense", defense)
         elseif defense <= 0 then
             Blocking:RemoveTarget(targetId)
+            continue
         end
     end
 end
