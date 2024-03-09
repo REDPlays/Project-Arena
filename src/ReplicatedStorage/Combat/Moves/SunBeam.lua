@@ -13,9 +13,9 @@ local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitFor
 
 local IgnoreFolder = workspace.Ignore
 
-local AngelicCharge = {}
+local SunBeam = {}
 
-function AngelicCharge:Activate(character, rootPart, placementCFrame, classData, moveType)
+function SunBeam:Activate(character, rootPart, placementCFrame, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local damage = classData.DamageList[moveType]
@@ -47,8 +47,11 @@ function AngelicCharge:Activate(character, rootPart, placementCFrame, classData,
 
     Stats:SetAttribute("AbilityLocked", true)
 
-    local duration = .25
+    local duration = 3
     local currTime = 0
+    local damageTick = .25
+
+    StateManager:AddTarget(character, "Slow", duration)
 
     local alreadyHit = {}
 
@@ -99,7 +102,13 @@ function AngelicCharge:Activate(character, rootPart, placementCFrame, classData,
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block angelic charge")
+                    warn("block Sun Beam")
+                    task.delay(damageTick, function()
+                        if alreadyHit[parent.Name] then
+                            alreadyHit[parent.Name] = nil
+                        end
+                    end)
+
                     continue
                 end
 
@@ -111,27 +120,25 @@ function AngelicCharge:Activate(character, rootPart, placementCFrame, classData,
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage)
+
+                task.delay(damageTick, function()
+                    if alreadyHit[parent.Name] then
+                        alreadyHit[parent.Name] = nil
+                    end
+                end)
             end
             
             task.wait()
         end
     end)
 
-    Debris:AddItem(Hitbox, duration * 2)
+    Debris:AddItem(Hitbox, duration)
 
-    task.delay(duration * 2 , function()
+    task.delay(duration, function()
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
     coroutine.resume(thread)
-
-    local dashData = {
-        duration = duration,
-        speed = 100,
-        isDash = true,
-    }
-
-    Events.Server_Client.Movement:FireAllClients(character, dashData)
 end
 
-return AngelicCharge
+return SunBeam

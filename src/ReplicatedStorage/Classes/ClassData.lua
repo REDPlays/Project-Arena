@@ -52,8 +52,8 @@ ClassData["AngelKnight"] = {
             Offset = CFrame.new(0, 3.5, 0),
         },
         ["FMove"] = {
-            Size = Vector3.new(5, 5, 5),
-            Offset = CFrame.new(0, 2.5, -2.5),
+            Size = Vector3.new(6, 6, 20),
+            Offset = CFrame.new(0, 3, -12),
         },
     },
     MoveData = {

@@ -33,6 +33,22 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
         return
     end
 
+    local Stats = character:FindFirstChild("Stats")
+    if not Stats then
+        return
+    end
+
+    --check if they can attack
+    if Stats:GetAttribute("Stunned") and Stats:GetAttribute("Stunned") == true then
+        warn("Ability is locked due to stun")
+        return
+    end
+
+    if Stats:GetAttribute("AbilityLocked") and Stats:GetAttribute("AbilityLocked") == true then
+        warn("Ability is locked due to using an ability")
+        return
+    end
+
     if moveType == "Block" then
         if InputManager.ServerBlockDebounces[player.UserId] then
             InputManager.ServerBlockDebounces[player.UserId] = nil

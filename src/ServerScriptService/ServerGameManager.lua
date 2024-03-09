@@ -29,21 +29,7 @@ function ServerGameManager:ConfigureDummies()
     ServerGameManager.dummyTimers = {}
     
     for _, dummy in pairs(Dummies:GetChildren()) do
-        local Stats = Instance.new("Folder")
-        Stats.Name = "Stats"
-        Stats.Parent = dummy
-
-        Stats:SetAttribute("Health", 50)
-        Stats:SetAttribute("MaxHealth", 50)
-
-        Stats:SetAttribute("Defense", 50)
-        Stats:SetAttribute("MaxDefense", 50)
-
-        Stats:SetAttribute("Speed", 60)
-
-        Stats:SetAttribute("Blocking", false)
-        Stats:SetAttribute("Stunned", false)
-        Stats:SetAttribute("Attacked", false)
+        CharacterSelectServer:DummyJoined(dummy)
     end
 
     StateManager:AddTarget(Dummies.DummyBlocker, "Blocking")
@@ -64,6 +50,12 @@ function ServerGameManager:ConfigureDummies()
         dummy = Dummies.DummyBurn,
         currTime = 0,
         maxTime = 1,
+    }
+
+    ServerGameManager.dummyTimers[Dummies.DummySlow] = {
+        dummy = Dummies.DummySlow,
+        currTime = 0,
+        maxTime = 3,
     }
 end
 
@@ -143,13 +135,18 @@ function ServerGameManager:Update(deltaTime)
             isBurn = true
         end
 
+        local isSlow = false
+        if data.dummy.Name == "DummySlow" then
+            isSlow = true
+        end
+
         if data.currTime >= data.maxTime then
             data.currTime = 0
 
             local animation = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData.Base.DummyAttack)
             animation:Play()
 
-            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn)
+            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn, isSlow)
         end
     end
 end

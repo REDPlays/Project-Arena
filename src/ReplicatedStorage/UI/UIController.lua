@@ -223,6 +223,8 @@ function UIController:Connect()
                 warn("Can FMove")
                 self.debounces.FMove = true
 
+                self.cameraSystem:OutsideToggle(true)
+
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
                     isAttack = true,
@@ -236,7 +238,7 @@ function UIController:Connect()
                     Events.Client_Server.Moves:FireServer(self.class, "FMove", moveData)
                 end
 
-                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack)
+                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack, true)
             end
         end
     end)

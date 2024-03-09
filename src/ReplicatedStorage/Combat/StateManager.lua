@@ -9,6 +9,7 @@ local states = {
     Blocking = require(States:WaitForChild("Blocking")),
     Attacked = require(States:WaitForChild("Attacked")),
     Burn = require(States:WaitForChild("Burn")),
+    Slow = require(States:WaitForChild("Slow")),
 }
 
 local StateManager = {}
@@ -52,6 +53,7 @@ if RunService:IsServer() then
         states.Blocking:Update(deltaTime)
         states.Attacked:Update(deltaTime)
         states.Burn:Update(deltaTime)
+        states.Slow:Update(deltaTime)
     end
 end
 

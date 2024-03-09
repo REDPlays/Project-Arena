@@ -16,7 +16,7 @@ local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
 local HitboxManager = {}
 
-function HitboxManager:HitboxDebugger(character, isStun, isBurn)
+function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow)
     local currentClassData = ClassData["Base"]
     if not currentClassData then
         return
@@ -114,6 +114,10 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn)
 
         if isBurn then
             StateManager:AddTarget(parent, "Burn", 3)
+        end
+
+        if isSlow then
+            StateManager:AddTarget(parent, "Slow", 2)
         end
 
         StateManager:AddTarget(parent, "Attacked", 1)

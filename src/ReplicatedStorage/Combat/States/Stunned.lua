@@ -26,6 +26,7 @@ function Stunned:AddTarget(target: Model, duration)
     end
 
     Stats:SetAttribute("Stunned", true)
+    Stats:SetAttribute("AbilityLocked", true)
 
     if Stunned.InState[target] then
         Stunned.InState[target].currTime = 0
@@ -62,6 +63,7 @@ function Stunned:RemoveTarget(target: Model)
     end
 
     Stats:SetAttribute("Stunned", false)
+    Stats:SetAttribute("AbilityLocked", false)
 
     humanoid.WalkSpeed = Stunned.InState[target].prevSpeed
 

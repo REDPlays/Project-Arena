@@ -31,6 +31,27 @@ function CharacterSelectServer:Setup()
     end
 end
 
+function CharacterSelectServer:DummyJoined(dummy)
+    local Stats = Instance.new("Folder")
+    Stats.Name = "Stats"
+    Stats.Parent = dummy
+
+    Stats:SetAttribute("Health", 50)
+    Stats:SetAttribute("MaxHealth", 50)
+
+    Stats:SetAttribute("Defense", 50)
+    Stats:SetAttribute("MaxDefense", 50)
+
+    Stats:SetAttribute("Speed", 60)
+
+    Stats:SetAttribute("Blocking", false)
+    Stats:SetAttribute("Stunned", false)
+    Stats:SetAttribute("Attacked", false)
+    Stats:SetAttribute("Burn", false)
+    Stats:SetAttribute("AbilityLocked", false)
+    Stats:SetAttribute("Slowed", false)
+end
+
 function CharacterSelectServer:PlayerJoined(player)
     local character = player.Character
     if not character then
@@ -54,6 +75,8 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("Stunned", false)
     Stats:SetAttribute("Attacked", false)
     Stats:SetAttribute("Burn", false)
+    Stats:SetAttribute("AbilityLocked", false)
+    Stats:SetAttribute("Slowed", false)
 
     --Set Stats
     CharacterSelectServer:SetStats(player, nil)
