@@ -83,8 +83,9 @@ function AnimationSystem:CreateConditionalData()
     return conditionalData
 end
 
-function AnimationSystem:Play(class, animName, animCount, conditionalData, hitBoxCallBack)
+function AnimationSystem:Play(class, animName, animCount, conditionalData, hitBoxCallBack, hasEvent)
     conditionalData = conditionalData or self:CreateConditionalData()
+    hasEvent = hasEvent or false
 
     conditionalData.weight = conditionalData.weight or defaultWeight
     conditionalData.speed = conditionalData.speed or defaultSpeed
@@ -103,7 +104,7 @@ function AnimationSystem:Play(class, animName, animCount, conditionalData, hitBo
     self.currentAnimations[animName]:Play(conditionalData.fadeTime, conditionalData.weight, conditionalData.speed)
 
     if conditionalData.isAttack then
-        self:HitBoxEvent(self.currentAnimations[animName], hitBoxCallBack) 
+        self:HitBoxEvent(self.currentAnimations[animName], hitBoxCallBack, hasEvent) 
     end
 end
 
@@ -113,22 +114,27 @@ function AnimationSystem:Stop(class, animName)
     end
 end
 
-function AnimationSystem:HitBoxEvent(animation: AnimationTrack, hitBoxCallBack)
-    local marker = animation:GetMarkerReachedSignal("Attack"):Connect(function()
+function AnimationSystem:HitBoxEvent(animation: AnimationTrack, hitBoxCallBack, hasEvent)
+    if hasEvent then
+        local marker = animation:GetMarkerReachedSignal("Attack"):Connect(function()
+            --spawnHitbox
+            hitBoxCallBack()
+        end)
+    
+        local stopped
+        stopped = animation.Stopped:Connect(function()
+            if stopped then
+                stopped:Disconnect()
+            end
+    
+            if marker then
+                marker:Disconnect()
+            end
+        end) 
+    else
         --spawnHitbox
         hitBoxCallBack()
-    end)
-
-    local stopped
-    stopped = animation.Stopped:Connect(function()
-        if stopped then
-            stopped:Disconnect()
-        end
-
-        if marker then
-            marker:Disconnect()
-        end
-    end)
+    end
 end
 
 function AnimationSystem:Disconnect()

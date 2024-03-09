@@ -23,6 +23,7 @@ Events.Server_Client = {
     PlayerLoaded = Server_Client:WaitForChild("PlayerLoaded"),
     Cooldown = Server_Client:WaitForChild("Cooldown"),
     Death = Server_Client:WaitForChild("Death"),
+    Movement = Server_Client:WaitForChild("Movement"),
 }
 
 Events.Server_Server = {

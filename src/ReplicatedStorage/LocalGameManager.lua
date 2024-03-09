@@ -4,6 +4,7 @@ local CameraManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitFor
 local UIController = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("UIController"))
 local CharacterSelectClient = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Player"):WaitForChild("CharacterSelect_Client"))
 local AnimationSystem = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Player"):WaitForChild("AnimationSystem"))
+local MovementManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("MovementManager"))
 
 local Lobby = workspace.Lobby
 

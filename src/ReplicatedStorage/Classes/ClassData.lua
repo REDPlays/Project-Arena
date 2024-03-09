@@ -29,7 +29,7 @@ ClassData["AngelKnight"] = {
     DamageList = {
         ["LMBMove"] = {5, 5 ,5 ,10},
         ["QMove"] = 15,
-        ["EMove"] = 5,
+        ["EMove"] = 10,
         ["FMove"] = 5,
     },
     Cooldowns = {
@@ -48,8 +48,8 @@ ClassData["AngelKnight"] = {
             Offset = CFrame.new(0, 2.5, -2.5),
         },
         ["EMove"] = {
-            Size = Vector3.new(5, 5, 5),
-            Offset = CFrame.new(0, 2.5, -2.5),
+            Size = Vector3.new(7, 7, 7),
+            Offset = CFrame.new(0, 3.5, 0),
         },
         ["FMove"] = {
             Size = Vector3.new(5, 5, 5),

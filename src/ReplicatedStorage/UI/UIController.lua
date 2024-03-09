@@ -149,7 +149,7 @@ function UIController:Connect()
                     Events.Client_Server.Hitbox:FireServer(self.class, "LMBMove", self.LMBs, isProjectile)
                 end
 
-                self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack)
+                self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack, true)
             end
         end
 
@@ -178,7 +178,7 @@ function UIController:Connect()
                     Events.Client_Server.Moves:FireServer(self.class, "QMove", moveData)
                 end
 
-                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack)
+                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack, true)
             end
         end
 
@@ -272,6 +272,14 @@ function UIController:Connect()
 
         if moveType == "QMove" then
             self.debounces.QMove = false
+        end
+
+        if moveType == "EMove" then
+            self.debounces.EMove = false
+        end
+
+        if moveType == "FMove" then
+            self.debounces.FMove = false
         end
     end)
 end

@@ -104,6 +104,7 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn)
         local isBlocking = StateManager:CheckState(parent, "Blocking")
         if isBlocking then
             --Block Indication
+            warn("block m1s")
             continue
         end
 
@@ -222,7 +223,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
         local isBlocking = StateManager:CheckState(parent, "Blocking")
         if isBlocking then
             --Block Indication
-
+            warn("block m1s")
             continue
         end
 
