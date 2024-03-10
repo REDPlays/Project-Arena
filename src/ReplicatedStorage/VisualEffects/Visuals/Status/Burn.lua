@@ -38,7 +38,6 @@ function Burn:DisplayVFX()
 end
 
 function Burn:Terminate()
-    warn("Terminate Burn")
     for _, particle in pairs(self.Fire:GetDescendants()) do
         if particle:IsA("ParticleEmitter") then
             particle.Enabled = false
