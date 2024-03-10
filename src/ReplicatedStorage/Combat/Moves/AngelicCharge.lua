@@ -11,6 +11,8 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
+local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+
 local IgnoreFolder = workspace.Ignore
 
 local AngelicCharge = {}
@@ -46,6 +48,14 @@ function AngelicCharge:Activate(character, rootPart, placementCFrame, classData,
     weld.Parent = weld.Part0
 
     Stats:SetAttribute("AbilityLocked", true)
+    
+    VisualEffectServer:SpawnEffectsInRange(
+        "AngelicCharge",
+        nil,
+        character,
+        {},
+        1000
+    )
 
     local duration = .25
     local currTime = 0

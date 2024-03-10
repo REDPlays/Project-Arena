@@ -1,8 +1,18 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
+local HttpService = game:GetService("HttpService")
+
+local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+
+local Assets = ReplicatedStorage.Assets
+local CharacterModels = Assets.CharacterModels
+local UI = Assets.UI
 
 local Burn = {}
 
 Burn.InState = {}
+local Color = Color3.fromRGB(255, 119, 0)
+
 local maxStacks = 3
 local burnDamage = .01
 local currTick = 0
@@ -31,6 +41,16 @@ function Burn:AddTarget(target: Model, duration)
         return
     end
 
+    local rootPart = target:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local UIAttach = rootPart:FindFirstChild("UI")
+    if not UIAttach then
+        return
+    end
+
     Stats:SetAttribute("Burn", true)
 
     if Burn.InState[target] then
@@ -44,11 +64,30 @@ function Burn:AddTarget(target: Model, duration)
         return
     end
 
+    local VFX_ID = "Burn_" .. HttpService:GenerateGUID(false)
+
+    local display = UI.StatusUI:Clone()
+    display.Adornee = UIAttach
+    display.StatusName.Text = "BURNED"
+    display.StatusName.TextColor3 = Color
+    display.Parent = target
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "Burn",
+        nil,
+        target,
+        {},
+        1000,
+        VFX_ID
+    )
+
     Burn.InState[target] = {
         target = target,
         duration = duration,
         currTime = 0,
         burnCount = 1,
+        display = display,
+        VFX_ID = VFX_ID,
     }
 end
 
@@ -70,6 +109,18 @@ function Burn:RemoveTarget(target: Model)
     Stats:SetAttribute("Burn", nil)
 
     if Burn.InState[target] then
+        if Burn.InState[target].display then
+            Burn.InState[target].display:Destroy()
+        end
+
+        VisualEffectServer:TerminateVFX(
+            "Burn",
+            nil,
+            Burn.InState[target].target,
+            {},
+            Burn.InState[target].VFX_ID
+        )
+
         Burn.InState[target] = nil
     end
 end

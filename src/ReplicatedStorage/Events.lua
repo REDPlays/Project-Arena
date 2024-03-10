@@ -24,6 +24,8 @@ Events.Server_Client = {
     Cooldown = Server_Client:WaitForChild("Cooldown"),
     Death = Server_Client:WaitForChild("Death"),
     Movement = Server_Client:WaitForChild("Movement"),
+    VisualEffects = Server_Client:WaitForChild("VisualEffects"),
+    TerminateVFX = Server_Client:WaitForChild("TerminateVFX")
 }
 
 Events.Server_Server = {

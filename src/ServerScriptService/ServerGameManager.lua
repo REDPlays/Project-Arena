@@ -11,6 +11,7 @@ local InputManager = require(ServerStorage.ServerFiles.Player.InputManager)
 local HitboxManager = require(ReplicatedStorage.RepFiles.Combat.HitboxManager)
 local StateManager = require(ReplicatedStorage.RepFiles.Combat.StateManager)
 local MoveManager = require(ReplicatedStorage.RepFiles.Combat.MoveManager)
+local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
 
 local Lobby = workspace.Lobby
 local Dummies = workspace.Dummies

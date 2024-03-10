@@ -1,6 +1,14 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
+
+local Assets = ReplicatedStorage.Assets
+local CharacterModels = Assets.CharacterModels
+local UI = Assets.UI
+
 local Stunned = {}
 
 Stunned.InState = {}
+local Color = Color3.fromRGB(255, 255, 255)
 
 function Stunned:CheckState(target: Model)
     return Stunned.InState[target]
@@ -25,6 +33,16 @@ function Stunned:AddTarget(target: Model, duration)
         return
     end
 
+    local rootPart = target:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local UIAttach = rootPart:FindFirstChild("UI")
+    if not UIAttach then
+        return
+    end
+
     Stats:SetAttribute("Stunned", true)
     Stats:SetAttribute("AbilityLocked", true)
 
@@ -36,12 +54,19 @@ function Stunned:AddTarget(target: Model, duration)
         return
     end
 
+    local display = UI.StatusUI:Clone()
+    display.Adornee = UIAttach
+    display.StatusName.Text = "STUNNED"
+    display.StatusName.TextColor3 = Color
+    display.Parent = target
+
     Stunned.InState[target] = {
         target = target,
         duration = duration,
         currTime = 0,
         stunCount = 1,
-        prevSpeed = humanoid.WalkSpeed
+        prevSpeed = humanoid.WalkSpeed,
+        display = display,
     }
 
     humanoid.WalkSpeed = 0
@@ -68,6 +93,10 @@ function Stunned:RemoveTarget(target: Model)
     humanoid.WalkSpeed = Stunned.InState[target].prevSpeed
 
     if Stunned.InState[target] then
+        if Stunned.InState[target].display then
+            Stunned.InState[target].display:Destroy()
+        end
+
         Stunned.InState[target] = nil
     end
 end

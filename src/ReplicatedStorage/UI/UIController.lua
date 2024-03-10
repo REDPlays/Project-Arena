@@ -17,6 +17,7 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.player = player
     self.character = character
     self.humanoid = character:WaitForChild("Humanoid")
+    self.rootPart = character:WaitForChild("HumanoidRootPart")
 
     self.animationSystem = animationSystem
     self.cameraSystem = cameraSystem
@@ -318,7 +319,12 @@ function UIController:Disconnect()
 end
 
 function UIController:Update(deltaTime)
-
+    local Overhead: BillboardGui = self.character:FindFirstChild("Overhead")
+    if Overhead then
+        if Overhead.Enabled then
+            Overhead.Enabled = false
+        end
+    end
 end
 
 return UIController

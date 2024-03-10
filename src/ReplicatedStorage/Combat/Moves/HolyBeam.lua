@@ -10,6 +10,8 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
+local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+
 local IgnoreFolder = workspace.Ignore
 
 local HolyBeam = {}
@@ -28,6 +30,14 @@ function HolyBeam:Activate(character, rootPart, placementCFrame, classData, move
     if not humanoid then
         return
     end
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "HolyBeam",
+        nil,
+        character,
+        {},
+        1000
+    )
 
     HealthManager:Heal(character, healing)
 end

@@ -11,6 +11,8 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
+local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+
 local IgnoreFolder = workspace.Ignore
 
 local SunBeam = {}
@@ -52,6 +54,14 @@ function SunBeam:Activate(character, rootPart, placementCFrame, classData, moveT
     local damageTick = .25
 
     StateManager:AddTarget(character, "Slow", duration)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "SunBeam",
+        nil,
+        character,
+        {},
+        1000
+    )
 
     local alreadyHit = {}
 

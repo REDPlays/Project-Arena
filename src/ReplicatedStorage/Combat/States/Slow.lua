@@ -1,6 +1,14 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
+
+local Assets = ReplicatedStorage.Assets
+local CharacterModels = Assets.CharacterModels
+local UI = Assets.UI
+
 local Slow = {}
 
 Slow.InState = {}
+local Color = Color3.fromRGB(160, 190, 255)
 
 function Slow:CheckState(target: Model)
     return Slow.InState[target]
@@ -25,17 +33,34 @@ function Slow:AddTarget(target: Model, duration)
         return
     end
 
+    local rootPart = target:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local UIAttach = rootPart:FindFirstChild("UI")
+    if not UIAttach then
+        return
+    end
+
     if Slow.InState[target] then
         return
     end
 
     Stats:SetAttribute("Slowed", true)
 
+    local display = UI.StatusUI:Clone()
+    display.Adornee = UIAttach
+    display.StatusName.Text = "SLOWED"
+    display.StatusName.TextColor3 = Color
+    display.Parent = target
+
     Slow.InState[target] = {
         target = target,
         duration = duration,
         currTime = 0,
-        prevSpeed = humanoid.WalkSpeed
+        prevSpeed = humanoid.WalkSpeed,
+        display = display,
     }
 
     humanoid.WalkSpeed = 4
@@ -61,6 +86,10 @@ function Slow:RemoveTarget(target: Model)
     humanoid.WalkSpeed = Slow.InState[target].prevSpeed
 
     if Slow.InState[target] then
+        if Slow.InState[target].display then
+            Slow.InState[target].display:Destroy()
+        end
+
         Slow.InState[target] = nil
     end
 end

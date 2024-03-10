@@ -3,10 +3,12 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local Assets = ReplicatedStorage.Assets
 local CharacterModels = Assets.CharacterModels
+local UI = Assets.UI
 
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
 local CharacterSelectServer = {}
+CharacterSelectServer.uiConnections = {}
 
 function CharacterSelectServer:Init(lobby)
     CharacterSelectServer.Lobby = lobby
@@ -50,6 +52,12 @@ function CharacterSelectServer:DummyJoined(dummy)
     Stats:SetAttribute("Burn", false)
     Stats:SetAttribute("AbilityLocked", false)
     Stats:SetAttribute("Slowed", false)
+
+    Stats:SetAttribute("Color1", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("Color2", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("Color3", Color3.fromRGB(255, 255, 255))
+
+    CharacterSelectServer:GiveUI(dummy, Stats)
 end
 
 function CharacterSelectServer:PlayerJoined(player)
@@ -78,8 +86,104 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("AbilityLocked", false)
     Stats:SetAttribute("Slowed", false)
 
+    Stats:SetAttribute("Color1", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("Color2", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("Color3", Color3.fromRGB(255, 255, 255))
+
+    CharacterSelectServer:GiveUI(character, Stats)
+
     --Set Stats
     CharacterSelectServer:SetStats(player, nil)
+end
+
+function CharacterSelectServer:GiveUI(character, Stats)
+    if not character then
+        return
+    end
+
+    local humanoid: Humanoid = character:FindFirstChild("Humanoid")
+    if not humanoid then
+        return
+    end
+
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local UIAttach = rootPart:FindFirstChild("UI")
+    if UIAttach then
+        UIAttach:Destroy()
+    end
+
+    local oldOverhead = character:FindFirstChild("Overhead")
+    if oldOverhead then
+        oldOverhead:Destroy()
+    end
+
+    local newAttach = Instance.new("Attachment")
+    newAttach.Name = "UI"
+    newAttach.Parent = rootPart
+    newAttach.Position = Vector3.new(0, 3, 0)
+
+    local Overhead: BillboardGui = UI.Overhead:Clone()
+    Overhead.Adornee = newAttach
+    Overhead.PlayerName.Text = character.Name
+    Overhead.Parent = character
+
+    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+
+    if CharacterSelectServer.uiConnections[character] then
+        if CharacterSelectServer.uiConnections[character].health then
+            CharacterSelectServer.uiConnections[character].health:Disconnect()
+        end
+
+        if CharacterSelectServer.uiConnections[character].defense then
+            CharacterSelectServer.uiConnections[character].defense:Disconnect()
+        end
+    end
+
+    CharacterSelectServer.uiConnections[character] = {}
+    CharacterSelectServer.uiConnections[character].health = Stats:GetAttributeChangedSignal("Health"):Connect(function()
+        local health = Stats:GetAttribute("Health")
+        local maxHealth = Stats:GetAttribute("MaxHealth")
+
+        if not Overhead then
+            return
+        end
+
+        local HealthBar = Overhead.Background:FindFirstChild("HealthBar")
+        if not HealthBar then
+            return
+        end
+
+        HealthBar.Bar.Size = UDim2.new((health / maxHealth) * 1, 0, 1, 0)
+    end)
+
+    CharacterSelectServer.uiConnections[character].defense = Stats:GetAttributeChangedSignal("Defense"):Connect(function()
+        local defense = Stats:GetAttribute("Defense")
+        local maxDefense = Stats:GetAttribute("MaxDefense")
+
+        if not Overhead then
+            return
+        end
+
+        local DefenseBar = Overhead.Background:FindFirstChild("DefenseBar")
+        if not DefenseBar then
+            return
+        end
+
+        DefenseBar.Bar.Size = UDim2.new((defense / maxDefense) * 1, 0, 1, 0)
+    end)
+
+    --First Time Set
+    local health = Stats:GetAttribute("Health")
+    local maxHealth = Stats:GetAttribute("MaxHealth")
+    Overhead.Background.HealthBar.Bar.Size = UDim2.new((health / maxHealth) * 1, 0, 1, 0)
+
+    local defense = Stats:GetAttribute("Defense")
+    local maxDefense = Stats:GetAttribute("MaxDefense")
+    Overhead.Background.DefenseBar.Bar.Size = UDim2.new((defense / maxDefense) * 1, 0, 1, 0)
 end
 
 function CharacterSelectServer:SetStats(player, className)
@@ -189,6 +293,8 @@ function CharacterSelectServer:SetCharacter(player, group, className)
         local gear = classFile.Gear:Clone()
         gear.Handle1.CFrame = character:WaitForChild("Left Arm").CFrame * CFrame.new(0, -1, 0)
         gear.Handle2.CFrame = character:WaitForChild("Right Arm").CFrame * CFrame.new(0, -1, 0)
+        gear.Handle1.Transparency = 1
+        gear.Handle2.Transparency = 1
         gear.Parent = character
 
         local leftHandle = Instance.new("Motor6D")
