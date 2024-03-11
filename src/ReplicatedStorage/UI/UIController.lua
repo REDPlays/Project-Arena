@@ -179,7 +179,7 @@ function UIController:Connect()
                     Events.Client_Server.Moves:FireServer(self.class, "QMove", moveData)
                 end
 
-                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack, true)
+                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack)
             end
         end
 
@@ -239,7 +239,7 @@ function UIController:Connect()
                     Events.Client_Server.Moves:FireServer(self.class, "FMove", moveData)
                 end
 
-                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack, true)
+                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack)
             end
         end
     end)

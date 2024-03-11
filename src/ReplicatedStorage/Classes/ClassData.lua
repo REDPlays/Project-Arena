@@ -73,6 +73,12 @@ ClassData["AngelKnight"] = {
             Stunned = false,
             Burn = false,
         },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "AngelKnightM1",
+        ["QMove"] = "HolyBeam",
+        ["EMove"] = "AngelicCharge",
+        ["FMove"] = "SunBeam",
     }
 }
 

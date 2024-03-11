@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
+local HttpService = game:GetService("HttpService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -9,6 +10,7 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
+local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectServer"))
 
 local IgnoreFolder = workspace.Ignore
 
@@ -155,6 +157,17 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
         damage = currentClassData.DamageList[moveType][moveCount]
     end
 
+    local VisualID = character.Name.." "..HttpService:GenerateGUID(false)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        currentClassData.VisualEffects[moveType],
+        nil,
+        character,
+        {moveCount = moveCount},
+        nil,
+        VisualID
+    )
+
     local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
@@ -235,6 +248,16 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
         if currentClassData.MoveData[moveType].Burn then
             StateManager:AddTarget(parent, "Burn", 3)
         end
+
+        VisualEffectServer:SpawnEffectsInRange(
+            currentClassData.VisualEffects[moveType],
+            parent,
+            character,
+            {moveCount = moveCount, isHit = true},
+            nil,
+            VisualID,
+            true
+        )
 
         StateManager:AddTarget(parent, "Attacked", 1)
 

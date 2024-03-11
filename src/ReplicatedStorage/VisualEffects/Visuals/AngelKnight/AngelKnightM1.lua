@@ -1,0 +1,139 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VFXAssets = ReplicatedStorage:WaitForChild("VFXAssets")
+local AngelKnightVFX = VFXAssets:WaitForChild("AngelKnight")
+
+local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
+
+local AngelKnightM1 = {}
+AngelKnightM1.__index = AngelKnightM1
+
+function AngelKnightM1.new(target, sourceUnit, conditionalData)
+    local newVFX = {}
+    setmetatable(newVFX, AngelKnightM1)
+
+    newVFX.target = target
+    newVFX.sourceUnit = sourceUnit
+    newVFX.conditionalData = conditionalData
+    newVFX.floorCFrame = sourceUnit:GetPivot()
+
+    newVFX.isTerminate = false
+
+    return newVFX
+end
+
+function AngelKnightM1:Activate(target, sourceUnit, conditionalData)
+    local vfx = AngelKnightM1.new(target, sourceUnit, conditionalData)
+    vfx:DisplayVFX()
+
+    return vfx
+end
+
+function AngelKnightM1:DisplayVFX()
+    self.Folder = Instance.new("Folder")
+    self.Folder.Name = "AngelKnightM1VFX"
+    self.Folder.Parent = workspace.VFX
+    
+    Debris:AddItem(self.Folder, 2)
+
+    self:Slash()
+end
+
+function AngelKnightM1:Terminate()
+    
+end
+
+function AngelKnightM1:Update(deltaTime)
+
+end
+
+function AngelKnightM1:RunFunction(target, sourceUnit, conditionalData)
+    if conditionalData.isHit then
+        self:Hit(target)
+    end
+end
+
+function AngelKnightM1:Slash()
+    self.rootPart = self.sourceUnit:FindFirstChild("HumanoidRootPart")
+    if not self.rootPart then
+        return
+    end
+
+    self.slash = AngelKnightVFX.M1s.Slash:Clone()
+    self.slash.Transparency = 1
+    self.slash.Anchored = true
+    self.slash.CFrame = self.rootPart.CFrame
+    self.slash.Parent = self.Folder
+
+    if self.conditionalData.moveCount == 1 then
+        self.slash.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(-30))
+    elseif self.conditionalData.moveCount == 2 then
+        self.slash.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(30))
+    end
+
+    local timing1 = .15
+    local info = TweenInfo.new(timing1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(self.slash, info, {CFrame = self.slash.CFrame * CFrame.new(0, 0, -2)}):Play()
+
+    task.delay(timing1, function()
+        local numVal = Instance.new("NumberValue")
+        numVal.Value = 0
+
+        local connect
+        connect = numVal.Changed:Connect(function()
+            self.slash.Beam.Transparency = NumberSequence.new(numVal.Value, 1)
+        end)
+
+        local timing2 = .5
+        local info2 = TweenInfo.new(timing2, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+        TweenService:Create(numVal, info2, {Value = 1}):Play()
+
+        task.delay(timing2, function()
+            if connect then
+                connect:Disconnect()
+            end
+
+            if numVal then
+                numVal:Destroy()
+            end
+        end)
+    end)
+end
+
+function AngelKnightM1:Hit(target)
+    local targetRoot = target:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then
+        return
+    end
+
+    self.HitVFX = AngelKnightVFX.M1s.Hit:Clone()
+    self.HitVFX.Transparency = 1
+    self.HitVFX.CFrame = targetRoot.CFrame
+    self.HitVFX.Parent = self.Folder
+
+    if self.conditionalData.moveCount == 1 then
+        self.HitVFX.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(30))
+    elseif self.conditionalData.moveCount == 2 then
+        self.HitVFX.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(-30))
+    end
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = self.HitVFX
+    weld.Part1 = targetRoot
+    weld.Parent = weld.Part0
+
+    local timing = .25
+    local info = TweenInfo.new(timing, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+    local info2 = TweenInfo.new(timing, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out, 0, false, .25)
+
+    TweenService:Create(self.HitVFX.A0, info, {Position = Vector3.new(4, 0, 0)}):Play()
+    TweenService:Create(self.HitVFX.A1, info, {Position = Vector3.new(-4, 0, 0)}):Play()
+    TweenService:Create(self.HitVFX.Beam, info2, {Width0 = 0, Width1 = 0}):Play()
+
+    self.HitVFX.Attachment.Particle1.Enabled = true
+    task.delay(.15, function()
+        self.HitVFX.Attachment.Particle1.Enabled = false
+    end)
+end
+
+return AngelKnightM1
