@@ -2,6 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VFXAssets = ReplicatedStorage:WaitForChild("VFXAssets")
 local AngelKnightVFX = VFXAssets:WaitForChild("AngelKnight")
 
+local Assets = ReplicatedStorage:WaitForChild("Assets")
+local Sounds = Assets:WaitForChild("Sounds")
+
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 
@@ -62,6 +65,12 @@ function SunBeam:Beam()
     weld.Part0 = self.Beam
     weld.Part1 = self.rootPart
     weld.Parent = weld.Part0
+
+    self.sfx1 = Sounds.AngelKnight.Beam:Clone()
+    self.sfx1.Volume = .25
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = self.Beam
+    self.sfx1:Play()
 
     local info1 = TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     TweenService:Create(self.Beam.Beam, info1, {Width0 = .5, Width1 = .5}):Play()

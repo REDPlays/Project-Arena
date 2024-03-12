@@ -2,6 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VFXAssets = ReplicatedStorage:WaitForChild("VFXAssets")
 local AngelKnightVFX = VFXAssets:WaitForChild("AngelKnight")
 
+local Assets = ReplicatedStorage:WaitForChild("Assets")
+local Sounds = Assets:WaitForChild("Sounds")
+
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 
@@ -65,6 +68,12 @@ function AngelKnightM1:Slash()
     self.slash.CFrame = self.rootPart.CFrame
     self.slash.Parent = self.Folder
 
+    self.sfx1 = Sounds.Base.SwordSwipe:Clone()
+    self.sfx1.Volume = .25
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = self.slash
+    self.sfx1:Play()
+
     if self.conditionalData.moveCount == 1 then
         self.slash.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(-30))
     elseif self.conditionalData.moveCount == 2 then
@@ -110,6 +119,12 @@ function AngelKnightM1:Hit(target)
     self.HitVFX.Transparency = 1
     self.HitVFX.CFrame = targetRoot.CFrame
     self.HitVFX.Parent = self.Folder
+
+    self.sfx2 = Sounds.Base.SwordHit:Clone()
+    self.sfx2.Volume = .25
+    self.sfx2._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx2.Parent = self.slash
+    self.sfx2:Play()
 
     if self.conditionalData.moveCount == 1 then
         self.HitVFX.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(30))

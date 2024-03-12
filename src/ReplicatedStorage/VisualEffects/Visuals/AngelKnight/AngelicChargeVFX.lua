@@ -2,6 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VFXAssets = ReplicatedStorage:WaitForChild("VFXAssets")
 local AngelKnightVFX = VFXAssets:WaitForChild("AngelKnight")
 
+local Assets = ReplicatedStorage:WaitForChild("Assets")
+local Sounds = Assets:WaitForChild("Sounds")
+
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 
@@ -62,6 +65,12 @@ function AngelicCharge:Dash()
     weld.Part0 = self.charge
     weld.Part1 = self.rootPart
     weld.Parent = weld.Part0
+
+    self.sfx1 = Sounds.AngelKnight.Charge:Clone()
+    self.sfx1.Volume = .25
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = self.charge
+    self.sfx1:Play()
 
     task.delay(.25, function()
         for _, particle in pairs(self.charge:GetDescendants()) do
