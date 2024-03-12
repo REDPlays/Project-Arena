@@ -27,7 +27,7 @@ ClassData["AngelKnight"] = {
     Speed = 30,
     Role = "Support",
     DamageList = {
-        ["LMBMove"] = {5, 5 ,5 ,10},
+        ["LMBMove"] = {10, 10, 10},
         ["QMove"] = 15,
         ["EMove"] = 10,
         ["FMove"] = 5,
@@ -58,6 +58,8 @@ ClassData["AngelKnight"] = {
     },
     MoveData = {
         ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = false,
             Stunned = false,
             Burn = false,
         },
@@ -86,9 +88,9 @@ ClassData["Pyromancer"] = {
     Health = 100,
     Defense = 100,
     Speed = 30,
-    Role = "Support",
+    Role = "Burst",
     DamageList = {
-        ["LMBMove"] = {5, 5 ,5 ,10},
+        ["LMBMove"] = {3, 3, 3},
         ["QMove"] = 15,
         ["EMove"] = 10,
         ["FMove"] = 5,
@@ -101,12 +103,12 @@ ClassData["Pyromancer"] = {
     },
     Hitboxes = {
         ["LMBMove"] = {
-            Size = Vector3.new(7, 5, 7),
-            Offset = CFrame.new(0, 2.5, -3.5),
+            Size = Vector3.new(4, 4, 4),
+            Offset = CFrame.new(0, 0, -2),
         },
         ["QMove"] = {
-            Size = Vector3.new(5, 5, 5),
-            Offset = CFrame.new(0, 2.5, -2.5),
+            Size = Vector3.new(3, 3, 3),
+            Offset = CFrame.new(0, 0, -2),
         },
         ["EMove"] = {
             Size = Vector3.new(7, 7, 7),
@@ -119,8 +121,10 @@ ClassData["Pyromancer"] = {
     },
     MoveData = {
         ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = true,
             Stunned = false,
-            Burn = false,
+            Burn = true,
         },
         ["QMove"] = {
             Stunned = false,

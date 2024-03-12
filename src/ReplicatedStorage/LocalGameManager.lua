@@ -28,7 +28,7 @@ function LocalGameManager:Setup()
     LocalGameManager.uiController = UIController.new()
     LocalGameManager.uiController:Init(LocalGameManager.player, LocalGameManager.character, LocalGameManager.animationSystem, LocalGameManager.cameraSystem)
 
-    CharacterSelectClient:Init(Lobby, LocalGameManager.uiController, LocalGameManager.animationSystem)
+    CharacterSelectClient:Init(LocalGameManager.character, Lobby, LocalGameManager.uiController, LocalGameManager.animationSystem)
 end
 
 function LocalGameManager:Disconnect(player: Player)

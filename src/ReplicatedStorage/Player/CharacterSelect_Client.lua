@@ -3,7 +3,8 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local CharacterSelectClient = {}
 
-function CharacterSelectClient:Init(lobby, uiController, animationSystem)
+function CharacterSelectClient:Init(character, lobby, uiController, animationSystem)
+    CharacterSelectClient.character = character
     CharacterSelectClient.Lobby = lobby
     CharacterSelectClient.Classes = lobby:WaitForChild("Classes")
 
@@ -37,6 +38,8 @@ function CharacterSelectClient:Setup()
                 local rootPart = character:FindFirstChild("HumanoidRootPart")
 
                 if not humanoid or not rootPart then return end
+
+                if character ~= CharacterSelectClient.character then return end
 
                 if alreadyTouched then return end
 

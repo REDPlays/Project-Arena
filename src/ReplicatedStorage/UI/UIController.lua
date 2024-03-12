@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
+local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
 local UIController = {}
 UIController.__index = UIController
@@ -146,8 +147,16 @@ function UIController:Connect()
                 }
 
                 local function hitBoxCallBack()
-                    local isProjectile = false
-                    Events.Client_Server.Hitbox:FireServer(self.class, "LMBMove", self.LMBs, isProjectile)
+                    local currentClassData = ClassData[self.class]
+                    if not currentClassData then
+                        return
+                    end
+
+                    local moveData = currentClassData.MoveData
+
+                    local currentMoveData = moveData.LMBMove
+
+                    Events.Client_Server.Hitbox:FireServer(self.class, "LMBMove", self.LMBs, currentMoveData)
                 end
 
                 self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack, true)

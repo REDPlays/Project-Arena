@@ -66,7 +66,13 @@ local function Ability(player, class, moveType, moveData)
 end
 
 function MoveManager:Update(deltaTime)
-    
+    for className, moveList in pairs(MoveData) do
+        for moveType, module in pairs(moveList) do
+            if module.Update then
+                module:Update(deltaTime)
+            end
+        end
+    end
 end
 
 Events.Client_Server.Moves.OnServerEvent:Connect(Ability)
