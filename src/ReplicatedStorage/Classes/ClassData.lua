@@ -82,15 +82,15 @@ ClassData["AngelKnight"] = {
     }
 }
 
-ClassData["DevilKnight"] = {
+ClassData["Pyromancer"] = {
     Health = 100,
     Defense = 100,
     Speed = 30,
     Role = "Support",
     DamageList = {
         ["LMBMove"] = {5, 5 ,5 ,10},
-        ["QMove"] = 5,
-        ["EMove"] = 5,
+        ["QMove"] = 15,
+        ["EMove"] = 10,
         ["FMove"] = 5,
     },
     Cooldowns = {
@@ -109,18 +109,18 @@ ClassData["DevilKnight"] = {
             Offset = CFrame.new(0, 2.5, -2.5),
         },
         ["EMove"] = {
-            Size = Vector3.new(5, 5, 5),
-            Offset = CFrame.new(0, 2.5, -2.5),
+            Size = Vector3.new(7, 7, 7),
+            Offset = CFrame.new(0, 3.5, 0),
         },
         ["FMove"] = {
-            Size = Vector3.new(5, 5, 5),
-            Offset = CFrame.new(0, 2.5, -2.5),
+            Size = Vector3.new(6, 6, 20),
+            Offset = CFrame.new(0, 3, -12),
         },
     },
     MoveData = {
         ["LMBMove"] = {
             Stunned = false,
-            Burn = true,
+            Burn = false,
         },
         ["QMove"] = {
             Stunned = false,
@@ -134,6 +134,12 @@ ClassData["DevilKnight"] = {
             Stunned = false,
             Burn = false,
         },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "AngelKnightM1",
+        ["QMove"] = "HolyBeam",
+        ["EMove"] = "AngelicCharge",
+        ["FMove"] = "SunBeam",
     }
 }
 

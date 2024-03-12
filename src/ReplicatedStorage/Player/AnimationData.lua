@@ -27,21 +27,21 @@ AnimationData["AngelKnight"] = {
     Run = Animations:WaitForChild("AngelKnight"):WaitForChild("Run"),
 }
 
-AnimationData["DevilKnight"] = {
+AnimationData["Pyromancer"] = {
     LMBMove = {
-        Animations:WaitForChild("DevilKnight"):WaitForChild("M1_1"),
-        Animations:WaitForChild("DevilKnight"):WaitForChild("M1_2"),
-        Animations:WaitForChild("DevilKnight"):WaitForChild("M1_3"),
+        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_1"),
+        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_2"),
+        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_3"),
     },
 
-    Block = Animations:WaitForChild("DevilKnight"):WaitForChild("Block"),
+    Block = Animations:WaitForChild("AngelKnight"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("DevilKnight"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("DevilKnight"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("DevilKnight"):WaitForChild("FMove"),
+    QMove = Animations:WaitForChild("AngelKnight"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("AngelKnight"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("AngelKnight"):WaitForChild("FMove"),
 
-    Idle = Animations:WaitForChild("DevilKnight"):WaitForChild("Idle"),
-    Run = Animations:WaitForChild("DevilKnight"):WaitForChild("Run"),
+    Idle = Animations:WaitForChild("AngelKnight"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("AngelKnight"):WaitForChild("Run"),
 }
 
 return AnimationData
