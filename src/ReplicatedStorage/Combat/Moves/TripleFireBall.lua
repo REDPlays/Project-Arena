@@ -130,8 +130,8 @@ function TripleFireBall:Activate(character, rootPart, placementCFrame, classData
 
         local projectileData = {
             projectile = Hitbox,
-            speed = 50,
-            duration = 2,
+            speed = 75,
+            duration = .5,
             currTime = 0,
             damage = damage,
             callBack = hitBoxCallBack,

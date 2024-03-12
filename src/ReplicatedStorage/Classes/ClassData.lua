@@ -91,7 +91,7 @@ ClassData["Pyromancer"] = {
     Role = "Burst",
     DamageList = {
         ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 15,
+        ["QMove"] = 5,
         ["EMove"] = 10,
         ["FMove"] = 5,
     },
@@ -108,7 +108,7 @@ ClassData["Pyromancer"] = {
         },
         ["QMove"] = {
             Size = Vector3.new(3, 3, 3),
-            Offset = CFrame.new(0, 0, -2),
+            Offset = CFrame.new(0, 0, -1),
         },
         ["EMove"] = {
             Size = Vector3.new(7, 7, 7),
@@ -128,15 +128,15 @@ ClassData["Pyromancer"] = {
         },
         ["QMove"] = {
             Stunned = false,
-            Burn = false,
+            Burn = true,
         },
         ["EMove"] = {
             Stunned = false,
-            Burn = false,
+            Burn = true,
         },
         ["FMove"] = {
             Stunned = false,
-            Burn = false,
+            Burn = true,
         },
     },
     VisualEffects = {
