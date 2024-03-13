@@ -156,6 +156,10 @@ function UIController:Connect()
 
                     local currentMoveData = moveData.LMBMove
 
+                    if currentMoveData.CameraLock then
+                        self.cameraSystem:OutsideToggle(true)
+                    end
+
                     Events.Client_Server.Hitbox:FireServer(self.class, "LMBMove", self.LMBs, currentMoveData)
                 end
 
@@ -181,11 +185,20 @@ function UIController:Connect()
                 }
 
                 local function hitBoxCallBack()
-                    local moveData = {
-                        isAOE = false,
-                        isProjectile = false,
-                    }
-                    Events.Client_Server.Moves:FireServer(self.class, "QMove", moveData)
+                    local currentClassData = ClassData[self.class]
+                    if not currentClassData then
+                        return
+                    end
+
+                    local moveData = currentClassData.MoveData
+
+                    local currentMoveData = moveData.QMove
+
+                    if currentMoveData.CameraLock then
+                        self.cameraSystem:OutsideToggle(true)
+                    end
+
+                    Events.Client_Server.Moves:FireServer(self.class, "QMove", currentMoveData)
                 end
 
                 self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack)
@@ -210,11 +223,20 @@ function UIController:Connect()
                 }
 
                 local function hitBoxCallBack()
-                    local moveData = {
-                        isAOE = false,
-                        isProjectile = false,
-                    }
-                    Events.Client_Server.Moves:FireServer(self.class, "EMove", moveData)
+                    local currentClassData = ClassData[self.class]
+                    if not currentClassData then
+                        return
+                    end
+
+                    local moveData = currentClassData.MoveData
+
+                    local currentMoveData = moveData.EMove
+
+                    if currentMoveData.CameraLock then
+                        self.cameraSystem:OutsideToggle(true)
+                    end
+
+                    Events.Client_Server.Moves:FireServer(self.class, "EMove", currentMoveData)
                 end
 
                 self.animationSystem:Play(self.class, "EMove", nil, conditionalData, hitBoxCallBack)
@@ -233,19 +255,26 @@ function UIController:Connect()
                 warn("Can FMove")
                 self.debounces.FMove = true
 
-                self.cameraSystem:OutsideToggle(true)
-
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
                     isAttack = true,
                 }
 
                 local function hitBoxCallBack()
-                    local moveData = {
-                        isAOE = false,
-                        isProjectile = false,
-                    }
-                    Events.Client_Server.Moves:FireServer(self.class, "FMove", moveData)
+                    local currentClassData = ClassData[self.class]
+                    if not currentClassData then
+                        return
+                    end
+
+                    local moveData = currentClassData.MoveData
+
+                    local currentMoveData = moveData.FMove
+
+                    if currentMoveData.CameraLock then
+                        self.cameraSystem:OutsideToggle(true)
+                    end
+
+                    Events.Client_Server.Moves:FireServer(self.class, "FMove", currentMoveData)
                 end
 
                 self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack)

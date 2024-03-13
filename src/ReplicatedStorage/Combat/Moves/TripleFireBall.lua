@@ -78,11 +78,6 @@ function TripleFireBall:Activate(character, rootPart, placementCFrame, classData
                 continue
             end
 
-            local Stats = parent:FindFirstChild("Stats")
-            if not Stats then
-                continue
-            end
-
             local isUserStun = StateManager:CheckState(character, "Stunned")
             if isUserStun then
                 return

@@ -62,18 +62,22 @@ ClassData["AngelKnight"] = {
             isProjectile = false,
             Stunned = false,
             Burn = false,
+            CameraLock = false,
         },
         ["QMove"] = {
             Stunned = false,
             Burn = false,
+            CameraLock = false,
         },
         ["EMove"] = {
             Stunned = false,
             Burn = false,
+            CameraLock = false,
         },
         ["FMove"] = {
             Stunned = false,
             Burn = false,
+            CameraLock = true,
         },
     },
     VisualEffects = {
@@ -92,8 +96,8 @@ ClassData["Pyromancer"] = {
     DamageList = {
         ["LMBMove"] = {3, 3, 3},
         ["QMove"] = 5,
-        ["EMove"] = 10,
-        ["FMove"] = 5,
+        ["EMove"] = 3,
+        ["FMove"] = 15,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
@@ -111,12 +115,12 @@ ClassData["Pyromancer"] = {
             Offset = CFrame.new(0, 0, -1),
         },
         ["EMove"] = {
-            Size = Vector3.new(7, 7, 7),
-            Offset = CFrame.new(0, 3.5, 0),
-        },
-        ["FMove"] = {
             Size = Vector3.new(6, 6, 20),
             Offset = CFrame.new(0, 3, -12),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(20, 20, 20),
+            Offset = CFrame.new(0, 0, 0),
         },
     },
     MoveData = {
@@ -125,18 +129,22 @@ ClassData["Pyromancer"] = {
             isProjectile = true,
             Stunned = false,
             Burn = true,
+            CameraLock = false,
         },
         ["QMove"] = {
             Stunned = false,
             Burn = true,
+            CameraLock = false,
         },
         ["EMove"] = {
             Stunned = false,
             Burn = true,
+            CameraLock = true,
         },
         ["FMove"] = {
             Stunned = false,
             Burn = true,
+            CameraLock = false,
         },
     },
     VisualEffects = {

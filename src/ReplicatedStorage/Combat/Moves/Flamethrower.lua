@@ -15,9 +15,9 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 
 local IgnoreFolder = workspace.Ignore
 
-local SunBeam = {}
+local Flamethrower = {}
 
-function SunBeam:Activate(character, rootPart, placementCFrame, classData, moveType)
+function Flamethrower:Activate(character, rootPart, placementCFrame, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local damage = classData.DamageList[moveType]
@@ -55,6 +55,7 @@ function SunBeam:Activate(character, rootPart, placementCFrame, classData, moveT
 
     StateManager:AddTarget(character, "Slow", duration)
 
+    --[==[
     VisualEffectServer:SpawnEffectsInRange(
         "SunBeam",
         nil,
@@ -62,7 +63,8 @@ function SunBeam:Activate(character, rootPart, placementCFrame, classData, moveT
         {},
         1000
     )
-
+    ]==]
+    
     local alreadyHit = {}
 
     local thread = coroutine.create(function()
@@ -112,7 +114,7 @@ function SunBeam:Activate(character, rootPart, placementCFrame, classData, moveT
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block Sun Beam")
+                    warn("block flamethrower Beam")
                     task.delay(damageTick, function()
                         if alreadyHit[parent.Name] then
                             alreadyHit[parent.Name] = nil
@@ -156,4 +158,4 @@ function SunBeam:Activate(character, rootPart, placementCFrame, classData, moveT
     coroutine.resume(thread)
 end
 
-return SunBeam
+return Flamethrower
