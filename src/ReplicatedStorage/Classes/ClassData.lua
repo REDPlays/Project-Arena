@@ -148,7 +148,7 @@ ClassData["Pyromancer"] = {
         },
     },
     VisualEffects = {
-        ["LMBMove"] = "AngelKnightM1",
+        ["LMBMove"] = "FireBall",
         ["QMove"] = "HolyBeam",
         ["EMove"] = "AngelicCharge",
         ["FMove"] = "SunBeam",

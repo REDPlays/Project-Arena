@@ -19,6 +19,10 @@ local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 local HitboxManager = {}
 HitboxManager.projectiles = {}
 
+local function predictPosition(part: BasePart, timeInterval)
+    return part.Position + part.AssemblyLinearVelocity * timeInterval
+end
+
 function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow)
     local currentClassData = ClassData["Base"]
     if not currentClassData then
@@ -272,7 +276,6 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
 end
 
 function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
-    warn(" hehe i'm a projectile >:3 ")
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -309,12 +312,15 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
         Hitbox.Transparency = .5
     end
 
+    local position = predictPosition(rootPart, 0.1)
+
     Hitbox.Size = currentClassData.Hitboxes[moveType].Size
-    Hitbox.CFrame = rootPart.CFrame * currentClassData.Hitboxes[moveType].Offset
+    --Hitbox.CFrame = rootPart.CFrame * currentClassData.Hitboxes[moveType].Offset + position
+    Hitbox.CFrame = CFrame.new(position, rootPart.CFrame.LookVector + position)
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
 
-    local function hitBoxCallBack(alreadyHit)
+    local function hitBoxCallBack(alreadyHit, projectileData)
         local touched = Hitbox.Touched:Connect(function() end)
         local touchedObjects = Hitbox:GetTouchingParts()
 
@@ -346,6 +352,12 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
 
             local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
             if not enemyRoot then
+                continue
+            end
+
+            --threshhold for projectile hit detection
+            local distance = (enemyRoot.Position - Hitbox.Position).Magnitude
+            if distance > Hitbox.Size.Z * .5 then
                 continue
             end
 
@@ -388,8 +400,37 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
             StateManager:AddTarget(parent, "Attacked", 1)
 
             HealthManager:Damage(parent, damage)
+
+            local conditionalData = {}
+            conditionalData.spawnCFrame = enemyRoot.CFrame
+
+            VisualEffectServer:TerminateVFX(
+                currentClassData.VisualEffects[moveType],
+                parent,
+                character,
+                conditionalData,
+                projectileData.VisualID
+            )
+
+            return true
         end
     end
+
+    local VisualID = character.Name.." "..HttpService:GenerateGUID(false)
+
+    local conditionalData = {
+        moveCount = moveCount, 
+        projectile = Hitbox,
+    }
+
+    VisualEffectServer:SpawnEffectsInRange(
+        currentClassData.VisualEffects[moveType],
+        nil,
+        character,
+        conditionalData,
+        nil,
+        VisualID
+    )
 
     local projectileData = {
         projectile = Hitbox,
@@ -398,7 +439,8 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
         currTime = 0,
         damage = damage,
         callBack = hitBoxCallBack,
-        alreadyHit = {}
+        alreadyHit = {},
+        VisualID = VisualID
     }
 
     local projectileId = player.Name..HttpService:GenerateGUID(false)
@@ -437,7 +479,18 @@ function HitboxManager:Update(deltaTime)
         
         projectileData.projectile.CFrame *= CFrame.new(0, 0, -projectileData.speed * deltaTime)
 
-        projectileData.callBack(projectileData.alreadyHit)
+        local hasTarget = projectileData.callBack(projectileData.alreadyHit, projectileData)
+        if hasTarget then
+            task.delay(.1, function()
+                if projectileData.projectile then
+                    projectileData.projectile:Destroy()
+                end
+
+                HitboxManager.projectiles[playerId] = nil
+            end)
+
+            continue
+        end
     end
 end
 
