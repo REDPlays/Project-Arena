@@ -389,4 +389,5 @@ end
 Events.Client_Server.Hitbox.OnServerEvent:Connect(HitboxCreateMove)
 Events.Client_Server.ProjectileTarget.OnServerEvent:Connect(ProjectileHitboxTarget)
 Events.Server_Server.Hitbox.Event:Connect(HitboxProjectile)
+
 return HitboxManager
