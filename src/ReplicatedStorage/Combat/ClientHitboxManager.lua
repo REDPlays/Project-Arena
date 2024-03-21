@@ -141,8 +141,8 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
 
     local HBprojectileData = {
         projectile = Hitbox,
-        speed = 50,
-        duration = 2,
+        speed = projectileData.speed,
+        duration = projectileData.duration,
         currTime = 0,
         damage = damage,
         callBack = hitBoxCallBack,
@@ -185,7 +185,7 @@ function ClientHitboxManager:Update(deltaTime)
             end
 
             ClientHitboxManager.projectiles[playerId] = nil
-            
+
             continue
         end
     end
