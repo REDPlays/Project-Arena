@@ -72,20 +72,19 @@ function VisualEffectServer:TerminateVFX(
     VFX_ID
 )
     conditionalData = conditionalData or {} 
-    warn("1")
 
     if not vfxName then
         return
     end
-    warn("2")
+    
     if not sourceUnit then
         return
     end
-    warn("3")
+    
     if not VisualEffectData[vfxName] then
         return
     end
-    warn("4")
+    
     for _, player in pairs(Players:GetChildren()) do
         local character = player.Character
         if not character then

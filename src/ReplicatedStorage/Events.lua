@@ -31,7 +31,7 @@ Events.Server_Client = {
 }
 
 Events.Server_Server = {
-    
+    Hitbox = Server_Server:WaitForChild("Hitbox"),
 }
 
 return Events
