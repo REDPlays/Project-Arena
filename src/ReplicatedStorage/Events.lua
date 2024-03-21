@@ -17,6 +17,7 @@ Events.Client_Server = {
     Input = Client_Server:WaitForChild("Input"),
     Hitbox = Client_Server:WaitForChild("Hitbox"),
     Moves = Client_Server:WaitForChild("Moves"),
+    ProjectileTarget = Client_Server:WaitForChild("ProjectileTarget")
 }
 
 Events.Server_Client = {
@@ -25,7 +26,8 @@ Events.Server_Client = {
     Death = Server_Client:WaitForChild("Death"),
     Movement = Server_Client:WaitForChild("Movement"),
     VisualEffects = Server_Client:WaitForChild("VisualEffects"),
-    TerminateVFX = Server_Client:WaitForChild("TerminateVFX")
+    TerminateVFX = Server_Client:WaitForChild("TerminateVFX"),
+    Hitbox = Server_Client:WaitForChild("Hitbox"),
 }
 
 Events.Server_Server = {

@@ -47,7 +47,6 @@ function FireBall:Terminate(target, sourceUnit, conditionalData)
 
     if self.FireBall  then
         self.FireBall .Anchored = true
-        --self.FireBall:Destroy()
         for _, particle in pairs(self.FireBall:GetDescendants()) do
             if particle:IsA("ParticleEmitter") then
                 particle.Enabled = false

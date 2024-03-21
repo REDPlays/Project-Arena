@@ -297,155 +297,21 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
         return
     end
 
-    local damage = 1
-    if not moveCount then
-        damage = currentClassData.DamageList[moveType]
-    else
-        damage = currentClassData.DamageList[moveType][moveCount]
-    end
-
-    local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
-
-    local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
-    Hitbox.Transparency = 1
-    if ShowHitboxes then
-        Hitbox.Transparency = .5
-    end
-
-    local position = predictPosition(rootPart, 0.1)
-
-    Hitbox.Size = currentClassData.Hitboxes[moveType].Size
-    --Hitbox.CFrame = rootPart.CFrame * currentClassData.Hitboxes[moveType].Offset + position
-    Hitbox.CFrame = CFrame.new(position, rootPart.CFrame.LookVector + position)
-    Hitbox.Anchored = true
-    Hitbox.Parent = IgnoreFolder
-
-    local function hitBoxCallBack(alreadyHit, projectileData)
-        local touched = Hitbox.Touched:Connect(function() end)
-        local touchedObjects = Hitbox:GetTouchingParts()
-
-        if touched then
-            touched:Disconnect()
-        end
-
-        for i=1, #touchedObjects do
-            local object = touchedObjects[i]
-            local parent = object.Parent
-
-            if not parent:IsA("Model") then
-                continue
-            end
-
-            if parent == character then
-                continue
-            end
-
-            --ignoreTargets
-            if CollectionService:HasTag(parent, "Ignore") then
-                continue
-            end
-
-            local enemyHum = parent:FindFirstChild("Humanoid")
-            if not enemyHum then
-                continue
-            end
-
-            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-            if not enemyRoot then
-                continue
-            end
-
-            --threshhold for projectile hit detection
-            local distance = (enemyRoot.Position - Hitbox.Position).Magnitude
-            if distance > Hitbox.Size.Z * .5 then
-                continue
-            end
-
-            if alreadyHit[parent.Name] then
-                continue
-            end
-
-            local Stats = parent:FindFirstChild("Stats")
-            if not Stats then
-                continue
-            end
-
-            local isUserStun = StateManager:CheckState(character, "Stunned")
-            if isUserStun then
-                return
-            end
-
-            alreadyHit[parent.Name] = true
-            task.delay(.25, function()
-                alreadyHit[parent.Name] = nil
-            end)
-
-            local isBlocking = StateManager:CheckState(parent, "Blocking")
-            if isBlocking then
-                --Block Indication
-                warn("block m1s")
-                continue
-            end
-
-            --apply burn
-            if currentClassData.MoveData[moveType].Burn then
-                StateManager:AddTarget(parent, "Burn", 3)
-            end
-
-            --apply stun
-            if currentClassData.MoveData[moveType].Stunned then
-                StateManager:AddTarget(parent, "Stunned", 2)
-            end
-
-            StateManager:AddTarget(parent, "Attacked", 1)
-
-            HealthManager:Damage(parent, damage)
-
-            local conditionalData = {}
-            conditionalData.spawnCFrame = enemyRoot.CFrame
-
-            VisualEffectServer:TerminateVFX(
-                currentClassData.VisualEffects[moveType],
-                parent,
-                character,
-                conditionalData,
-                projectileData.VisualID
-            )
-
-            return true
-        end
-    end
-
-    local VisualID = character.Name.." "..HttpService:GenerateGUID(false)
-
-    local conditionalData = {
-        moveCount = moveCount, 
-        projectile = Hitbox,
-    }
-
-    VisualEffectServer:SpawnEffectsInRange(
-        currentClassData.VisualEffects[moveType],
-        nil,
-        character,
-        conditionalData,
-        nil,
-        VisualID
-    )
-
-    local projectileData = {
-        projectile = Hitbox,
-        speed = 50,
-        duration = 2,
-        currTime = 0,
-        damage = damage,
-        callBack = hitBoxCallBack,
-        alreadyHit = {},
-        VisualID = VisualID
-    }
-
     local projectileId = player.Name..HttpService:GenerateGUID(false)
 
+    local projectileData = {
+        ID = projectileId,
+        character = character,
+        speed = 50,
+        duration = 2,
+        classData = currentClassData,
+        moveType = moveType,
+        moveCount = moveCount
+    }
+
     HitboxManager.projectiles[projectileId] = projectileData
+
+    Events.Server_Client.Hitbox:FireAllClients(projectileData)
 end
 
 local function HitboxCreateMove(player, class, moveType, moveCount, moveData)
@@ -458,42 +324,64 @@ local function HitboxCreateMove(player, class, moveType, moveCount, moveData)
     end
 end
 
+local function ProjectileHitboxTarget(player, target, classData, moveType, moveCount, projectileId)
+    if not HitboxManager.projectiles[projectileId] then
+        return
+    end
+
+    if not target then
+        return
+    end
+
+    local character = player.Character
+    if not character then
+        return
+    end
+
+    local damage = 1
+    if not moveCount then
+        damage = classData.DamageList[moveType]
+    else
+        damage = classData.DamageList[moveType][moveCount]
+    end
+
+    local Stats = target:FindFirstChild("Stats")
+    if not Stats then
+        return
+    end
+
+    local isUserStun = StateManager:CheckState(character, "Stunned")
+    if isUserStun then
+        return
+    end
+
+    local isBlocking = StateManager:CheckState(target, "Blocking")
+    if isBlocking then
+        --Block Indication
+        warn("block m1s")
+        return
+    end
+
+    --apply burn
+    if classData.MoveData[moveType].Burn then
+        StateManager:AddTarget(target, "Burn", 3)
+    end
+
+    --apply stun
+    if classData.MoveData[moveType].Stunned then
+        StateManager:AddTarget(target, "Stunned", 2)
+    end
+
+    StateManager:AddTarget(target, "Attacked", 1)
+
+    HealthManager:Damage(target, damage)
+end
+
 function HitboxManager:Update(deltaTime)
     ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
-
-    for playerId, projectileData in pairs(HitboxManager.projectiles) do
-        if not projectileData.projectile then
-            continue
-        end
-        
-        projectileData.currTime += deltaTime
-        if projectileData.currTime >= projectileData.duration then
-            if projectileData.projectile then
-                projectileData.projectile:Destroy()
-            end
-
-            HitboxManager.projectiles[playerId] = nil
-
-            continue
-        end
-        
-        projectileData.projectile.CFrame *= CFrame.new(0, 0, -projectileData.speed * deltaTime)
-
-        local hasTarget = projectileData.callBack(projectileData.alreadyHit, projectileData)
-        if hasTarget then
-            task.delay(.1, function()
-                if projectileData.projectile then
-                    projectileData.projectile:Destroy()
-                end
-
-                HitboxManager.projectiles[playerId] = nil
-            end)
-
-            continue
-        end
-    end
 end
 
 Events.Client_Server.Hitbox.OnServerEvent:Connect(HitboxCreateMove)
+Events.Client_Server.ProjectileTarget.OnServerEvent:Connect(ProjectileHitboxTarget)
 
 return HitboxManager

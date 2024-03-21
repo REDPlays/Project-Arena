@@ -6,6 +6,7 @@ local CharacterSelectClient = require(ReplicatedStorage:WaitForChild("RepFiles")
 local AnimationSystem = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Player"):WaitForChild("AnimationSystem"))
 local MovementManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("MovementManager"))
 local VisualEffectClient = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectClient"))
+local ClientHitboxManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("ClientHitboxManager"))
 
 local Lobby = workspace.Lobby
 
@@ -62,6 +63,8 @@ function LocalGameManager:Update(deltaTime)
     if LocalGameManager.uiController then
         LocalGameManager.uiController:Update(deltaTime)
     end
+
+    ClientHitboxManager:Update(deltaTime)
 
     VisualEffectClient:Update(deltaTime)
 end
