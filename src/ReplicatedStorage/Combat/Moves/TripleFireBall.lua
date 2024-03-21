@@ -18,6 +18,10 @@ local IgnoreFolder = workspace.Ignore
 local TripleFireBall = {}
 TripleFireBall.projectiles = {}
 
+local function predictPosition(part: BasePart, timeInterval)
+    return part.Position + part.AssemblyLinearVelocity * timeInterval
+end
+
 function TripleFireBall:Activate(character, rootPart, placementCFrame, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
@@ -39,7 +43,9 @@ function TripleFireBall:Activate(character, rootPart, placementCFrame, classData
 
     local offSet = classData.Hitboxes[moveType].Offset
 
-    local function hitBoxCallBack(Hitbox, alreadyHit)
+    local function hitBoxCallBack(Hitbox)
+        local target = nil
+
         local touched = Hitbox.Touched:Connect(function() end)
         local touchedObjects = Hitbox:GetTouchingParts()
 
@@ -74,7 +80,7 @@ function TripleFireBall:Activate(character, rootPart, placementCFrame, classData
                 continue
             end
 
-            if alreadyHit[parent.Name] then
+            if target then
                 continue
             end
 
@@ -83,10 +89,7 @@ function TripleFireBall:Activate(character, rootPart, placementCFrame, classData
                 return
             end
 
-            alreadyHit[parent.Name] = true
-            task.delay(.25, function()
-                alreadyHit[parent.Name] = nil
-            end)
+            target = parent
 
             local isBlocking = StateManager:CheckState(parent, "Blocking")
             if isBlocking then
@@ -108,6 +111,8 @@ function TripleFireBall:Activate(character, rootPart, placementCFrame, classData
             StateManager:AddTarget(parent, "Attacked", 1)
 
             HealthManager:Damage(parent, damage)
+
+            return true
         end
     end
 
@@ -118,19 +123,40 @@ function TripleFireBall:Activate(character, rootPart, placementCFrame, classData
             Hitbox.Transparency = .5
         end
 
+        local position = predictPosition(rootPart, 0.1)
+
         Hitbox.Size = classData.Hitboxes[moveType].Size
-        Hitbox.CFrame = rootPart.CFrame * offSet * CFrame.fromEulerAnglesXYZ(0, math.rad(angle), 0)
+        Hitbox.CFrame = CFrame.new(position, rootPart.CFrame.LookVector + position) * offSet * CFrame.fromEulerAnglesXYZ(0, math.rad(angle), 0)
         Hitbox.Anchored = true
         Hitbox.Parent = IgnoreFolder
 
+        local VisualID = character.Name.." "..HttpService:GenerateGUID(false)
+
+        local conditionalData = {
+            projectile = Hitbox
+        }
+
+        VisualEffectServer:SpawnEffectsInRange(
+            classData.VisualEffects[moveType],
+            nil,
+            character,
+            conditionalData,
+            1000,
+            VisualID
+        )
+
         local projectileData = {
+            classData = classData,
+            sourceUnit = character,
+            moveType = moveType,
             projectile = Hitbox,
             speed = 75,
-            duration = .5,
+            duration = 1,
             currTime = 0,
             damage = damage,
             callBack = hitBoxCallBack,
-            alreadyHit = {}
+            alreadyHit = {},
+            VisualID = VisualID
         }
 
         local projectileId = character.Name..HttpService:GenerateGUID(false)
@@ -153,6 +179,17 @@ function TripleFireBall:Update(deltaTime)
                 projectileData.projectile:Destroy()
             end
 
+            local conditionalData = {}
+            conditionalData.spawnCFrame = projectileData.projectile.CFrame
+
+            VisualEffectServer:TerminateVFX(
+                projectileData.classData.VisualEffects[projectileData.moveType],
+                nil,
+                projectileData.sourceUnit,
+                conditionalData,
+                projectileData.VisualID
+            )
+
             TripleFireBall.projectiles[playerId] = nil
 
             continue
@@ -160,7 +197,16 @@ function TripleFireBall:Update(deltaTime)
         
         projectileData.projectile.CFrame *= CFrame.new(0, 0, -projectileData.speed * deltaTime)
 
-        projectileData.callBack(projectileData.projectile, projectileData.alreadyHit)
+        local hasTarget = projectileData.callBack(projectileData.projectile)
+        if hasTarget then
+            if projectileData.projectile then
+                projectileData.projectile:Destroy()
+            end
+
+            TripleFireBall.projectiles[playerId] = nil
+
+            continue
+        end
     end
 end
 

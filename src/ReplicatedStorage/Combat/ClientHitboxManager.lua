@@ -140,6 +140,9 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
     )
 
     local HBprojectileData = {
+        classData = projectileData.classData,
+        sourceUnit = projectileData.character,
+        moveType = projectileData.moveType,
         projectile = Hitbox,
         speed = projectileData.speed,
         duration = projectileData.duration,
@@ -170,6 +173,17 @@ function ClientHitboxManager:Update(deltaTime)
             if projectileData.projectile then
                 projectileData.projectile:Destroy()
             end
+
+            local conditionalData = {}
+            conditionalData.spawnCFrame = projectileData.projectile.CFrame
+
+            VisualEffectClient:TerminateVFX(
+                projectileData.classData.VisualEffects[projectileData.moveType],
+                nil,
+                projectileData.sourceUnit,
+                conditionalData,
+                projectileData.VisualID
+            )
 
             ClientHitboxManager.projectiles[playerId] = nil
 
