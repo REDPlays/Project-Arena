@@ -275,7 +275,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
     end
 end
 
-function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
+function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -306,7 +306,8 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
         duration = 1,
         classData = currentClassData,
         moveType = moveType,
-        moveCount = moveCount
+        moveCount = moveCount,
+        offSet = offSet
     }
 
     HitboxManager.projectiles[projectileId] = projectileData
@@ -377,11 +378,15 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     HealthManager:Damage(target, damage)
 end
 
+local function HitboxProjectile(player, class, moveType, moveCount, offSet)
+    HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet)
+end
+
 function HitboxManager:Update(deltaTime)
     ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 end
 
 Events.Client_Server.Hitbox.OnServerEvent:Connect(HitboxCreateMove)
 Events.Client_Server.ProjectileTarget.OnServerEvent:Connect(ProjectileHitboxTarget)
-
+Events.Server_Server.Hitbox.Event:Connect(HitboxProjectile)
 return HitboxManager

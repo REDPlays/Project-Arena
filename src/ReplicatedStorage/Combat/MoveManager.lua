@@ -36,7 +36,7 @@ function MoveManager:Ability(player, class, moveType, moveData)
     end
 
     local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
-    MoveData[class][moveType]:Activate(character, rootPart, placementCFrame, currentClassData, moveType)
+    MoveData[class][moveType]:Activate(player, character, rootPart, placementCFrame, class, currentClassData, moveType)
 end
 
 function MoveManager:ProjectileAbility(player, class, moveType, moveData)

@@ -17,7 +17,7 @@ local IgnoreFolder = workspace.Ignore
 
 local AngelicCharge = {}
 
-function AngelicCharge:Activate(character, rootPart, placementCFrame, classData, moveType)
+function AngelicCharge:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local damage = classData.DamageList[moveType]

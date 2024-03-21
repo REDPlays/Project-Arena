@@ -16,7 +16,7 @@ local IgnoreFolder = workspace.Ignore
 
 local HolyBeam = {}
 
-function HolyBeam:Activate(character, rootPart, placementCFrame, classData, moveType)
+function HolyBeam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local healing = classData.DamageList[moveType]

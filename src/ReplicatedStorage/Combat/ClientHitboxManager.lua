@@ -29,6 +29,8 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
         return
     end
 
+    projectileData.offSet = projectileData.offSet or CFrame.new(0, 0, 0)
+
     local damage = 1
     if not projectileData.moveCount then
         damage = projectileData.classData.DamageList[projectileData.moveType]
@@ -47,7 +49,7 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
     local position = predictPosition(rootPart, 0.1)
 
     Hitbox.Size = projectileData.classData.Hitboxes[projectileData.moveType].Size
-    Hitbox.CFrame = CFrame.new(position, rootPart.CFrame.LookVector + position)
+    Hitbox.CFrame = CFrame.new(position, rootPart.CFrame.LookVector + position) * projectileData.offSet
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
 
