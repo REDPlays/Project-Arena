@@ -90,12 +90,6 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
                 continue
             end
 
-            --threshhold for projectile hit detection
-            local distance = (enemyRoot.Position - Hitbox.Position).Magnitude
-            if distance > Hitbox.Size.Z * .5 then
-                continue
-            end
-
             if target then
                 continue
             end
