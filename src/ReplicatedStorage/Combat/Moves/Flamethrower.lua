@@ -55,15 +55,13 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
 
     StateManager:AddTarget(character, "Slow", duration)
 
-    --[==[
     VisualEffectServer:SpawnEffectsInRange(
-        "SunBeam",
+        "Flamethrower",
         nil,
         character,
         {},
         1000
     )
-    ]==]
     
     local alreadyHit = {}
 
