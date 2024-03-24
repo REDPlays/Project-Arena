@@ -32,6 +32,11 @@ function TripleFireBall:Activate(player, character, rootPart, placementCFrame, c
         return
     end
 
+    Stats:SetAttribute("AbilityLocked", true)
+    task.delay(.5, function()
+        Stats:SetAttribute("AbilityLocked", false)
+    end)
+
     local angle = -15
     local angleDiff = 15
     local numProjectiles = 3
