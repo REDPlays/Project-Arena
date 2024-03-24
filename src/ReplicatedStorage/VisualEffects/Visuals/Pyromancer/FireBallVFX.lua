@@ -76,6 +76,12 @@ function FireBall:Ball()
     self.FireStart.CFrame = self.rootPart.CFrame * CFrame.new(0, 0, -2)
     self.FireStart.Parent = self.Folder
 
+    self.sfx1 = Sounds.Base.MagicSpawn:Clone()
+    self.sfx1.Volume = .25
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = self.FireStart
+    self.sfx1:Play()
+
     self.FireStart.Attachment.Ring:Emit(1)
     self.FireStart.Fire:Emit(12)
     self.FireStart.Fire2:Emit(12)
@@ -85,10 +91,21 @@ function FireBall:Ball()
     self.FireBall.CFrame = self.conditionalData.projectile.CFrame
     self.FireBall.Parent = self.Folder
 
+    self.sfx2 = Sounds.Pyromancer.FireLoop:Clone()
+    self.sfx2.Volume = .25
+    self.sfx2._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx2.Parent = self.FireBall
+    self.sfx2:Play()
+
     self.weld = Instance.new("WeldConstraint")
     self.weld.Part0 = self.FireBall
     self.weld.Part1 = self.conditionalData.projectile
     self.weld.Parent = self.weld.Part0
+
+    task.delay(self.conditionalData.duration * .75, function()
+        local info = TweenInfo.new(self.conditionalData.duration * .25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        TweenService:Create(self.sfx2, info, {Volume = 0}):Play()
+    end)
 end
 
 function FireBall:Explode(spawnCFrame)
@@ -96,6 +113,12 @@ function FireBall:Explode(spawnCFrame)
     self.FireHit.Transparency = 1
     self.FireHit.CFrame = spawnCFrame
     self.FireHit.Parent = self.Folder
+
+    self.sfx3 = Sounds.Pyromancer.FireHit:Clone()
+    self.sfx3.Volume = .25
+    self.sfx3._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx3.Parent = self.FireHit
+    self.sfx3:Play()
 
     self.FireHit.Attachment.Ring:Emit(2)
     self.FireHit.Fire:Emit(8)

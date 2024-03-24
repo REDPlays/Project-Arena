@@ -125,6 +125,7 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
     local conditionalData = {
         moveCount = projectileData.moveCount, 
         projectile = Hitbox,
+        duration = projectileData.duration,
     }
 
     VisualEffectClient:SpawnEffects(

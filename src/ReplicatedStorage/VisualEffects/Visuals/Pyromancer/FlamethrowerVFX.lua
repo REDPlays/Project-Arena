@@ -61,15 +61,30 @@ function Flamethrower:Fire()
     self.Flame.CFrame = self.rootPart.CFrame * CFrame.new(0, 0, -3)
     self.Flame.Parent = self.Folder
 
+    self.sfx1 = Sounds.Base.MagicSpawn:Clone()
+    self.sfx1.Volume = .25
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = self.Flame
+    self.sfx1:Play()
+
     local weld = Instance.new("WeldConstraint")
     weld.Part0 = self.Flame
     weld.Part1 = self.rootPart
     weld.Parent = weld.Part0
 
+    self.sfx2 = Sounds.Pyromancer.FireLoop:Clone()
+    self.sfx2.Volume = .25
+    self.sfx2._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx2.Parent = self.Flame
+    self.sfx2:Play()
+
     task.delay(3, function()
         if weld then
             weld:Destroy()
         end
+
+        local info = TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        TweenService:Create(self.sfx2, info, {Volume = 0}):Play()
 
         self.Flame.Anchored = true
         

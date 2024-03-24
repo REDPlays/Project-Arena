@@ -17,6 +17,10 @@ local IgnoreFolder = workspace.Ignore
 
 local Eruption = {}
 
+local function predictPosition2(model: Model, timeInterval)
+    return model:GetPivot().Position + model.PrimaryPart.AssemblyLinearVelocity * timeInterval
+end
+
 function Eruption:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
@@ -38,15 +42,27 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
         Hitbox.Transparency = .5
     end
 
+    local position = predictPosition2(character, .35)
+
+    local newCFrame = CFrame.new(position, rootPart.CFrame.LookVector + position) * classData.Hitboxes[moveType].Offset
+
+    local conditionalData = {}
+    conditionalData.spawnCFrame = newCFrame
+    conditionalData.size = classData.Hitboxes[moveType].Size
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "Eruption",
+        nil,
+        character,
+        conditionalData,
+        1000
+    )
+
     Hitbox.Size = classData.Hitboxes[moveType].Size
-    Hitbox.CFrame = placementCFrame * classData.Hitboxes[moveType].Offset
+    Hitbox.CFrame = newCFrame
+    Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
     Debris:AddItem(Hitbox, .25)
-
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = Hitbox
-    weld.Part1 = rootPart
-    weld.Parent = weld.Part0
 
     local alreadyHit = {}
 
@@ -119,8 +135,6 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
 
         HealthManager:Damage(parent, damage)
     end
-
-
 end
 
 return Eruption

@@ -126,12 +126,12 @@ function CharacterSelectServer:GiveUI(character, Stats)
     newAttach.Parent = rootPart
     newAttach.Position = Vector3.new(0, 3, 0)
 
+    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+
     local Overhead: BillboardGui = UI.Overhead:Clone()
     Overhead.Adornee = newAttach
     Overhead.PlayerName.Text = character.Name
     Overhead.Parent = character
-
-    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
 
     if CharacterSelectServer.uiConnections[character] then
         if CharacterSelectServer.uiConnections[character].health then

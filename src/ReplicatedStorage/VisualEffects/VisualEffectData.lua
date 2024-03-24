@@ -10,6 +10,7 @@ VisualEffectData["SunBeam"] = require(Visuals:WaitForChild("AngelKnight"):WaitFo
 
 VisualEffectData["FireBall"] = require(Visuals:WaitForChild("Pyromancer"):WaitForChild("FireBallVFX"))
 VisualEffectData["Flamethrower"] = require(Visuals:WaitForChild("Pyromancer"):WaitForChild("FlamethrowerVFX"))
+VisualEffectData["Eruption"] = require(Visuals:WaitForChild("Pyromancer"):WaitForChild("EruptionVFX"))
 
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))
 
