@@ -154,7 +154,7 @@ function UIController:Connect()
             if canBlock then
                 self.debounces.Block = true
 
-                self.cameraSystem:OutsideToggle(true)
+                --self.cameraSystem:OutsideToggle(true)
 
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
@@ -248,7 +248,7 @@ function UIController:Connect()
                     local currentMoveData = moveData.QMove
 
                     if currentMoveData.CameraLock then
-                        self.cameraSystem:OutsideToggle(true)
+                        --self.cameraSystem:OutsideToggle(true)
                     end
 
                     Events.Client_Server.Moves:FireServer(self.class, "QMove", currentMoveData)
@@ -289,7 +289,7 @@ function UIController:Connect()
                     local currentMoveData = moveData.EMove
 
                     if currentMoveData.CameraLock then
-                        self.cameraSystem:OutsideToggle(true)
+                        --self.cameraSystem:OutsideToggle(true)
                     end
 
                     Events.Client_Server.Moves:FireServer(self.class, "EMove", currentMoveData)
@@ -330,7 +330,7 @@ function UIController:Connect()
                     local currentMoveData = moveData.FMove
 
                     if currentMoveData.CameraLock then
-                        self.cameraSystem:OutsideToggle(true)
+                        --self.cameraSystem:OutsideToggle(true)
                     end
 
                     Events.Client_Server.Moves:FireServer(self.class, "FMove", currentMoveData)
@@ -467,6 +467,10 @@ function UIController:Update(deltaTime)
 
         local targetUI = character:FindFirstChild("Overhead")
         if not targetUI then
+            continue
+        end
+
+        if character == self.character then
             continue
         end
 
