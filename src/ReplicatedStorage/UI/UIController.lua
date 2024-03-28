@@ -24,6 +24,11 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.cameraSystem = cameraSystem
 
     self.HUD = self.player:WaitForChild("PlayerGui"):WaitForChild("HUD")
+    self.Indicator = self.HUD:WaitForChild("Indicator")
+    self.IndicatorMenu = self.Indicator:WaitForChild("Menu")
+    self.IndicatorContext = self.IndicatorMenu:WaitForChild("Context")
+    self.IndicatorTimer = self.IndicatorMenu:WaitForChild("Timer")
+
     self.Gameplay = self.HUD:WaitForChild("Gameplay")
     self.MoveList = self.Gameplay:WaitForChild("MoveList")
     self.Stats = self.Gameplay:WaitForChild("Stats")
@@ -376,10 +381,31 @@ function UIController:Connect()
             self.debounces.FMove = false
         end
     end)
+
+    self.countDownEvent = Events.Server_Client.CountDown.OnClientEvent:Connect(function(context, countDown)
+        if not context then
+            return
+        end
+
+        if not countDown then
+            return
+        end
+
+        self.IndicatorContext.Text = context
+
+        local min = math.floor(countDown / 60)
+        local sec = countDown % 60
+        local formattedTime = string.format("%i:%02i", min, sec)
+
+        self.IndicatorTimer.Text = formattedTime
+    end)
 end
 
 function UIController:LoadCharacter(class)
     self.class = class
+
+    --set icons for moves
+
 end
 
 function UIController:Disconnect()
@@ -407,6 +433,11 @@ function UIController:Disconnect()
         self.cooldownEvent:Disconnect()
         self.cooldownEvent = nil
     end
+
+    if self.countDownEvent then
+        self.countDownEvent:Disconnect()
+        self.countDownEvent = nil
+    end
 end
 
 function UIController:Update(deltaTime)
@@ -414,6 +445,16 @@ function UIController:Update(deltaTime)
     if Overhead then
         if Overhead.Enabled then
             Overhead.Enabled = false
+        end
+    end
+
+    if not self.class then
+        if self.Gameplay.Visible then
+            self.Gameplay.Visible = false
+        end
+    elseif self.class then
+        if not self.Gameplay.Visible then
+            self.Gameplay.Visible = true
         end
     end
 

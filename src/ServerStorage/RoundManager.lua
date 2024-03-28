@@ -1,3 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
+
 local RoundManager = {}
 RoundManager.__index = RoundManager
 
@@ -81,7 +85,7 @@ function RoundManager:Update(deltaTime)
 
         if self.intermission then
             self.intermissionDuration -= self.maxTick
-            warn("self.intermissionDuration:", self.intermissionDuration)
+            Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
 
             if self.intermissionDuration <= 0 then
                 self.intermission = false
@@ -106,11 +110,13 @@ function RoundManager:Update(deltaTime)
             if not self.startCountDown then
                 self.startCountDown = true
                 self.countDown = 15
+
+                Events.Server_Client.CountDown:FireAllClients("CountDown", self.countDown)
             end
             
             if self.startCountDown and self.countDown > 0 then
                 self.countDown -= self.maxTick
-                warn("self.countDown:", self.countDown)
+                Events.Server_Client.CountDown:FireAllClients("CountDown", self.countDown)
     
                 if self.countDown <= 0 then
                     self.roundStart = true
@@ -119,6 +125,8 @@ function RoundManager:Update(deltaTime)
                     self.startCountDown = false
                     self.countDown = 0
 
+                    Events.Server_Client.CountDown:FireAllClients("Round", self.roundDuration)
+
                     self:TeleportAllPlayers()
 
                     warn("Start Round!!!")
@@ -126,7 +134,7 @@ function RoundManager:Update(deltaTime)
             end
         elseif self.roundStart then
             self.roundDuration -= self.maxTick
-            warn("self.roundDuration:", self.roundDuration)
+            Events.Server_Client.CountDown:FireAllClients("Round", self.roundDuration)
 
             if self.roundDuration <= 0 then
                 self.roundStart = false
@@ -136,6 +144,8 @@ function RoundManager:Update(deltaTime)
 
                 self.intermission = true
                 self.intermissionDuration = 20
+
+                Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
 
                 warn("ROUND OVER!!!")
             end

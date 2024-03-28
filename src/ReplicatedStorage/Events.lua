@@ -28,6 +28,7 @@ Events.Server_Client = {
     VisualEffects = Server_Client:WaitForChild("VisualEffects"),
     TerminateVFX = Server_Client:WaitForChild("TerminateVFX"),
     Hitbox = Server_Client:WaitForChild("Hitbox"),
+    CountDown = Server_Client:WaitForChild("CountDown"),
 }
 
 Events.Server_Server = {
