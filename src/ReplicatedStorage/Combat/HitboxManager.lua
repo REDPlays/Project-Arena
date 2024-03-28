@@ -316,7 +316,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
         ID = projectileId,
         character = character,
         speed = 50,
-        duration = .5,
+        duration = 1,
         classData = currentClassData,
         moveType = moveType,
         moveCount = moveCount,
