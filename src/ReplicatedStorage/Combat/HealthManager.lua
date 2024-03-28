@@ -25,6 +25,10 @@ function HealthManager:Damage(character, damage)
         return
     end
 
+    if CollectionService:HasTag(character, "Invulnerable") then
+        return
+    end
+
     humanoid:TakeDamage(damage)
     Stats:SetAttribute("Health", humanoid.Health)
     Stats:SetAttribute("MaxHealth", maxHealth)

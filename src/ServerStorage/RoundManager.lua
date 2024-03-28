@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
@@ -15,7 +16,7 @@ end
 function RoundManager:Init(ServerGameManager)
     self.serverGameManager = ServerGameManager
 
-    self.belowLimit = 1
+    self.belowLimit = 0 --1
     self.maxTick = 1
     self.currTick = 0
 
@@ -52,6 +53,10 @@ function RoundManager:TeleportAllPlayers()
         local xOffset = math.random(-xRange, xRange)
         local zOffset = math.random(-zRange, zRange)
 
+        if CollectionService:HasTag(data.character, "Invulnerable") then
+            CollectionService:RemoveTag(data.character, "Invulnerable")
+        end
+
         data.character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
     end
 end
@@ -69,6 +74,30 @@ function RoundManager:ResetAllPlayers()
 
         humanoid.Health = -100
     end
+end
+
+function RoundManager:TeleportPlayer(player: Player)
+    local character = player.Character
+    if not character then
+        return
+    end
+
+    local teleporter = self.Map:FindFirstChild("Teleporter")
+    if not teleporter then
+        return
+    end
+
+    local xRange = teleporter.Size.X
+    local zRange = teleporter.Size.Z
+
+    local xOffset = math.random(-xRange, xRange)
+    local zOffset = math.random(-zRange, zRange)
+
+    if CollectionService:HasTag(character, "Invulnerable") then
+        CollectionService:RemoveTag(character, "Invulnerable")
+    end
+
+    character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
 end
 
 function RoundManager:Update(deltaTime)

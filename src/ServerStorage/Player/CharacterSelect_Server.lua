@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
@@ -12,9 +13,11 @@ CharacterSelectServer.uiConnections = {}
 
 CharacterSelectServer.hasClass = {}
 
-function CharacterSelectServer:Init(lobby)
+function CharacterSelectServer:Init(lobby, roundManager)
     CharacterSelectServer.Lobby = lobby
     CharacterSelectServer.Classes = lobby:WaitForChild("Classes")
+
+    CharacterSelectServer.roundManager = roundManager
 
     --Temporary(Make a map manager)
     CharacterSelectServer.Teleporter = workspace.Teleporter
@@ -328,7 +331,12 @@ function CharacterSelectServer:SetCharacter(player, group, className)
     end
 
     --Teleport player
-    character:PivotTo(CharacterSelectServer.Teleporter.CFrame * CFrame.new(0, 1, 0))
+    if CharacterSelectServer.roundManager.roundStart then
+        CharacterSelectServer.roundManager:TeleportPlayer(player)
+    else
+        CollectionService:AddTag(character, "Invulnerable")
+        character:PivotTo(CharacterSelectServer.Teleporter.CFrame * CFrame.new(0, 1, 0))
+    end
 end
 
 function CharacterSelectServer:SelectCharacter(player, className, ID)

@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
@@ -456,6 +457,20 @@ function UIController:Update(deltaTime)
         if not self.Gameplay.Visible then
             self.Gameplay.Visible = true
         end
+    end
+
+    for _, player in pairs(Players:GetChildren()) do
+        local character = player.Character
+        if not character then
+            continue
+        end
+
+        local targetUI = character:FindFirstChild("Overhead")
+        if not targetUI then
+            continue
+        end
+
+        targetUI.Enabled = true
     end
 
     for moveType, UIData in pairs(self.UICooldowns) do

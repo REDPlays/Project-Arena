@@ -82,6 +82,10 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow)
             continue
         end
 
+        if CollectionService:HasTag(parent, "Invulnerable") then
+            continue
+        end
+
         local enemyHum = parent:FindFirstChild("Humanoid")
         if not enemyHum then
             continue
@@ -240,6 +244,10 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
             return
         end
 
+        if CollectionService:HasTag(parent, "Invulnerable") then
+            continue
+        end
+
         alreadyHit[parent.Name] = true
 
         local isBlocking = StateManager:CheckState(parent, "Blocking")
@@ -353,6 +361,10 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
 
     local isUserStun = StateManager:CheckState(character, "Stunned")
     if isUserStun then
+        return
+    end
+
+    if CollectionService:HasTag(target, "Invulnerable") then
         return
     end
 

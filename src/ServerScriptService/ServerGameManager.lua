@@ -22,11 +22,11 @@ ServerGameManager.playerList = {}
 ServerGameManager.playerCount = 0
 
 function ServerGameManager:Init()
-    ServerGameManager.characterSelect = CharacterSelectServer
-    ServerGameManager.characterSelect:Init(Lobby)
-
     ServerGameManager.roundManager = RoundManager.new()
     ServerGameManager.roundManager:Init(ServerGameManager)
+
+    ServerGameManager.characterSelect = CharacterSelectServer
+    ServerGameManager.characterSelect:Init(Lobby, ServerGameManager.roundManager)
 
     ServerGameManager:ConfigureDummies()
 end
