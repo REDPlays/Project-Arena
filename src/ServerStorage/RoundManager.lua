@@ -15,7 +15,7 @@ end
 function RoundManager:Init(ServerGameManager)
     self.serverGameManager = ServerGameManager
 
-    self.belowLimit = 0
+    self.belowLimit = 1
     self.maxTick = 1
     self.currTick = 0
 
