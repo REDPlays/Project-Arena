@@ -474,7 +474,7 @@ function UIController:Update(deltaTime)
 
         local durationText = string.format("%0.2f", UIData.duration)
 
-        UIData.CooldownUI.Text = durationText --UIData.duration
+        UIData.CooldownUI.Text = durationText
     end
 end
 
