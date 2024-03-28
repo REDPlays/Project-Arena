@@ -139,7 +139,7 @@ function Burn:Update(deltaTime)
             continue
         end
 
-        data.currTime += deltaTime
+        data.currTime += 1
 
         local Stats = data.target:FindFirstChild("Stats")
         if not Stats then
