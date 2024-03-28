@@ -68,7 +68,6 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
 
         InputManager.ServerLMBDebounces[player.UserId] = true
 
-
         if moveCount and moveCount >= 3 then
             animInfo = currentClassData.Cooldowns.LMBMove
         end
@@ -89,11 +88,9 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
 
         InputManager.ServerQDebounces[player.UserId] = true
 
-        if moveCount and moveCount >= 3 then
-            animInfo = currentClassData.Cooldowns.QMove
-        end
+        local cooldown = currentClassData.Cooldowns.QMove
 
-        task.delay(animInfo, function()
+        task.delay(cooldown, function()
             if InputManager.ServerQDebounces[player.UserId] then
                 InputManager.ServerQDebounces[player.UserId] = nil
             end
@@ -109,11 +106,9 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
 
         InputManager.ServerEDebounces[player.UserId] = true
 
-        if moveCount and moveCount >= 3 then
-            animInfo = currentClassData.Cooldowns.EMove
-        end
+        local cooldown = currentClassData.Cooldowns.EMove
 
-        task.delay(animInfo, function()
+        task.delay(cooldown, function()
             if InputManager.ServerEDebounces[player.UserId] then
                 InputManager.ServerEDebounces[player.UserId] = nil
             end
@@ -129,11 +124,9 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
 
         InputManager.ServerFDebounces[player.UserId] = true
 
-        if moveCount and moveCount >= 3 then
-            animInfo = currentClassData.Cooldowns.FMove
-        end
+        local cooldown = currentClassData.Cooldowns.FMove
 
-        task.delay(animInfo, function()
+        task.delay(cooldown, function()
             if InputManager.ServerFDebounces[player.UserId] then
                 InputManager.ServerFDebounces[player.UserId] = nil
             end

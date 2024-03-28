@@ -34,9 +34,9 @@ ClassData["AngelKnight"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 1,
-        ["EMove"] = 1,
-        ["FMove"] = 1,
+        ["QMove"] = 3,
+        ["EMove"] = 3,
+        ["FMove"] = 10,
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -101,9 +101,9 @@ ClassData["Pyromancer"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 1,
-        ["EMove"] = 1,
-        ["FMove"] = 1,
+        ["QMove"] = 2,
+        ["EMove"] = 7,
+        ["FMove"] = 10,
     },
     Hitboxes = {
         ["LMBMove"] = {

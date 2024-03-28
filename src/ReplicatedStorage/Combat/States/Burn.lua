@@ -14,7 +14,7 @@ Burn.InState = {}
 local Color = Color3.fromRGB(255, 119, 0)
 
 local maxStacks = 3
-local burnDamage = .01
+local burnDamage = .005
 local currTick = 0
 local maxTick = 1
 

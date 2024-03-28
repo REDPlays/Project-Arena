@@ -99,7 +99,7 @@ function UIController:Connect()
             return
         end
 
-        if input.KeyCode == Enum.KeyCode.LeftShift then
+        if input.KeyCode == Enum.KeyCode.C then
             if self.debounces.Block then
                 return
             end
@@ -287,7 +287,7 @@ function UIController:Connect()
             return
         end
 
-        if input.KeyCode == Enum.KeyCode.LeftShift then
+        if input.KeyCode == Enum.KeyCode.C then
             if not self.debounces.Block then
                 return
             end
