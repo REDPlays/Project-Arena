@@ -38,6 +38,8 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
         FMove = self.MoveList:WaitForChild("F_Btn"),
     }
 
+    self.UICooldowns = {}
+
     self.LMBs = 0
     self.maxCount = 3
     self.currTime = 0
@@ -51,8 +53,46 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
         FMove = false,
     }
 
+    self:UISetup()
     self:StatConnect()
     self:Connect()
+end
+
+function UIController:UISetup()
+    for btnName, btn in pairs(self.Btns) do
+        local Cooldown = btn:FindFirstChild("Cooldown")
+        if Cooldown then
+            Cooldown.Visible = false
+        end
+    end
+end
+
+function UIController:toggleUICountdown(moveType, duration)
+    if self.UICooldowns[moveType] then
+        warn("already in cooldown")
+        return
+    end
+
+    self.UICooldowns[moveType] = {
+        UIObject = self.Btns[moveType],
+        CooldownUI = self.Btns[moveType]:FindFirstChild("Cooldown"),
+        duration = duration,
+        maxDuration = duration,
+    }
+
+    self.UICooldowns[moveType].CooldownUI.Text = duration
+    self.UICooldowns[moveType].CooldownUI.Visible = true
+end
+
+function UIController:removeUICountdown(moveType)
+    if not self.UICooldowns[moveType] then
+        warn("not in cooldown")
+        return
+    end
+
+    self.UICooldowns[moveType].CooldownUI.Visible = false
+
+    self.UICooldowns[moveType] = nil
 end
 
 function UIController:StatConnect()
@@ -140,6 +180,10 @@ function UIController:Connect()
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "LMBMove", animInfo, self.LMBs)
             if canAttack then
                 self.debounces.LMBMove = true
+                local currentClassData = ClassData[self.class]
+                
+                local cooldownDuration = currentClassData.Cooldowns["LMBMove"]
+                self:toggleUICountdown("LMBMove", cooldownDuration)
 
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
@@ -178,6 +222,10 @@ function UIController:Connect()
             if canAttack then
                 warn("Can QMove")
                 self.debounces.QMove = true
+                local currentClassData = ClassData[self.class]
+                
+                local cooldownDuration = currentClassData.Cooldowns["QMove"]
+                self:toggleUICountdown("QMove", cooldownDuration)
 
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
@@ -216,6 +264,10 @@ function UIController:Connect()
             if canAttack then
                 warn("Can EMove")
                 self.debounces.EMove = true
+                local currentClassData = ClassData[self.class]
+                
+                local cooldownDuration = currentClassData.Cooldowns["EMove"]
+                self:toggleUICountdown("EMove", cooldownDuration)
 
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
@@ -254,6 +306,10 @@ function UIController:Connect()
             if canAttack then
                 warn("Can FMove")
                 self.debounces.FMove = true
+                local currentClassData = ClassData[self.class]
+                
+                local cooldownDuration = currentClassData.Cooldowns["FMove"]
+                self:toggleUICountdown("FMove", cooldownDuration)
 
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
@@ -362,6 +418,25 @@ function UIController:Update(deltaTime)
         if Overhead.Enabled then
             Overhead.Enabled = false
         end
+    end
+
+    for moveType, UIData in pairs(self.UICooldowns) do
+        if not UIData.CooldownUI then
+            continue
+        end
+
+        if UIData.duration <= 0 then
+            self:removeUICountdown(moveType)
+
+            continue
+        end 
+
+        UIData.duration -= deltaTime
+        UIData.duration = math.clamp(UIData.duration, 0, UIData.maxDuration)
+
+        local durationText = string.format("%0.2f", UIData.duration)
+
+        UIData.CooldownUI.Text = durationText --UIData.duration
     end
 end
 
