@@ -267,6 +267,11 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
             StateManager:AddTarget(parent, "Stunned", 2)
         end
 
+        --apply slow
+        if currentClassData.MoveData[moveType].Slow then
+            StateManager:AddTarget(parent, "Slow", 1)
+        end
+
         VisualEffectServer:SpawnEffectsInRange(
             currentClassData.VisualEffects[moveType],
             parent,
@@ -311,7 +316,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
         ID = projectileId,
         character = character,
         speed = 50,
-        duration = 1,
+        duration = .5,
         classData = currentClassData,
         moveType = moveType,
         moveCount = moveCount,
@@ -377,12 +382,17 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
 
     --apply burn
     if classData.MoveData[moveType].Burn then
-        StateManager:AddTarget(target, "Burn", 3)
+        StateManager:AddTarget(target, "Burn", 2)
     end
 
     --apply stun
     if classData.MoveData[moveType].Stunned then
         StateManager:AddTarget(target, "Stunned", 2)
+    end
+
+    --apply slow
+    if classData.MoveData[moveType].Slow then
+        StateManager:AddTarget(target, "Slow", 1)
     end
 
     StateManager:AddTarget(target, "Attacked", 1)

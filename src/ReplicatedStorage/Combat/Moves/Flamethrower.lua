@@ -107,6 +107,10 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
                     continue
                 end
 
+                if CollectionService:HasTag(parent, "Invulnerable") then
+                    continue
+                end
+
                 alreadyHit[parent.Name] = true
 
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
@@ -130,6 +134,11 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
                 --apply stun
                 if classData.MoveData[moveType].Stunned then
                     StateManager:AddTarget(parent, "Stunned", 2)
+                end
+
+                --apply slow
+                if classData.MoveData[moveType].Slow then
+                    StateManager:AddTarget(parent, "Slow", 1)
                 end
 
                 StateManager:AddTarget(parent, "Attacked", 1)

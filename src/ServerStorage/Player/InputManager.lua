@@ -71,8 +71,9 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
         if moveCount and moveCount >= 3 then
             animInfo = currentClassData.Cooldowns.LMBMove
         end
+        local cooldown = currentClassData.Cooldowns.LMBMove
 
-        task.delay(animInfo, function()
+        task.delay(cooldown, function()
             if InputManager.ServerLMBDebounces[player.UserId] then
                 InputManager.ServerLMBDebounces[player.UserId] = nil
             end

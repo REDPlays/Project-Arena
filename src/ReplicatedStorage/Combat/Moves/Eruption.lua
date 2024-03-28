@@ -104,6 +104,10 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
             continue
         end
 
+        if CollectionService:HasTag(parent, "Invulnerable") then
+            continue
+        end
+
         local isUserStun = StateManager:CheckState(character, "Stunned")
         if isUserStun then
             return
@@ -129,6 +133,11 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
         --apply stun
         if classData.MoveData[moveType].Stunned then
             StateManager:AddTarget(parent, "Stunned", 2)
+        end
+
+        --apply slow
+        if classData.MoveData[moveType].Slow then
+            StateManager:AddTarget(parent, "Slow", 1)
         end
 
         StateManager:AddTarget(parent, "Attacked", 1)
