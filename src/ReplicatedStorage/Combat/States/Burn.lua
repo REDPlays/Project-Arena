@@ -14,7 +14,7 @@ Burn.InState = {}
 local Color = Color3.fromRGB(255, 119, 0)
 
 local maxStacks = 3
-local burnDamage = .005
+local burnDamage = .25
 local currTick = 0
 local maxTick = 1
 
@@ -126,6 +126,13 @@ function Burn:RemoveTarget(target: Model)
 end
 
 function Burn:Update(deltaTime)
+    currTick += deltaTime
+    if currTick < maxTick then
+        return
+    end
+
+    currTick = 0
+
     for targetId, data in pairs(Burn.InState) do
         if data.currTime >= data.duration then
             Burn:RemoveTarget(targetId)
