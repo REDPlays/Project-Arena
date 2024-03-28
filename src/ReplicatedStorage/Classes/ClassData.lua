@@ -27,15 +27,15 @@ ClassData["AngelKnight"] = {
     Speed = 30,
     Role = "Support",
     DamageList = {
-        ["LMBMove"] = {10, 10, 10},
+        ["LMBMove"] = {15, 15, 15},
         ["QMove"] = 15,
         ["EMove"] = 10,
         ["FMove"] = 5,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 3,
-        ["EMove"] = 3,
+        ["QMove"] = 5,
+        ["EMove"] = 5,
         ["FMove"] = 10,
     },
     Hitboxes = {
@@ -95,13 +95,13 @@ ClassData["Pyromancer"] = {
     Role = "Burst",
     DamageList = {
         ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 5,
+        ["QMove"] = 3,
         ["EMove"] = 3,
         ["FMove"] = 15,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 2,
+        ["QMove"] = 3,
         ["EMove"] = 7,
         ["FMove"] = 10,
     },

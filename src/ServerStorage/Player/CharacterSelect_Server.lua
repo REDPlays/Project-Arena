@@ -10,6 +10,8 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 local CharacterSelectServer = {}
 CharacterSelectServer.uiConnections = {}
 
+CharacterSelectServer.hasClass = {}
+
 function CharacterSelectServer:Init(lobby)
     CharacterSelectServer.Lobby = lobby
     CharacterSelectServer.Classes = lobby:WaitForChild("Classes")
@@ -316,6 +318,13 @@ function CharacterSelectServer:SetCharacter(player, group, className)
 
         --Set Stats
         CharacterSelectServer:SetStats(player, className)
+
+        if not CharacterSelectServer.hasClass[player] then
+            CharacterSelectServer.hasClass[player] = {
+                player = player,
+                character = character
+            }
+        end
     end
 
     --Teleport player

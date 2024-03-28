@@ -220,7 +220,6 @@ function UIController:Connect()
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "QMove", animInfo)
             if canAttack then
-                warn("Can QMove")
                 self.debounces.QMove = true
                 local currentClassData = ClassData[self.class]
                 
@@ -262,7 +261,6 @@ function UIController:Connect()
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "EMove", animInfo)
             if canAttack then
-                warn("Can EMove")
                 self.debounces.EMove = true
                 local currentClassData = ClassData[self.class]
                 
@@ -304,7 +302,6 @@ function UIController:Connect()
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "FMove", animInfo)
             if canAttack then
-                warn("Can FMove")
                 self.debounces.FMove = true
                 local currentClassData = ClassData[self.class]
                 
