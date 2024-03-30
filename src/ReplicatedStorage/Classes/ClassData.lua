@@ -100,7 +100,7 @@ ClassData["Pyromancer"] = {
     DamageList = {
         ["LMBMove"] = {2, 2, 2},
         ["QMove"] = 2,
-        ["EMove"] = 2,
+        ["EMove"] = 4,
         ["FMove"] = 10,
     },
     Cooldowns = {
