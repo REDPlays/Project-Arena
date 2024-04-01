@@ -22,13 +22,13 @@ ClassData["Base"] = {
 }
 
 ClassData["AngelKnight"] = {
-    Health = 100,
+    Health = 150,
     Defense = 100,
-    Speed = 30,
+    Speed = 40,
     Role = "Support",
     DamageList = {
         ["LMBMove"] = {15, 15, 15},
-        ["QMove"] = 10,
+        ["QMove"] = 25,
         ["EMove"] = 10,
         ["FMove"] = 5,
     },
