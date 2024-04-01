@@ -64,21 +64,25 @@ function AngelKnightM1:Slash()
 
     self.slash = AngelKnightVFX.M1s.Slash:Clone()
     self.slash.Transparency = 1
-    self.slash.Anchored = true
     self.slash.CFrame = self.rootPart.CFrame
     self.slash.Parent = self.Folder
-
-    self.sfx1 = Sounds.Base.SwordSwipe:Clone()
-    self.sfx1.Volume = .25
-    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
-    self.sfx1.Parent = self.slash
-    self.sfx1:Play()
 
     if self.conditionalData.moveCount == 1 then
         self.slash.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(-30))
     elseif self.conditionalData.moveCount == 2 then
         self.slash.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(30))
     end
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = self.slash
+    weld.Part1 = self.rootPart
+    weld.Parent = weld.Part0
+
+    self.sfx1 = Sounds.Base.SwordSwipe:Clone()
+    self.sfx1.Volume = .25
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = self.slash
+    self.sfx1:Play()
 
     local timing1 = .15
     local info = TweenInfo.new(timing1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)

@@ -40,7 +40,7 @@ ClassData["AngelKnight"] = {
     },
     Hitboxes = {
         ["LMBMove"] = {
-            Size = Vector3.new(7, 5, 7),
+            Size = Vector3.new(12, 5, 7),
             Offset = CFrame.new(0, 2.5, -3.5),
         },
         ["QMove"] = {
