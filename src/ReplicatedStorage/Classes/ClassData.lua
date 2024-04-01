@@ -27,10 +27,10 @@ ClassData["AngelKnight"] = {
     Speed = 40,
     Role = "Support",
     DamageList = {
-        ["LMBMove"] = {15, 15, 15},
+        ["LMBMove"] = {10, 10, 10},
         ["QMove"] = 25,
         ["EMove"] = 10,
-        ["FMove"] = 5,
+        ["FMove"] = 3,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
