@@ -129,7 +129,7 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
 
                 --apply slow
                 if classData.MoveData[moveType].Slow then
-                    StateManager:AddTarget(parent, "Slow", 1)
+                    StateManager:AddTarget(parent, "Slow", 2)
                 end
 
                 StateManager:AddTarget(parent, "Attacked", 1)
@@ -151,7 +151,7 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
 
     local dashData = {
         duration = duration,
-        speed = 100,
+        speed = 75,
         isDash = true,
     }
 
