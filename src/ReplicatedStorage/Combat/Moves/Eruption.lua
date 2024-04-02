@@ -142,7 +142,7 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
 
         StateManager:AddTarget(parent, "Attacked", 1)
 
-        HealthManager:Damage(parent, damage)
+        HealthManager:Damage(parent, damage, character)
     end
 end
 

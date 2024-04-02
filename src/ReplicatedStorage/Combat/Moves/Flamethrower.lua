@@ -143,7 +143,7 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
 
                 StateManager:AddTarget(parent, "Attacked", 1)
 
-                HealthManager:Damage(parent, damage)
+                HealthManager:Damage(parent, damage, character)
 
                 task.delay(damageTick, function()
                     if alreadyHit[parent.Name] then

@@ -143,7 +143,7 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
 
                 StateManager:AddTarget(parent, "Attacked", 1)
 
-                HealthManager:Damage(parent, damage)
+                HealthManager:Damage(parent, damage, character)
 
                 task.delay(damageTick, function()
                     if alreadyHit[parent.Name] then

@@ -2,26 +2,28 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
-local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
-local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
+local StateManager
+local HealthManager
 local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectServer"))
 
 local IgnoreFolder = workspace.Ignore
 
 local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
+if RunService:IsServer() then
+    StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
+    HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
+end
+
 local HitboxManager = {}
 HitboxManager.projectiles = {}
-
-local function predictPosition(part: BasePart, timeInterval)
-    return part.Position + part.AssemblyLinearVelocity * timeInterval
-end
 
 function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow)
     local currentClassData = ClassData["Base"]
@@ -133,7 +135,7 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow)
 
         StateManager:AddTarget(parent, "Attacked", 1)
 
-        HealthManager:Damage(parent, damage)
+        HealthManager:Damage(parent, damage, character)
     end
 end
 
@@ -293,7 +295,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
         
                 StateManager:AddTarget(parent, "Attacked", 1)
         
-                HealthManager:Damage(parent, damage)
+                HealthManager:Damage(parent, damage, character)
             end
 
             task.wait()
@@ -418,7 +420,7 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
 
     StateManager:AddTarget(target, "Attacked", 1)
 
-    HealthManager:Damage(target, damage)
+    HealthManager:Damage(target, damage, character)
 end
 
 local function HitboxProjectile(player, class, moveType, moveCount, offSet)

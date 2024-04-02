@@ -76,9 +76,11 @@ function CharacterSelectClient:Disconnect()
 end
 
 function CharacterSelectClient:UpdateStatue(tokenAmount, classes)
-    for _, group in pairs(CharacterSelectClient.Classes:GetChildren()) do
-        CharacterSelectClient.ClassList[group.Name] = {}
+    if not CharacterSelectClient.Classes then
+        return
+    end
 
+    for _, group in pairs(CharacterSelectClient.Classes:GetChildren()) do
         for _, class in pairs(group:GetChildren()) do
             local currClassData = ClassData[class.Name]
 

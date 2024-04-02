@@ -10,7 +10,7 @@ local UI = Assets.UI
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
 local tick = 0
-local maxTick = 1
+local maxTick = 0.5
 
 local CharacterSelectServer = {}
 CharacterSelectServer.uiConnections = {}

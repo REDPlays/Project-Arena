@@ -1,8 +1,12 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
+
+local PlayerDataManager = require(ServerStorage.ServerFiles.Player.PlayerDataManager)
 
 local HealthManager = {}
 
-function HealthManager:Damage(character, damage)
+function HealthManager:Damage(character, damage, attacker)
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
         return
@@ -27,6 +31,14 @@ function HealthManager:Damage(character, damage)
 
     if CollectionService:HasTag(character, "Invulnerable") then
         return
+    end
+
+    if currentHealth - damage <= 0 then
+        local attackerPlayer = Players:GetPlayerFromCharacter(attacker)
+        if attackerPlayer then
+            warn(attacker,"killed", character)
+            PlayerDataManager:AddKill(attackerPlayer)
+        end
     end
 
     humanoid:TakeDamage(damage)

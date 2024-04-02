@@ -134,7 +134,7 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
 
                 StateManager:AddTarget(parent, "Attacked", 1)
 
-                HealthManager:Damage(parent, damage)
+                HealthManager:Damage(parent, damage, character)
             end
             
             task.wait()
