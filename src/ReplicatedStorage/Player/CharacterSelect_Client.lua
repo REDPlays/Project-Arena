@@ -88,6 +88,7 @@ function CharacterSelectClient:UpdateStatue(tokenAmount, classes)
 
             if classes[class.Name] then
                 PurchaseUI.Enabled = false
+                Bounds.Transparency = 1
 
                 continue
             end

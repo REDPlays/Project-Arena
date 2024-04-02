@@ -8,6 +8,8 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 local DataTemplate = {
     Tokens = 200,
 
+    Kills = 0,
+
 	["Classes"] = {
 		["AngelKnight"] = false,
         ["Pyromancer"] = false,
@@ -57,6 +59,13 @@ function PlayerDataManager:onPlayerRemoving(player: Player)
 		profile:Release()
 		Profiles[player] = nil
 	end
+end
+
+function PlayerDataManager:AddKill(player: Player)
+    local profile = Profiles[player]
+    if profile then
+        profile.Data.Kills += 1
+    end
 end
 
 function PlayerDataManager:AddToken(player: Player, tokenAmount: number)

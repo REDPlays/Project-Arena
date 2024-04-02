@@ -32,6 +32,10 @@ function PlayerManager:CheckClass(player: Player, class)
     return PlayerDataManager:CheckClass(player, class)
 end
 
+function PlayerManager:AddKill(player: Player)
+    PlayerDataManager:AddKill(player)
+end
+
 function PlayerManager:GetData(player: Player)
     return PlayerDataManager:Get(player)
 end
