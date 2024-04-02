@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
+local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
+
 local CharacterSelectClient = {}
 
 function CharacterSelectClient:Init(character, lobby, uiController, animationSystem)
@@ -53,7 +55,6 @@ function CharacterSelectClient:Setup()
                     CharacterSelectClient.uiController:LoadCharacter(class:GetAttribute("ClassID"))
                     
                 else
-                    warn("invalid classname and ID")
                     alreadyTouched = false
                 end
             end)
@@ -73,5 +74,37 @@ function CharacterSelectClient:Disconnect()
         CharacterSelectClient.Bounds[className] = nil
     end
 end
+
+function CharacterSelectClient:UpdateStatue(tokenAmount, classes)
+    for _, group in pairs(CharacterSelectClient.Classes:GetChildren()) do
+        CharacterSelectClient.ClassList[group.Name] = {}
+
+        for _, class in pairs(group:GetChildren()) do
+            local currClassData = ClassData[class.Name]
+
+            local Bounds = class:WaitForChild("Bounds")
+            local PurchaseUI = Bounds:WaitForChild("PurchaseUI")
+            local Background: Frame = PurchaseUI:WaitForChild("Background")
+
+            if classes[class.Name] then
+                PurchaseUI.Enabled = false
+
+                continue
+            end
+
+            if tokenAmount >= currClassData.Cost then
+                Background.BackgroundColor3 = Color3.fromRGB(96, 252, 255)
+            elseif tokenAmount < currClassData.Cost then
+                Background.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+            end
+        end
+    end
+end
+
+local function UpdateStatue(tokenAmount, classes)
+    CharacterSelectClient:UpdateStatue(tokenAmount, classes)
+end
+
+Events.Server_Client.UpdateStatue.OnClientEvent:Connect(UpdateStatue)
 
 return CharacterSelectClient

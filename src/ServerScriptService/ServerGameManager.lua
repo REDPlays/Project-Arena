@@ -13,6 +13,7 @@ local StateManager = require(ReplicatedStorage.RepFiles.Combat.StateManager)
 local MoveManager = require(ReplicatedStorage.RepFiles.Combat.MoveManager)
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
 local RoundManager = require(ServerStorage.ServerFiles.RoundManager)
+local PlayerManager = require(ServerStorage.ServerFiles.Player.PlayerManager)
 
 local Lobby = workspace.Lobby
 local Dummies = workspace.Dummies
@@ -25,8 +26,10 @@ function ServerGameManager:Init()
     ServerGameManager.roundManager = RoundManager.new()
     ServerGameManager.roundManager:Init(ServerGameManager)
 
+    ServerGameManager.playerManager = PlayerManager
+
     ServerGameManager.characterSelect = CharacterSelectServer
-    ServerGameManager.characterSelect:Init(Lobby, ServerGameManager.roundManager)
+    ServerGameManager.characterSelect:Init(Lobby, ServerGameManager.roundManager, ServerGameManager.playerManager)
 
     ServerGameManager:ConfigureDummies()
 end
@@ -111,6 +114,10 @@ function ServerGameManager:PlayerJoin(player: Player)
 
     CharacterSelectServer:PlayerJoined(player)
 
+    ServerGameManager.playerManager:PlayerJoin(player)
+
+    local playerData = ServerGameManager.playerManager:GetData(player)
+
     return true
 end
 
@@ -129,12 +136,16 @@ function ServerGameManager:PlayerLeave(player: Player)
 
     ServerGameManager.playerList[player.UserId] = nil
     ServerGameManager.playerCount -= 1
+
+    ServerGameManager.playerManager:PlayerRemove(player)
 end
 
 function ServerGameManager:Update(deltaTime)
     HitboxManager:Update(deltaTime)
     StateManager:Update(deltaTime)
     MoveManager:Update(deltaTime)
+    ServerGameManager.playerManager:Update(deltaTime)
+    ServerGameManager.characterSelect:Update(deltaTime)
 
     if ServerGameManager.roundManager then
         ServerGameManager.roundManager:Update(deltaTime)

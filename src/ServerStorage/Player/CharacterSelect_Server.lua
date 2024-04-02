@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
@@ -8,16 +9,20 @@ local UI = Assets.UI
 
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
+local tick = 0
+local maxTick = 1
+
 local CharacterSelectServer = {}
 CharacterSelectServer.uiConnections = {}
 
 CharacterSelectServer.hasClass = {}
 
-function CharacterSelectServer:Init(lobby, roundManager)
+function CharacterSelectServer:Init(lobby, roundManager, playerManager)
     CharacterSelectServer.Lobby = lobby
     CharacterSelectServer.Classes = lobby:WaitForChild("Classes")
 
     CharacterSelectServer.roundManager = roundManager
+    CharacterSelectServer.playerManager = playerManager
 
     --Temporary(Make a map manager)
     CharacterSelectServer.Teleporter = workspace.Teleporter
@@ -33,8 +38,23 @@ function CharacterSelectServer:Setup()
         for _, class in pairs(group:GetChildren()) do
             CharacterSelectServer.ClassList[group.Name][class.Name] = class
             class:SetAttribute("ClassID", class.Name)
-        end
 
+            local currClassData = ClassData[class.Name]
+
+            local Bounds = class.Bounds
+            local PurchaseUI = Bounds:WaitForChild("PurchaseUI")
+
+            PurchaseUI.Background:WaitForChild("Banner").Text = "Token Cost: "..currClassData.Cost
+
+            local Wall = class.Wall
+            local DescriptionUI = Wall:WaitForChild("DescriptionUI")
+
+            DescriptionUI.Background:WaitForChild("ClassName").Text= "["..class.Name.."]"
+            DescriptionUI.Background:WaitForChild("Health").Text = "HP: "..currClassData.Health
+            DescriptionUI.Background:WaitForChild("Speed").Text = "Speed: "..currClassData.Speed
+            DescriptionUI.Background:WaitForChild("Role").Text = currClassData.Role
+            DescriptionUI.Background:WaitForChild("Description").Text = currClassData.Description
+        end
     end
 end
 
@@ -353,6 +373,15 @@ function CharacterSelectServer:SelectCharacter(player, className, ID)
         end
     end
 
+    local CheckClass = CharacterSelectServer.playerManager:CheckClass(player, className)
+    
+    if not CheckClass then
+        local enoughTokens = CharacterSelectServer.playerManager:AddClass(player, className)
+        if not enoughTokens then
+            return
+        end
+    end
+
     CharacterSelectServer:SetCharacter(player, group, currentClass)
 
     if currentClass then
@@ -360,6 +389,39 @@ function CharacterSelectServer:SelectCharacter(player, className, ID)
     else
         return
     end
+end
+
+function CharacterSelectServer:UpdateStatues()
+    for _, player in pairs(Players:GetChildren()) do
+        local playerData = CharacterSelectServer.playerManager:GetData(player)
+        if not playerData then
+            continue
+        end
+
+        local Tokens = playerData.Tokens
+        if not Tokens then
+            continue
+        end
+
+        local Classes = playerData.Classes
+        if not Classes then
+            continue
+        end
+
+        Events.Server_Client.UpdateStatue:FireClient(player, Tokens, Classes)
+    end
+end
+
+function CharacterSelectServer:Update(deltaTime)
+    tick += deltaTime
+
+    if tick < maxTick then
+        return
+    end
+
+    tick = 0
+
+    CharacterSelectServer:UpdateStatues()
 end
 
 local function SelectCharacter(player, className, ID)
