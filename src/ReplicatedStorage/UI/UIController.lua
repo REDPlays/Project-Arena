@@ -129,6 +129,22 @@ function UIController:StatConnect()
 
         self.DefenseBar.Bar.Size = UDim2.new((defense / maxDefense) * 1, 0, 1, 0)
     end)
+
+    --toggle dummy Overhead
+    for _, dummy in pairs(workspace.Dummies:GetChildren()) do
+        local targetUI = dummy:FindFirstChild("Overhead")
+        if not targetUI then
+            continue
+        end
+
+        if targetUI.Enabled == true then
+            targetUI.Enabled = false
+        end
+
+        task.delay(.15, function()
+            targetUI.Enabled = true
+        end)
+    end
 end
 
 function UIController:Connect()
@@ -472,16 +488,6 @@ function UIController:Update(deltaTime)
         end
 
         if character == self.character then
-            continue
-        end
-
-        targetUI.Enabled = true
-    end
-
-    --toggle dummy Overhead
-    for _, dummy in pairs(workspace.Dummies:GetChildren()) do
-        local targetUI = dummy:FindFirstChild("Overhead")
-        if not targetUI then
             continue
         end
 
