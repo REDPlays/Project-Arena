@@ -10,6 +10,20 @@ local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitFor
 local RoundManager = {}
 RoundManager.__index = RoundManager
 
+function SortTable(oldTable)
+    local sortedTable = {}
+
+    table.sort(oldTable, function(a, b)
+        warn("a:", a)
+        warn("b:", b)
+        return a > b
+    end)
+
+    sortedTable = oldTable
+
+    return sortedTable
+end
+
 function RoundManager.new()
     local newRound = {}
     setmetatable(newRound, RoundManager)
@@ -32,9 +46,11 @@ function RoundManager:Init(ServerGameManager)
 
     self.roundStart = false
     self.roundDuration = 0
+
+    self.playersInRound = {}
     
     --setting round duration based on gamemode?
-    self.roundMaxDuration = 120
+    self.roundMaxDuration = 45 --120
 
     --map selection will be needed later on
     self.Map = workspace.Map
@@ -93,8 +109,14 @@ function RoundManager:TeleportAllPlayers()
             CollectionService:RemoveTag(data.character, "Invulnerable")
         end
 
+        if not self.playersInRound[player.Name] then
+            self.playersInRound[player.Name] = 0
+        end
+
         data.character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
     end
+
+    warn("self.playersInRound:", self.playersInRound)
 end
 
 function RoundManager:ResetAllPlayers()
@@ -133,7 +155,23 @@ function RoundManager:TeleportPlayer(player: Player)
         CollectionService:RemoveTag(character, "Invulnerable")
     end
 
+    if not self.playersInRound[player.Name] then
+        self.playersInRound[player.Name] = 0
+    end
+
     character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
+end
+
+function RoundManager:AddKill(player: Player)
+    if not player then
+        return
+    end
+    
+    if not self.playersInRound[player.Name] then
+        return
+    end
+    
+    self.playersInRound[player.Name] += 1
 end
 
 function RoundManager:UpdatePickups(deltaTime)
@@ -233,7 +271,7 @@ function RoundManager:Update(deltaTime)
         end
 
         --not enough players with a class
-        if playerHasClass <= self.belowLimit then
+        if playerHasClass <= self.belowLimit and not self.roundStart then
             warn("not enough players ready")
             return
         end
@@ -273,6 +311,12 @@ function RoundManager:Update(deltaTime)
             if self.roundDuration <= 0 then
                 self.roundStart = false
                 self.roundDuration = 0
+
+                local currentList = self.playersInRound
+                warn("currentList:", currentList)
+
+                local newList = SortTable(currentList)
+                warn("newList:", newList)
 
                 self:CleanupPickups()
 

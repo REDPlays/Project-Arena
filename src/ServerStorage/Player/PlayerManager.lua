@@ -8,6 +8,10 @@ local PlayerDataManager = require(ServerStorage.ServerFiles.Player.PlayerDataMan
 local PlayerManager = {}
 PlayerManager.playerDatas = {}
 
+function PlayerManager:Init(roundManager)
+    PlayerManager.roundManager = roundManager
+end
+
 function PlayerManager:PlayerJoin(player: Player)
     PlayerDataManager:onPlayerAdded(player)
 end
@@ -34,6 +38,11 @@ end
 
 function PlayerManager:AddKill(player: Player)
     PlayerDataManager:AddKill(player)
+
+    PlayerManager.roundManager:AddKill(player)
+
+    --25 tokens a kill
+    PlayerDataManager:AddToken(player, 25)
 end
 
 function PlayerManager:GetData(player: Player)

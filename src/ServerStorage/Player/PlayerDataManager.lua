@@ -16,7 +16,7 @@ local DataTemplate = {
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test5", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test7", DataTemplate)
 
 local Profiles = {}
 
@@ -65,9 +65,6 @@ function PlayerDataManager:AddKill(player: Player)
     local profile = Profiles[player]
     if profile then
         profile.Data.Kills += 1
-
-        --25 tokens a kill
-        PlayerDataManager:AddToken(player, 25)
     end
 end
 

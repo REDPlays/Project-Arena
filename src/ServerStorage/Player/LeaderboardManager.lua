@@ -52,6 +52,22 @@ function LeaderboardManager:PlayerJoin(currPlayer: Player)
     LeaderboardManager.playerList[currPlayer.UserId] = currPlayer
 end
 
+function LeaderboardManager:SudoPlayerJoin(player: Player, LeaderUI, currPlayer: Player, playerData)
+    local newUI = UI.FrameBase:Clone()
+    newUI.Name = currPlayer.UserId
+    newUI.PlayerName.Text = currPlayer.Name
+    newUI.KillCount.Text = playerData.Kills
+    newUI.Tokens.Text = playerData.Tokens
+    newUI.Wins.Text = playerData.Wins
+    newUI.Visible = true
+    if player == currPlayer then
+        newUI.LayoutOrder = 1
+    else
+        newUI.LayoutOrder = 2
+    end
+    newUI.Parent = LeaderUI.Holder
+end
+
 function LeaderboardManager:PlayerLeave(currPlayer: Player)
     if not LeaderboardManager.playerList[currPlayer.UserId] then
         return
@@ -107,6 +123,7 @@ function LeaderboardManager:Update(deltaTime)
 
             local theirUI = Leader.Holder:FindFirstChild(currPlayer.UserId)
             if not theirUI then
+                LeaderboardManager:SudoPlayerJoin(player, Leader, currPlayer, theirPlayerData)
                 continue
             end
 

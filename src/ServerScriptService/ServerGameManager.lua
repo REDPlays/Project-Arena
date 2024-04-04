@@ -28,6 +28,7 @@ function ServerGameManager:Init()
     ServerGameManager.roundManager:Init(ServerGameManager)
 
     ServerGameManager.playerManager = PlayerManager
+    ServerGameManager.playerManager:Init(ServerGameManager.roundManager)
 
     ServerGameManager.characterSelect = CharacterSelectServer
     ServerGameManager.characterSelect:Init(Lobby, ServerGameManager.roundManager, ServerGameManager.playerManager)

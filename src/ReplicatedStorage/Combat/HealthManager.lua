@@ -2,7 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ServerStorage = game:GetService("ServerStorage")
 
-local PlayerDataManager = require(ServerStorage.ServerFiles.Player.PlayerDataManager)
+local PlayerManager = require(ServerStorage.ServerFiles.Player.PlayerManager)
 
 local HealthManager = {}
 
@@ -33,17 +33,16 @@ function HealthManager:Damage(character, damage, attacker)
         return
     end
 
-    if currentHealth - damage <= 0 then
-        local attackerPlayer = Players:GetPlayerFromCharacter(attacker)
-        if attackerPlayer then
-            warn(attacker,"killed", character)
-            PlayerDataManager:AddKill(attackerPlayer)
-        end
-    end
-
     humanoid:TakeDamage(damage)
     Stats:SetAttribute("Health", humanoid.Health)
     Stats:SetAttribute("MaxHealth", maxHealth)
+
+    if currentHealth - damage <= 0 then
+        local attackerPlayer = Players:GetPlayerFromCharacter(attacker)
+        if attackerPlayer then
+            PlayerManager:AddKill(attackerPlayer)
+        end
+    end
 end
 
 function HealthManager:Heal(character, health)
