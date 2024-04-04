@@ -14,6 +14,7 @@ local MoveManager = require(ReplicatedStorage.RepFiles.Combat.MoveManager)
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
 local RoundManager = require(ServerStorage.ServerFiles.RoundManager)
 local PlayerManager = require(ServerStorage.ServerFiles.Player.PlayerManager)
+local LeaderboardManager = require(ServerStorage.ServerFiles.Player.LeaderboardManager)
 
 local Lobby = workspace.Lobby
 local Dummies = workspace.Dummies
@@ -30,6 +31,8 @@ function ServerGameManager:Init()
 
     ServerGameManager.characterSelect = CharacterSelectServer
     ServerGameManager.characterSelect:Init(Lobby, ServerGameManager.roundManager, ServerGameManager.playerManager)
+
+    LeaderboardManager:Init(ServerGameManager.playerManager)
 
     ServerGameManager:ConfigureDummies()
 end
@@ -116,7 +119,7 @@ function ServerGameManager:PlayerJoin(player: Player)
 
     ServerGameManager.playerManager:PlayerJoin(player)
 
-    local playerData = ServerGameManager.playerManager:GetData(player)
+    LeaderboardManager:PlayerJoin(player)
 
     return true
 end
@@ -138,6 +141,8 @@ function ServerGameManager:PlayerLeave(player: Player)
     ServerGameManager.playerCount -= 1
 
     ServerGameManager.playerManager:PlayerRemove(player)
+
+    LeaderboardManager:PlayerLeave(player)
 end
 
 function ServerGameManager:Update(deltaTime)
@@ -146,6 +151,7 @@ function ServerGameManager:Update(deltaTime)
     MoveManager:Update(deltaTime)
     ServerGameManager.playerManager:Update(deltaTime)
     ServerGameManager.characterSelect:Update(deltaTime)
+    LeaderboardManager:Update(deltaTime)
 
     if ServerGameManager.roundManager then
         ServerGameManager.roundManager:Update(deltaTime)

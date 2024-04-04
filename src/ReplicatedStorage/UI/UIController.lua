@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
@@ -36,6 +37,11 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
 
     self.HealthBar = self.Stats:WaitForChild("HealthBar")
     self.DefenseBar = self.Stats:WaitForChild("DefenseBar")
+
+    self.Leaderboard = self.HUD:WaitForChild("Leaderboard")
+    self.HolderFrame = self.Leaderboard:WaitForChild("Holder")
+    self.hideLeaderboard = false
+    self.hideTween = nil
 
     self.Btns = {
         LMBMove = self.MoveList:WaitForChild("LMB_Btn"),
@@ -147,8 +153,40 @@ function UIController:StatConnect()
     end
 end
 
+function UIController:HideLeaderboard()
+    local info = TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+    if not self.hideLeaderboard then
+        self.hideLeaderboard = true
+
+        if self.hideTween then
+            self.hideTween:Pause()
+        end
+
+        self.hideTween = TweenService:Create(self.Leaderboard, info, {Position = UDim2.new(1.25, 0, .5, 0)})
+        self.hideTween:Play()
+    elseif self.hideLeaderboard then
+        self.hideLeaderboard = false
+
+        if self.hideTween then
+            self.hideTween:Pause()
+        end
+
+        self.hideTween = TweenService:Create(self.Leaderboard, info, {Position = UDim2.new(1, 0, .5, 0)})
+        self.hideTween:Play()
+    end
+end
+
 function UIController:Connect()
     self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+        if gameProcessedEvent then
+            return
+        end
+
+        if input.KeyCode == Enum.KeyCode.Tab then
+            self:HideLeaderboard()
+        end
+
         if not self.class then
             return
         end

@@ -7,8 +7,8 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 
 local DataTemplate = {
     Tokens = 200,
-
     Kills = 0,
+    Wins = 0,
 
 	["Classes"] = {
 		["AngelKnight"] = false,
@@ -16,7 +16,7 @@ local DataTemplate = {
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test4", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test5", DataTemplate)
 
 local Profiles = {}
 
@@ -65,6 +65,9 @@ function PlayerDataManager:AddKill(player: Player)
     local profile = Profiles[player]
     if profile then
         profile.Data.Kills += 1
+
+        --25 tokens a kill
+        PlayerDataManager:AddToken(player, 25)
     end
 end
 
