@@ -102,10 +102,10 @@ ClassData["Pyromancer"] = {
     Cost = 200,
     Description = "Fire Connoisseur",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
+        ["LMBMove"] = {5, 5, 5},
         ["QMove"] = 6,
         ["EMove"] = 6,
-        ["FMove"] = 10,
+        ["FMove"] = 15,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
