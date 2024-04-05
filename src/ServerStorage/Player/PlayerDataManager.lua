@@ -16,7 +16,7 @@ local DataTemplate = {
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test7", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test9", DataTemplate)
 
 local Profiles = {}
 
@@ -65,6 +65,13 @@ function PlayerDataManager:AddKill(player: Player)
     local profile = Profiles[player]
     if profile then
         profile.Data.Kills += 1
+    end
+end
+
+function PlayerDataManager:AddWin(player: Player)
+    local profile = Profiles[player]
+    if profile then
+        profile.Data.Wins += 1
     end
 end
 

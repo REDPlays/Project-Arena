@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ServerStorage = game:GetService("ServerStorage")
 
+local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local PlayerDataManager = require(ServerStorage.ServerFiles.Player.PlayerDataManager)
 
 local PlayerManager = {}
@@ -41,8 +42,12 @@ function PlayerManager:AddKill(player: Player)
 
     PlayerManager.roundManager:AddKill(player)
 
-    --25 tokens a kill
-    PlayerDataManager:AddToken(player, 25)
+    --10 tokens a kill
+    PlayerDataManager:AddToken(player, 10)
+end
+
+function PlayerManager:AddWin(player: Player)
+    PlayerDataManager:AddWin(player)
 end
 
 function PlayerManager:GetData(player: Player)
@@ -52,5 +57,15 @@ end
 function PlayerManager:Update(deltaTime)
     
 end
+
+local function RewardPlayers(player: Player, tokenAmount: number, placement: number)
+    PlayerManager:AddToken(player, tokenAmount)
+
+    if placement == 1 then
+        PlayerManager:AddWin(player)
+    end
+end
+
+Events.Server_Server.RewardPlayers.Event:Connect(RewardPlayers)
 
 return PlayerManager

@@ -43,6 +43,16 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.hideLeaderboard = false
     self.hideTween = nil
 
+    self.Winnerboard = self.HUD:WaitForChild("Winnerboard")
+    self.Winnerboard.Visible = false
+    self.Winnerboard.GroupTransparency = 1
+
+    self.placementUI = {
+        [1] = self.Winnerboard:WaitForChild("First"),
+        [2] = self.Winnerboard:WaitForChild("Second"),
+        [3] = self.Winnerboard:WaitForChild("Third"),
+    }
+
     self.Btns = {
         LMBMove = self.MoveList:WaitForChild("LMB_Btn"),
         QMove = self.MoveList:WaitForChild("Q_Btn"),
@@ -175,6 +185,53 @@ function UIController:HideLeaderboard()
         self.hideTween = TweenService:Create(self.Leaderboard, info, {Position = UDim2.new(1, 0, .5, 0)})
         self.hideTween:Play()
     end
+end
+
+function UIController:DisplayWinners(rewardData, rewardCount)
+    for placement, UI in pairs(self.placementUI) do
+        if placement <= rewardCount then
+            UI.Visible = true
+        else
+            UI.Visible = false
+        end
+    end
+
+    self.Winnerboard.Visible = true
+    local info =TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(self.Winnerboard, info, {GroupTransparency = 0}):Play()
+
+    for placement, data in pairs(rewardData) do
+        local copyCharacter = data.character:Clone()
+
+        local currentUI = self.placementUI[placement]
+        if not currentUI then
+            continue
+        end
+
+        local viewPort = currentUI:FindFirstChild("ViewportFrame")
+        if not viewPort then
+            continue
+        end
+
+        local PlaceHolder = viewPort:FindFirstChild("PlaceHolder")
+        if PlaceHolder then
+            PlaceHolder:Destroy()
+        end
+
+        copyCharacter.Parent = viewPort
+        copyCharacter:PivotTo(CFrame.new(0, 0, 0))
+
+        viewPort.PlayerName.Text = data.playerName
+        viewPort.Tokens.Text = "Tokens - ".. data.tokens
+        viewPort.Kills.Text = "Kills - "..data.kills
+    end
+
+    task.delay(3, function()
+        TweenService:Create(self.Winnerboard, info, {GroupTransparency = 1}):Play()
+        task.delay(.25, function()
+            self.Winnerboard.Visible = false
+        end)
+    end)
 end
 
 function UIController:Connect()
@@ -453,6 +510,10 @@ function UIController:Connect()
         local formattedTime = string.format("%i:%02i", min, sec)
 
         self.IndicatorTimer.Text = formattedTime
+    end)
+
+    self.rewardsEvent = Events.Server_Client.Rewards.OnClientEvent:Connect(function(rewardData, rewardCount)
+        self:DisplayWinners(rewardData, rewardCount)
     end)
 end
 

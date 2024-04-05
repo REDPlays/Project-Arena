@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
@@ -11,15 +12,11 @@ local RoundManager = {}
 RoundManager.__index = RoundManager
 
 function SortTable(oldTable)
-    local sortedTable = {}
+    local sortedTable = table.clone(oldTable)
 
-    table.sort(oldTable, function(a, b)
-        warn("a:", a)
-        warn("b:", b)
-        return a > b
+    table.sort(sortedTable, function(a, b)
+        return a[2] > b[2]
     end)
-
-    sortedTable = oldTable
 
     return sortedTable
 end
@@ -50,7 +47,7 @@ function RoundManager:Init(ServerGameManager)
     self.playersInRound = {}
     
     --setting round duration based on gamemode?
-    self.roundMaxDuration = 45 --120
+    self.roundMaxDuration = 120
 
     --map selection will be needed later on
     self.Map = workspace.Map
@@ -109,14 +106,20 @@ function RoundManager:TeleportAllPlayers()
             CollectionService:RemoveTag(data.character, "Invulnerable")
         end
 
-        if not self.playersInRound[player.Name] then
-            self.playersInRound[player.Name] = 0
+        local currentTag = nil
+        for i, tag in pairs(self.playersInRound) do
+            if tag[1] == player.Name then
+                currentTag = tag
+            end
+        end
+
+        if not currentTag then
+            local tag = {player.Name, 0}
+            table.insert(self.playersInRound, tag)
         end
 
         data.character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
     end
-
-    warn("self.playersInRound:", self.playersInRound)
 end
 
 function RoundManager:ResetAllPlayers()
@@ -155,8 +158,16 @@ function RoundManager:TeleportPlayer(player: Player)
         CollectionService:RemoveTag(character, "Invulnerable")
     end
 
-    if not self.playersInRound[player.Name] then
-        self.playersInRound[player.Name] = 0
+    local currentTag = nil
+    for i, tag in pairs(self.playersInRound) do
+        if tag[1] == player.Name then
+            currentTag = tag
+        end
+    end
+
+    if not currentTag then
+        local tag = {player.Name, 0}
+        table.insert(self.playersInRound, tag)
     end
 
     character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
@@ -167,11 +178,11 @@ function RoundManager:AddKill(player: Player)
         return
     end
     
-    if not self.playersInRound[player.Name] then
-        return
+    for i, tag in pairs(self.playersInRound) do
+        if tag[1] == player.Name then
+            tag[2] += 1
+        end
     end
-    
-    self.playersInRound[player.Name] += 1
 end
 
 function RoundManager:UpdatePickups(deltaTime)
@@ -237,6 +248,42 @@ function RoundManager:UpdatePickups(deltaTime)
             end
         end
     end
+end
+
+function RoundManager:RewardPlayers(newList)
+    local rewardData = {}
+    local rewardCount = 0
+
+    for placement, tag in pairs(newList) do
+        local player = Players:FindFirstChild(tag[1])
+        if player then
+            local tokens
+            if placement == 1 then
+                tokens = 100 + (tag[2] * 10)
+            elseif placement == 2 then
+                tokens = 75 + (tag[2] * 10)
+            elseif placement == 3 then
+                tokens = 50 + (tag[2] * 10)
+            else
+                tokens = 25 + (tag[2] * 10)
+            end
+
+            if placement < 4 then
+                rewardCount += 1
+                player.Character.Archivable = true
+                rewardData[placement] = {
+                    playerName = player.Name,
+                    character = player.Character,
+                    kills = tag[2],
+                    tokens = tokens,
+                }
+            end
+
+            Events.Server_Server.RewardPlayers:Fire(player, tokens, placement)
+        end
+    end
+
+    Events.Server_Client.Rewards:FireAllClients(rewardData, rewardCount)
 end
 
 function RoundManager:Update(deltaTime)
@@ -312,11 +359,10 @@ function RoundManager:Update(deltaTime)
                 self.roundStart = false
                 self.roundDuration = 0
 
-                local currentList = self.playersInRound
-                warn("currentList:", currentList)
+                local newList = SortTable(self.playersInRound)
+                self:RewardPlayers(newList)
 
-                local newList = SortTable(currentList)
-                warn("newList:", newList)
+                self.playersInRound = {}
 
                 self:CleanupPickups()
 

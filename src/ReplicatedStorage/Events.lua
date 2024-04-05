@@ -30,11 +30,13 @@ Events.Server_Client = {
     Hitbox = Server_Client:WaitForChild("Hitbox"),
     CountDown = Server_Client:WaitForChild("CountDown"),
     UpdateStatue = Server_Client:WaitForChild("UpdateStatue"),
-    Leaderboard = Server_Client:WaitForChild("Leaderboard")
+    Leaderboard = Server_Client:WaitForChild("Leaderboard"),
+    Rewards = Server_Client:WaitForChild("Rewards"),
 }
 
 Events.Server_Server = {
     Hitbox = Server_Server:WaitForChild("Hitbox"),
+    RewardPlayers = Server_Server:WaitForChild("RewardPlayers"),
 }
 
 return Events
