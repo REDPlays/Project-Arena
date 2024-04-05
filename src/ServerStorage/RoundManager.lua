@@ -296,7 +296,7 @@ function RoundManager:Update(deltaTime)
 
         --not enough players
         if self.serverGameManager.playerCount <= self.belowLimit then
-            warn("not enough players")
+            Events.Server_Client.CountDown:FireAllClients("not enough players", 0)
             return
         end
 
@@ -319,7 +319,7 @@ function RoundManager:Update(deltaTime)
 
         --not enough players with a class
         if playerHasClass <= self.belowLimit and not self.roundStart then
-            warn("not enough players ready")
+            Events.Server_Client.CountDown:FireAllClients("not enough players ready", 0)
             return
         end
 
@@ -348,7 +348,7 @@ function RoundManager:Update(deltaTime)
 
                     self:TeleportAllPlayers()
 
-                    warn("Start Round!!!")
+                    --warn("Start Round!!!")
                 end
             end
         elseif self.roundStart then
@@ -373,7 +373,7 @@ function RoundManager:Update(deltaTime)
 
                 Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
 
-                warn("ROUND OVER!!!")
+                --warn("ROUND OVER!!!")
             end
         end
     end
