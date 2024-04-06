@@ -58,6 +58,10 @@ function HealthRegen:Update(deltaTime)
             continue
         end
 
+        if humanoid.Health <= 0 then
+            continue
+        end
+
         local Stats = character:FindFirstChild("Stats")
         if not Stats then
             continue
@@ -76,18 +80,6 @@ function HealthRegen:Update(deltaTime)
         end
 
         HealthManager:Heal(character, HealthRegen.rateRegen * deltaTime)
-
-        --[==[
-        local health = humanoid.Health 
-        local maxHealth = humanoid.MaxHealth
-
-        if health > 0 and health < maxHealth then
-            humanoid.Health += HealthRegen.rateRegen * deltaTime
-
-            Stats:SetAttribute("Health", health)
-            Stats:SetAttribute("MaxHealth", maxHealth)
-        end
-        ]==]
     end
 
     --regenerate health (dummy)
@@ -98,6 +90,10 @@ function HealthRegen:Update(deltaTime)
 
         local humanoid: Humanoid = dummy:FindFirstChild("Humanoid")
         if not humanoid then
+            continue
+        end
+
+        if humanoid.Health <= 0 then
             continue
         end
 
@@ -119,18 +115,6 @@ function HealthRegen:Update(deltaTime)
         end
 
         HealthManager:Heal(dummy, HealthRegen.rateRegen * deltaTime)
-
-        --[==[
-        local health = humanoid.Health 
-        local maxHealth = humanoid.MaxHealth
-
-        if health > 0 and health < maxHealth then
-            humanoid.Health += HealthRegen.rateRegen * deltaTime
-
-            Stats:SetAttribute("Health", health)
-            Stats:SetAttribute("MaxHealth", maxHealth)
-        end
-        ]==]
     end
 
     for targetId, data in pairs(HealthRegen.InState) do
@@ -141,6 +125,10 @@ function HealthRegen:Update(deltaTime)
 
         local humanoid: Humanoid = data.target:FindFirstChild("Humanoid")
         if not humanoid then
+            continue
+        end
+
+        if humanoid.Health <= 0 then
             continue
         end
 
@@ -157,18 +145,6 @@ function HealthRegen:Update(deltaTime)
         end
 
         HealthManager:Heal(data.target, HealthRegen.rateRegen * deltaTime)
-
-        --[==[
-        local health = humanoid.Health 
-        local maxHealth = humanoid.MaxHealth
-
-        if health > 0 and health < maxHealth then
-            humanoid.Health += data.regenRate * deltaTime
-
-            Stats:SetAttribute("Health", health)
-            Stats:SetAttribute("MaxHealth", maxHealth)
-        end
-        ]==]
     end
 end
 

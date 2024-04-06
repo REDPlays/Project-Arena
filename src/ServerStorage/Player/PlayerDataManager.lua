@@ -16,7 +16,7 @@ local DataTemplate = {
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test9", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test10", DataTemplate)
 
 local Profiles = {}
 
