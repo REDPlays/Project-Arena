@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
+local Indicators = Assets:WaitForChild("Indicators")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
@@ -47,6 +48,20 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
     weld.Part1 = rootPart
     weld.Parent = weld.Part0
 
+    local caution = Indicators.CautionLines:Clone()
+    caution.Size = Vector3.new(Hitbox.Size.X, .1, Hitbox.Size.Z)
+    caution.A0.Position = Vector3.new(0, .05, -caution.Size.Z/2)
+    caution.A1.Position = Vector3.new(0, .05, caution.Size.Z/2)
+    caution.Beam.Width0 = caution.Size.X
+    caution.Beam.Width1 = caution.Size.X
+    caution.CFrame = placementCFrame * CFrame.new(0, -Hitbox.Size.Y/2 + 0.05, 0)
+    caution.Parent = IgnoreFolder
+
+    local weld2 = Instance.new("WeldConstraint")
+    weld2.Part0 = caution
+    weld2.Part1 = rootPart
+    weld2.Parent = weld2.Part0
+
     Stats:SetAttribute("AbilityLocked", true)
 
     local duration = 3
@@ -55,11 +70,16 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
 
     StateManager:AddTarget(character, "Slow", duration)
 
+    local conditionalData = {
+        Offset = placementCFrame,
+        Size = classData.Hitboxes[moveType].Size,
+    }
+
     VisualEffectServer:SpawnEffectsInRange(
         "Flamethrower",
         nil,
         character,
-        {},
+        conditionalData,
         1000
     )
     
@@ -157,6 +177,7 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
     end)
 
     Debris:AddItem(Hitbox, duration)
+    Debris:AddItem(caution, duration)
 
     task.delay(duration, function()
         Stats:SetAttribute("AbilityLocked", false)

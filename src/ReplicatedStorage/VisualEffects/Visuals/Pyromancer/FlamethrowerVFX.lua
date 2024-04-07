@@ -47,7 +47,6 @@ function Flamethrower:Terminate()
 end
 
 function Flamethrower:Update(deltaTime)
-    
 end
 
 function Flamethrower:Fire()
