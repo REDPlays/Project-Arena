@@ -13,6 +13,7 @@ local DataTemplate = {
 	["Classes"] = {
 		["AngelKnight"] = false,
         ["Pyromancer"] = false,
+        ["ShieldWarrior"] = false,
 	},
 }
 

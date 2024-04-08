@@ -52,7 +52,7 @@ function CharacterSelectServer:Setup()
             DescriptionUI.Background:WaitForChild("ClassName").Text= "["..class.Name.."]"
             DescriptionUI.Background:WaitForChild("Health").Text = "HP: "..currClassData.Health
             DescriptionUI.Background:WaitForChild("Speed").Text = "Speed: "..currClassData.Speed
-            DescriptionUI.Background:WaitForChild("Role").Text = currClassData.Role
+            DescriptionUI.Background:WaitForChild("Role").Text = "Role: "..currClassData.Role
             DescriptionUI.Background:WaitForChild("Description").Text = currClassData.Description
         end
     end

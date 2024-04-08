@@ -167,4 +167,77 @@ ClassData["Pyromancer"] = {
     }
 }
 
+ClassData["ShieldWarrior"] = {
+    Health = 250,
+    Defense = 150,
+    Speed = 20,
+    Role = "Tank",
+    Cost = 200,
+    Description = "Shield Hero",
+    DamageList = {
+        ["LMBMove"] = {5, 5, 5},
+        ["QMove"] = 6,
+        ["EMove"] = 6,
+        ["FMove"] = 15,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .5,
+        ["QMove"] = 3,
+        ["EMove"] = 7,
+        ["FMove"] = 10,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(4, 4, 4),
+            Offset = CFrame.new(0, 0, -2),
+        },
+        ["QMove"] = {
+            Size = Vector3.new(3, 3, 3),
+            Offset = CFrame.new(0, 0, -1),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(6, 6, 20),
+            Offset = CFrame.new(0, 3, -12),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(20, 20, 20),
+            Offset = CFrame.new(0, 0, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = true,
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = false,
+        },
+        ["QMove"] = {
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = false,
+        },
+        ["EMove"] = {
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = true,
+        },
+        ["FMove"] = {
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "FireBall",
+        ["QMove"] = "FireBall",
+        ["EMove"] = "AngelicCharge",
+        ["FMove"] = "SunBeam",
+    }
+}
+
 return ClassData
