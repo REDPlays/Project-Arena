@@ -22,7 +22,7 @@ ClassData["Base"] = {
 }
 
 ClassData["AngelKnight"] = {
-    Health = 150,
+    Health = 125,
     Defense = 100,
     Speed = 40,
     Role = "Support",
