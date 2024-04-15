@@ -46,9 +46,9 @@ AnimationData["Pyromancer"] = {
 
 AnimationData["ShieldWarrior"] = {
     LMBMove = {
-        Animations:WaitForChild("Pyromancer"):WaitForChild("M1_1"),
-        Animations:WaitForChild("Pyromancer"):WaitForChild("M1_2"),
-        Animations:WaitForChild("Pyromancer"):WaitForChild("M1_3"),
+        Animations:WaitForChild("ShieldWarrior"):WaitForChild("M1_1"),
+        Animations:WaitForChild("ShieldWarrior"):WaitForChild("M1_2"),
+        Animations:WaitForChild("ShieldWarrior"):WaitForChild("M1_3"),
     },
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),

@@ -22,9 +22,9 @@ ClassData["Base"] = {
 }
 
 ClassData["AngelKnight"] = {
-    Health = 125,
+    Health = 100,
     Defense = 100,
-    Speed = 40,
+    Speed = 35,
     Role = "Support",
     Cost = 200,
     Description = "Agressive Healer",
@@ -36,7 +36,7 @@ ClassData["AngelKnight"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 5,
+        ["QMove"] = 6,
         ["EMove"] = 5,
         ["FMove"] = 10,
     },
@@ -105,7 +105,7 @@ ClassData["Pyromancer"] = {
         ["LMBMove"] = {5, 5, 5},
         ["QMove"] = 6,
         ["EMove"] = 6,
-        ["FMove"] = 15,
+        ["FMove"] = 20,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
@@ -188,8 +188,8 @@ ClassData["ShieldWarrior"] = {
     },
     Hitboxes = {
         ["LMBMove"] = {
-            Size = Vector3.new(4, 4, 4),
-            Offset = CFrame.new(0, 0, -2),
+            Size = Vector3.new(7, 5, 7),
+            Offset = CFrame.new(0, 2.5, -3.5),
         },
         ["QMove"] = {
             Size = Vector3.new(3, 3, 3),
@@ -207,37 +207,41 @@ ClassData["ShieldWarrior"] = {
     MoveData = {
         ["LMBMove"] = {
             isAOE = false,
-            isProjectile = true,
+            isProjectile = false,
             Stunned = false,
-            Burn = true,
+            Burn = false,
             Slow = false,
             CameraLock = false,
         },
         ["QMove"] = {
             Stunned = false,
-            Burn = true,
+            Burn = false,
             Slow = false,
             CameraLock = false,
         },
         ["EMove"] = {
             Stunned = false,
-            Burn = true,
+            Burn = false,
             Slow = false,
-            CameraLock = true,
+            CameraLock = false,
         },
         ["FMove"] = {
             Stunned = false,
-            Burn = true,
+            Burn = false,
             Slow = false,
             CameraLock = false,
         },
     },
     VisualEffects = {
-        ["LMBMove"] = "AngelKnightM1",
+        ["LMBMove"] = "ShieldWarriorM1",
         ["QMove"] = "FireBall",
         ["EMove"] = "AngelicCharge",
         ["FMove"] = "SunBeam",
     }
 }
+
+--ClassData["Samurai"] = {}
+
+--ClassData["Engineer"] = {}
 
 return ClassData
