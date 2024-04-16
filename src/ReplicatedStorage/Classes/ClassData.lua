@@ -188,8 +188,8 @@ ClassData["ShieldWarrior"] = {
     },
     Hitboxes = {
         ["LMBMove"] = {
-            Size = Vector3.new(7, 5, 7),
-            Offset = CFrame.new(0, 2.5, -3.5),
+            Size = Vector3.new(7, 5, 5),
+            Offset = CFrame.new(0, 2.5, -2.5),
         },
         ["QMove"] = {
             Size = Vector3.new(3, 3, 3),
