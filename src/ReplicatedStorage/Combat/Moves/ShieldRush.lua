@@ -15,9 +15,9 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 
 local IgnoreFolder = workspace.Ignore
 
-local AngelicCharge = {}
+local ShieldRush = {}
 
-function AngelicCharge:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ShieldRush:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local damage = classData.DamageList[moveType]
@@ -48,22 +48,14 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
     weld.Parent = weld.Part0
 
     Stats:SetAttribute("AbilityLocked", true)
-    
-    VisualEffectServer:SpawnEffectsInRange(
-        "AngelicCharge",
-        nil,
-        character,
-        {},
-        1000
-    )
 
-    local duration = .25
+    local duration = 3
     local currTime = 0
 
-    local alreadyHit = {}
+    local target = nil
 
     local thread = coroutine.create(function()
-        while currTime < duration * 2 do
+        while currTime < duration do
             currTime += RunService.Heartbeat:Wait()
             
             local touched = Hitbox.Touched:Connect(function() end)
@@ -100,7 +92,7 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                     continue
                 end
 
-                if alreadyHit[parent.Name] then
+                if target then
                     continue
                 end
 
@@ -108,14 +100,22 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                     continue
                 end
 
-                alreadyHit[parent.Name] = true
+                target = parent
 
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block angelic charge")
+                    warn("block shield bash")
                     continue
                 end
+                
+                if Hitbox then
+                    Hitbox:Destroy()
+                end
+
+                Stats:SetAttribute("AbilityLocked", false)
+
+                Events.Server_Client.AnimationSystem:FireClient(player, "Cancel", moveType)
 
                 --apply burn
                 if classData.MoveData[moveType].Burn then
@@ -135,28 +135,34 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage, character)
+
+                Events.Server_Client.Movement:FireAllClients(character, {}, true)
+
+                break
             end
             
             task.wait()
         end
     end)
 
-    Debris:AddItem(Hitbox, duration * 2)
+    Debris:AddItem(Hitbox, duration)
 
-    task.delay(duration * 2 , function()
-        Stats:SetAttribute("AbilityLocked", false)
+    task.delay(duration, function()
+        if Stats:GetAttribute("AbilityLocked") then
+            Stats:SetAttribute("AbilityLocked", false)
+        end
     end)
 
     coroutine.resume(thread)
 
     local dashData = {
         duration = duration,
-        speed = 75,
+        speed = 45,
         isDash = true,
-        allowPass = true,
+        allowPass = false,
     }
 
     Events.Server_Client.Movement:FireAllClients(character, dashData)
 end
 
-return AngelicCharge
+return ShieldRush

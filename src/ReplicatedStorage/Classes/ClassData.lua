@@ -175,14 +175,14 @@ ClassData["ShieldWarrior"] = {
     Cost = 200,
     Description = "Shield Hero",
     DamageList = {
-        ["LMBMove"] = {5, 5, 5},
-        ["QMove"] = 6,
-        ["EMove"] = 6,
+        ["LMBMove"] = {3, 3, 3},
+        ["QMove"] = 10,
+        ["EMove"] = 15,
         ["FMove"] = 15,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 3,
+        ["QMove"] = 3.5,
         ["EMove"] = 7,
         ["FMove"] = 10,
     },
@@ -192,12 +192,12 @@ ClassData["ShieldWarrior"] = {
             Offset = CFrame.new(0, 2.5, -2.5),
         },
         ["QMove"] = {
-            Size = Vector3.new(3, 3, 3),
-            Offset = CFrame.new(0, 0, -1),
+            Size = Vector3.new(6, 6, 6),
+            Offset = CFrame.new(0, 2.5, -1),
         },
         ["EMove"] = {
-            Size = Vector3.new(6, 6, 20),
-            Offset = CFrame.new(0, 3, -12),
+            Size = Vector3.new(6, 6, 6),
+            Offset = CFrame.new(0, 2.5, 0),
         },
         ["FMove"] = {
             Size = Vector3.new(20, 20, 20),
@@ -220,7 +220,7 @@ ClassData["ShieldWarrior"] = {
             CameraLock = false,
         },
         ["EMove"] = {
-            Stunned = false,
+            Stunned = true,
             Burn = false,
             Slow = false,
             CameraLock = false,
@@ -234,8 +234,8 @@ ClassData["ShieldWarrior"] = {
     },
     VisualEffects = {
         ["LMBMove"] = "ShieldWarriorM1",
-        ["QMove"] = "FireBall",
-        ["EMove"] = "AngelicCharge",
+        ["QMove"] = "ShieldBash",
+        ["EMove"] = "ShieldRush",
         ["FMove"] = "SunBeam",
     }
 }

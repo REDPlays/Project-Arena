@@ -32,6 +32,7 @@ Events.Server_Client = {
     UpdateStatue = Server_Client:WaitForChild("UpdateStatue"),
     Leaderboard = Server_Client:WaitForChild("Leaderboard"),
     Rewards = Server_Client:WaitForChild("Rewards"),
+    AnimationSystem = Server_Client:WaitForChild("AnimationSystem"),
 }
 
 Events.Server_Server = {

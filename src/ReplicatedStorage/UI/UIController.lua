@@ -515,6 +515,12 @@ function UIController:Connect()
     self.rewardsEvent = Events.Server_Client.Rewards.OnClientEvent:Connect(function(rewardData, rewardCount)
         self:DisplayWinners(rewardData, rewardCount)
     end)
+
+    self.animationEvent = Events.Server_Client.AnimationSystem.OnClientEvent:Connect(function(data, moveType)
+        if data == "Cancel" then
+            self.animationSystem:Stop(self.class, moveType)
+        end
+    end)
 end
 
 function UIController:LoadCharacter(class)
@@ -553,6 +559,14 @@ function UIController:Disconnect()
     if self.countDownEvent then
         self.countDownEvent:Disconnect()
         self.countDownEvent = nil
+    end
+
+    if self.rewardsEvent then
+        self.rewardsEvent:Disconnect()
+    end
+
+    if self.animationEvent then
+        self.animationEvent:Disconnect()
     end
 end
 

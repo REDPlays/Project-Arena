@@ -15,9 +15,9 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 
 local IgnoreFolder = workspace.Ignore
 
-local AngelicCharge = {}
+local ShieldBash = {}
 
-function AngelicCharge:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ShieldBash:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local damage = classData.DamageList[moveType]
@@ -48,22 +48,14 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
     weld.Parent = weld.Part0
 
     Stats:SetAttribute("AbilityLocked", true)
-    
-    VisualEffectServer:SpawnEffectsInRange(
-        "AngelicCharge",
-        nil,
-        character,
-        {},
-        1000
-    )
 
-    local duration = .25
+    local duration = .125
     local currTime = 0
 
     local alreadyHit = {}
 
     local thread = coroutine.create(function()
-        while currTime < duration * 2 do
+        while currTime < duration * 3 do
             currTime += RunService.Heartbeat:Wait()
             
             local touched = Hitbox.Touched:Connect(function() end)
@@ -113,7 +105,7 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block angelic charge")
+                    warn("block shield bash")
                     continue
                 end
 
@@ -141,9 +133,9 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
         end
     end)
 
-    Debris:AddItem(Hitbox, duration * 2)
+    Debris:AddItem(Hitbox, duration * 3)
 
-    task.delay(duration * 2 , function()
+    task.delay(duration * 3 , function()
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
@@ -153,10 +145,10 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
         duration = duration,
         speed = 75,
         isDash = true,
-        allowPass = true,
+        allowPass = false,
     }
 
     Events.Server_Client.Movement:FireAllClients(character, dashData)
 end
 
-return AngelicCharge
+return ShieldBash
