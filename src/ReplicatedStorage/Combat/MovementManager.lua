@@ -14,10 +14,19 @@ function MovementManager:Dash(character, dashData)
         return
     end
 
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+    
+   if dashData.facingCFrame then
+        rootPart.CFrame = dashData.facingCFrame
+   end
+
     local detector = Hitboxes.Hitbox:Clone()
     detector.Size = Vector3.new(5, 5, 5)
     detector.Color = Color3.fromRGB(82, 180, 173)
-    detector.Transparency = 1
+    detector.Transparency = .5
     detector.Anchored = true
     detector.CFrame = character.HumanoidRootPart.CFrame
     detector.Parent = workspace.Ignore
@@ -33,13 +42,10 @@ function MovementManager:Dash(character, dashData)
 end
 
 function MovementManager:Cleanup(character)
-    if not MovementManager.dashList[character] then
-        return
+    if MovementManager.dashList[character] then
+        MovementManager.dashList[character].detector:Destroy()
+        MovementManager.dashList[character] = nil
     end
-
-    MovementManager.dashList[character].detector:Destroy()
-
-    MovementManager.dashList[character] = nil
 end
 
 function MovementManager:GetDetection(detector: BasePart, character, allowPass)
@@ -94,18 +100,18 @@ RunService.Heartbeat:Connect(function(deltaTime)
         if not rootPart then
             continue
         end
-
+        
         if dashData.currTime >= dashData.duration then
             MovementManager:Cleanup(dashData.character)
             continue
         end
-
+        
         local detector = dashData.detector
         if not detector then
             MovementManager:Cleanup(dashData.character)
             continue
         end
-
+        
         dashData.currTime += deltaTime
 
         detector.CFrame = rootPart.CFrame

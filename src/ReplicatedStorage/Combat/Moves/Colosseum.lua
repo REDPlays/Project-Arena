@@ -51,7 +51,10 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
         Wall.CanQuery = false
         Wall.CFrame = newCFrame
         Wall.Anchored = true
-        Wall.Transparency = 0
+        Wall.Transparency = 1
+        if ShowHitboxes then
+            Wall.Transparency = 0
+        end
         Wall.Parent = workspace.Obstacles
 
         wallObjects[i] = Wall
