@@ -145,11 +145,9 @@ function ShieldWarriorM1:Hit(target)
     weld.Part1 = targetRoot 
     weld.Parent = weld.Part0
 
-    self.HitVFX.Attachment.Particle1:Emit(32)
-    self.HitVFX.Attachment.Particle1.Enabled = true
-    task.delay(.15, function()
-        self.HitVFX.Attachment.Particle1.Enabled = false
-    end)
+    self.HitVFX.Attachment.Ring:Emit(2)
+    self.HitVFX.Attachment.Spheres:Emit(16)
+    self.HitVFX.Attachment.Stars:Emit(3)
 end
 
 return ShieldWarriorM1
