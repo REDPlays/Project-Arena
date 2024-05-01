@@ -128,7 +128,7 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
 
                 HealthManager:Damage(parent, damage, character)
 
-                local facingCFrame = CFrame.new(enemyRoot.Position, rootPart.Position)
+                --[==[local facingCFrame = CFrame.new(enemyRoot.Position, rootPart.Position)
 
                 local knockData = {
                     duration = duration,
@@ -138,7 +138,7 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
                     facingCFrame = facingCFrame
                 }
             
-                Events.Server_Client.Movement:FireAllClients(parent, knockData)
+                Events.Server_Client.Movement:FireAllClients(parent, knockData)]==]
             end
             
             task.wait()
