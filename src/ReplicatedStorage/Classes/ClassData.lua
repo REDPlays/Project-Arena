@@ -192,8 +192,8 @@ ClassData["ShieldWarrior"] = {
             Offset = CFrame.new(0, 2.5, -2.5),
         },
         ["QMove"] = {
-            Size = Vector3.new(6, 6, 6),
-            Offset = CFrame.new(0, 2.5, -1),
+            Size = Vector3.new(6, 6, 8),
+            Offset = CFrame.new(0, 3, -4),
         },
         ["EMove"] = {
             Size = Vector3.new(6, 6, 6),

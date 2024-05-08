@@ -77,12 +77,6 @@ function ShieldWarriorM1:Swing()
     self.slash.CFrame = self.rootPart.CFrame
     self.slash.Parent = self.Folder
 
-    if self.conditionalData.moveCount == 1 or self.conditionalData.moveCount == 3 then
-        self.slash.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(30))
-    elseif self.conditionalData.moveCount == 2 then
-        self.slash.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(15))
-    end
-
     local weld = Instance.new("WeldConstraint")
     weld.Part0 = self.slash
     weld.Part1 = self.rootPart
@@ -93,34 +87,6 @@ function ShieldWarriorM1:Swing()
     self.sfx1._Pitch.Octave = math.random(95,  105) / 100
     self.sfx1.Parent = self.slash
     self.sfx1:Play()
-
-    local timing1 = .15
-    local info = TweenInfo.new(timing1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    TweenService:Create(self.slash, info, {CFrame = self.slash.CFrame * CFrame.new(0, 0, -2)}):Play()
-
-    task.delay(timing1, function()
-        local numVal = Instance.new("NumberValue")
-        numVal.Value = 0
-
-        local connect
-        connect = numVal.Changed:Connect(function()
-            self.slash.Beam.Transparency = NumberSequence.new(numVal.Value, 1)
-        end)
-
-        local timing2 = .5
-        local info2 = TweenInfo.new(timing2, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
-        TweenService:Create(numVal, info2, {Value = 1}):Play()
-
-        task.delay(timing2, function()
-            if connect then
-                connect:Disconnect()
-            end
-
-            if numVal then
-                numVal:Destroy()
-            end
-        end)
-    end)
 end
 
 function ShieldWarriorM1:Hit(target)
@@ -145,9 +111,9 @@ function ShieldWarriorM1:Hit(target)
     weld.Part1 = targetRoot 
     weld.Parent = weld.Part0
 
-    self.HitVFX.Attachment.Ring:Emit(2)
-    self.HitVFX.Attachment.Spheres:Emit(16)
-    self.HitVFX.Attachment.Stars:Emit(3)
+    self.HitVFX.Attachment.Ring:Emit(3)
+    self.HitVFX.Attachment.Squares:Emit(24)
+    self.HitVFX.Attachment.Center:Emit(3)
 end
 
 return ShieldWarriorM1

@@ -39,13 +39,9 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
     end
 
     Hitbox.Size = classData.Hitboxes[moveType].Size
+    Hitbox.Anchored = true
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
-
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = Hitbox
-    weld.Part1 = rootPart
-    weld.Parent = weld.Part0
 
     Stats:SetAttribute("AbilityLocked", true)
 
@@ -160,7 +156,7 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
         allowPass = false,
     }
 
-    Events.Server_Client.Movement:FireAllClients(character, dashData)
+    --Events.Server_Client.Movement:FireAllClients(character, dashData)
 end
 
 return ShieldBash
