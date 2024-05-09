@@ -44,6 +44,9 @@ function Slow:AddTarget(target: Model, duration)
     end
 
     if Slow.InState[target] then
+        Slow.InState[target].currTime = 0
+        Slow.InState[target].duration = duration
+        
         return
     end
 

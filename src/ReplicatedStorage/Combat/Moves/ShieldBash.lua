@@ -123,18 +123,6 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage, character)
-
-                --[==[local facingCFrame = CFrame.new(enemyRoot.Position, rootPart.Position)
-
-                local knockData = {
-                    duration = duration,
-                    speed = -75,
-                    isDash = true,
-                    allowPass = true,
-                    facingCFrame = facingCFrame
-                }
-            
-                Events.Server_Client.Movement:FireAllClients(parent, knockData)]==]
             end
             
             task.wait()
@@ -149,14 +137,13 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
 
     coroutine.resume(thread)
 
-    local dashData = {
-        duration = duration,
-        speed = 75,
-        isDash = true,
-        allowPass = false,
-    }
-
-    --Events.Server_Client.Movement:FireAllClients(character, dashData)
+    VisualEffectServer:SpawnEffectsInRange(
+        "ShieldBash",
+        nil,
+        character,
+        {},
+        1000
+    )
 end
 
 return ShieldBash

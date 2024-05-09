@@ -182,7 +182,7 @@ ClassData["ShieldWarrior"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 3.5,
+        ["QMove"] = 1,-- 3.5,
         ["EMove"] = 10,
         ["FMove"] = 10,
     },
@@ -193,7 +193,7 @@ ClassData["ShieldWarrior"] = {
         },
         ["QMove"] = {
             Size = Vector3.new(6, 6, 8),
-            Offset = CFrame.new(0, 3, -4),
+            Offset = CFrame.new(0, 3, -6),
         },
         ["EMove"] = {
             Size = Vector3.new(6, 6, 6),
