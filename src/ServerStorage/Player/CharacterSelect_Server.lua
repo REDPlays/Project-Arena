@@ -354,7 +354,9 @@ function CharacterSelectServer:SetCharacter(player, group, className)
     if CharacterSelectServer.roundManager.roundStart then
         CharacterSelectServer.roundManager:TeleportPlayer(player)
     else
-        CollectionService:AddTag(character, "Invulnerable")
+        if not workspace:GetAttribute("TestState") then
+            CollectionService:AddTag(character, "Invulnerable")
+        end
         character:PivotTo(CharacterSelectServer.Teleporter.CFrame * CFrame.new(0, 1, 0))
     end
 end

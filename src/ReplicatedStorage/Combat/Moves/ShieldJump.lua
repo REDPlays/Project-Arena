@@ -15,9 +15,9 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 
 local IgnoreFolder = workspace.Ignore
 
-local ShieldBash = {}
+local ShieldJump = {}
 
-function ShieldBash:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ShieldJump:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local damage = classData.DamageList[moveType]
@@ -39,19 +39,23 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
     end
 
     Hitbox.Size = classData.Hitboxes[moveType].Size
-    Hitbox.Anchored = true
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
 
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = Hitbox
+    weld.Part1 = rootPart
+    weld.Parent = weld.Part0
+
     Stats:SetAttribute("AbilityLocked", true)
 
-    local duration = .125
+    local duration = 3
     local currTime = 0
 
-    local alreadyHit = {}
+    local target = nil
 
     local thread = coroutine.create(function()
-        while currTime < duration * 3 do
+        while currTime < duration do
             currTime += RunService.Heartbeat:Wait()
             
             local touched = Hitbox.Touched:Connect(function() end)
@@ -88,7 +92,7 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
                     continue
                 end
 
-                if alreadyHit[parent.Name] then
+                if target then
                     continue
                 end
 
@@ -96,14 +100,22 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
                     continue
                 end
 
-                alreadyHit[parent.Name] = true
+                target = parent
 
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block shield bash")
+                    warn("block shield rush")
                     continue
                 end
+                
+                if Hitbox then
+                    Hitbox:Destroy()
+                end
+
+                Stats:SetAttribute("AbilityLocked", false)
+
+                Events.Server_Client.AnimationSystem:FireClient(player, "Cancel", moveType)
 
                 --apply burn
                 if classData.MoveData[moveType].Burn then
@@ -123,27 +135,34 @@ function ShieldBash:Activate(player, character, rootPart, placementCFrame, class
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage, character)
+
+                Events.Server_Client.Movement:FireAllClients(character, {}, true)
+
+                break
             end
             
             task.wait()
         end
     end)
 
-    Debris:AddItem(Hitbox, duration * 3)
+    Debris:AddItem(Hitbox, duration)
 
-    task.delay(duration * 3 , function()
-        Stats:SetAttribute("AbilityLocked", false)
+    task.delay(duration, function()
+        if Stats:GetAttribute("AbilityLocked") then
+            Stats:SetAttribute("AbilityLocked", false)
+        end
     end)
 
     coroutine.resume(thread)
 
-    VisualEffectServer:SpawnEffectsInRange(
-        "ShieldBash",
-        nil,
-        character,
-        {},
-        1000
-    )
+    local dashData = {
+        duration = duration,
+        speed = 45,
+        isDash = true,
+        allowPass = false,
+    }
+
+    Events.Server_Client.Movement:FireAllClients(character, dashData)
 end
 
-return ShieldBash
+return ShieldJump

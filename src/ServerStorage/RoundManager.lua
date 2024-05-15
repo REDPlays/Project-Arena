@@ -326,7 +326,7 @@ function RoundManager:Update(deltaTime)
         if not self.roundStart then
             if not self.startCountDown then
                 self.startCountDown = true
-                self.countDown = 15
+                self.countDown = 1000 --15
 
                 Events.Server_Client.CountDown:FireAllClients("CountDown", self.countDown)
             end

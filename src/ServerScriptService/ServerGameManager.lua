@@ -50,25 +50,25 @@ function ServerGameManager:ConfigureDummies()
     ServerGameManager.dummyTimers[Dummies.DummyAttacker] = {
         dummy = Dummies.DummyAttacker,
         currTime = 0,
-        maxTime = 1,
+        maxTime = .5,
     }
 
     ServerGameManager.dummyTimers[Dummies.DummyStunner] = {
         dummy = Dummies.DummyStunner,
         currTime = 0,
-        maxTime = 3,
+        maxTime = .5,
     }
 
     ServerGameManager.dummyTimers[Dummies.DummyBurn] = {
         dummy = Dummies.DummyBurn,
         currTime = 0,
-        maxTime = 1,
+        maxTime = .5,
     }
 
     ServerGameManager.dummyTimers[Dummies.DummySlow] = {
         dummy = Dummies.DummySlow,
         currTime = 0,
-        maxTime = 3,
+        maxTime = .5,
     }
 end
 

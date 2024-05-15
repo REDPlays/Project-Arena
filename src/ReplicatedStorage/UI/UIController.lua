@@ -308,7 +308,6 @@ function UIController:Connect()
                 }
 
                 local function hitBoxCallBack()
-                    local currentClassData = ClassData[self.class]
                     if not currentClassData then
                         return
                     end
@@ -349,7 +348,6 @@ function UIController:Connect()
                 }
 
                 local function hitBoxCallBack()
-                    local currentClassData = ClassData[self.class]
                     if not currentClassData then
                         return
                     end
@@ -358,14 +356,11 @@ function UIController:Connect()
 
                     local currentMoveData = moveData.QMove
 
-                    if currentMoveData.CameraLock then
-                        --self.cameraSystem:OutsideToggle(true)
-                    end
-
                     Events.Client_Server.Moves:FireServer(self.class, "QMove", currentMoveData)
                 end
 
-                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack)
+                local hasEvent = currentClassData.MoveData.QMove.hasEvent
+                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
 
@@ -390,7 +385,6 @@ function UIController:Connect()
                 }
 
                 local function hitBoxCallBack()
-                    local currentClassData = ClassData[self.class]
                     if not currentClassData then
                         return
                     end
@@ -399,14 +393,11 @@ function UIController:Connect()
 
                     local currentMoveData = moveData.EMove
 
-                    if currentMoveData.CameraLock then
-                        --self.cameraSystem:OutsideToggle(true)
-                    end
-
                     Events.Client_Server.Moves:FireServer(self.class, "EMove", currentMoveData)
                 end
 
-                self.animationSystem:Play(self.class, "EMove", nil, conditionalData, hitBoxCallBack)
+                local hasEvent = currentClassData.MoveData.EMove.hasEvent
+                self.animationSystem:Play(self.class, "EMove", nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
 
@@ -431,7 +422,6 @@ function UIController:Connect()
                 }
 
                 local function hitBoxCallBack()
-                    local currentClassData = ClassData[self.class]
                     if not currentClassData then
                         return
                     end
@@ -440,14 +430,11 @@ function UIController:Connect()
 
                     local currentMoveData = moveData.FMove
 
-                    if currentMoveData.CameraLock then
-                        --self.cameraSystem:OutsideToggle(true)
-                    end
-
                     Events.Client_Server.Moves:FireServer(self.class, "FMove", currentMoveData)
                 end
 
-                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack)
+                local hasEvent = currentClassData.MoveData.FMove.hasEvent
+                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
     end)

@@ -68,18 +68,21 @@ ClassData["AngelKnight"] = {
             CameraLock = false,
         },
         ["QMove"] = {
+            hasEvent = false,
             Stunned = false,
             Burn = false,
             Slow = false,
             CameraLock = false,
         },
         ["EMove"] = {
+            hasEvent = false,
             Stunned = false,
             Burn = false,
             Slow = true,
             CameraLock = false,
         },
         ["FMove"] = {
+            hasEvent = false,
             Stunned = false,
             Burn = false,
             Slow = false,
@@ -141,18 +144,21 @@ ClassData["Pyromancer"] = {
             CameraLock = false,
         },
         ["QMove"] = {
+            hasEvent = false,
             Stunned = false,
             Burn = true,
             Slow = false,
             CameraLock = false,
         },
         ["EMove"] = {
+            hasEvent = false,
             Stunned = false,
             Burn = true,
             Slow = false,
             CameraLock = true,
         },
         ["FMove"] = {
+            hasEvent = false,
             Stunned = false,
             Burn = true,
             Slow = false,
@@ -192,8 +198,8 @@ ClassData["ShieldWarrior"] = {
             Offset = CFrame.new(0, 2.5, -2.5),
         },
         ["QMove"] = {
-            Size = Vector3.new(6, 6, 8),
-            Offset = CFrame.new(0, 3, -6),
+            Size = Vector3.new(5, 5, 5),
+            Offset = CFrame.new(0, 2.5, -5),
         },
         ["EMove"] = {
             Size = Vector3.new(6, 6, 6),
@@ -214,18 +220,21 @@ ClassData["ShieldWarrior"] = {
             CameraLock = false,
         },
         ["QMove"] = {
+            hasEvent = true,
             Stunned = false,
             Burn = false,
             Slow = false,
             CameraLock = false,
         },
         ["EMove"] = {
+            hasEvent = false,
             Stunned = true,
             Burn = false,
             Slow = false,
             CameraLock = false,
         },
         ["FMove"] = {
+            hasEvent = false,
             Stunned = false,
             Burn = false,
             Slow = false,
@@ -234,8 +243,8 @@ ClassData["ShieldWarrior"] = {
     },
     VisualEffects = {
         ["LMBMove"] = "ShieldWarriorM1",
-        ["QMove"] = "ShieldBash",
-        ["EMove"] = "ShieldRush",
+        ["QMove"] = "ShieldSlam",
+        ["EMove"] = "ShieldJump",
         ["FMove"] = "SunBeam",
     }
 }
