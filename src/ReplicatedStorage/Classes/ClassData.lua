@@ -189,7 +189,7 @@ ClassData["ShieldWarrior"] = {
     Cooldowns = {
         ["LMBMove"] = .5,
         ["QMove"] = 1,-- 3.5,
-        ["EMove"] = 10,
+        ["EMove"] = 1, --10,
         ["FMove"] = 10,
     },
     Hitboxes = {
@@ -198,11 +198,11 @@ ClassData["ShieldWarrior"] = {
             Offset = CFrame.new(0, 2.5, -2.5),
         },
         ["QMove"] = {
-            Size = Vector3.new(5, 5, 5),
-            Offset = CFrame.new(0, 2.5, -5),
+            Size = Vector3.new(6, 6, 6),
+            Offset = CFrame.new(0, 3, -6),
         },
         ["EMove"] = {
-            Size = Vector3.new(6, 6, 6),
+            Size = Vector3.new(15, 5, 15),
             Offset = CFrame.new(0, 2.5, 0),
         },
         ["FMove"] = {
@@ -227,14 +227,14 @@ ClassData["ShieldWarrior"] = {
             CameraLock = false,
         },
         ["EMove"] = {
-            hasEvent = false,
+            hasEvent = true,
             Stunned = true,
             Burn = false,
             Slow = false,
             CameraLock = false,
         },
         ["FMove"] = {
-            hasEvent = false,
+            hasEvent = true,
             Stunned = false,
             Burn = false,
             Slow = false,

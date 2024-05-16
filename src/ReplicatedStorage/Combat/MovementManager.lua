@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -8,6 +9,11 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local MovementManager = {}
 MovementManager.dashList = {}
+MovementManager.bezierList = {}
+
+local function quadratic(t, p0, p1, p2)
+	return (1 - t) ^ 2 * p0 + 2 * (1 - t) * t * p1 + t ^ 2 * p2
+end
 
 function MovementManager:Dash(character, dashData)
     if MovementManager.dashList[character] then
@@ -41,10 +47,74 @@ function MovementManager:Dash(character, dashData)
     }
 end
 
+function MovementManager:Bezier(character, bezierData)
+    if MovementManager.bezierList[character] then
+        return
+    end
+
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local startCFrame = rootPart.CFrame
+    local endCFrame = startCFrame * CFrame.new(0, 0, -bezierData.distance)
+    local middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, 20, 0)
+
+    local numValue = Instance.new("NumberValue")
+    numValue.Value = 0
+
+    local info = TweenInfo.new(bezierData.duration, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(numValue, info, {Value = 1})
+
+    local thread = task.spawn(function()
+        while true do
+            local position = quadratic(numValue.Value, startCFrame.Position, middleCFrame.Position, endCFrame.Position)
+            
+            local endLookVector = endCFrame.LookVector
+            local lookAt = Vector3.new(endLookVector.X, 0, endLookVector.Z)
+
+            rootPart.CFrame = CFrame.lookAt(position, position + lookAt, Vector3.new(0, 1, 0))
+            
+            task.wait()
+        end
+    end)
+
+    MovementManager.bezierList[character] = {
+        duration = bezierData.duration,
+        currTime = 0,
+        character = character,
+        numValue = numValue,
+        tween = tween,
+        thread = thread
+    }
+
+    tween:Play()
+end
+
 function MovementManager:Cleanup(character)
     if MovementManager.dashList[character] then
         MovementManager.dashList[character].detector:Destroy()
         MovementManager.dashList[character] = nil
+    end
+end
+
+function MovementManager:CleanupBezier(character)
+    local bezierData = MovementManager.bezierList[character]
+    if bezierData then
+        if bezierData.thread then
+            task.cancel(bezierData.thread)
+        end
+
+        if bezierData.tween then
+            bezierData.tween:Cancel()
+        end
+
+        if bezierData.numValue then
+            bezierData.numValue:Destroy()
+        end
+
+        MovementManager.bezierList[character] = nil
     end
 end
 
@@ -92,6 +162,10 @@ local function movement(character, moveData, cancel)
     if moveData.isDash then
         MovementManager:Dash(character, moveData)
     end
+
+    if moveData.isBezier then
+        MovementManager:Bezier(character, moveData)
+    end
 end
 
 RunService.Heartbeat:Connect(function(deltaTime)
@@ -122,6 +196,28 @@ RunService.Heartbeat:Connect(function(deltaTime)
         end
 
         rootPart.CFrame *= CFrame.new(0, 0, -dashData.speed * deltaTime)
+    end
+
+    for id, bezierData in pairs(MovementManager.bezierList) do
+        local humanoid = bezierData.character:FindFirstChild("Humanoid")
+        if not humanoid then
+            MovementManager:CleanupBezier(bezierData.character)
+
+            continue
+        end
+
+        if bezierData.currTime >= bezierData.duration then
+            MovementManager:CleanupBezier(bezierData.character)
+            continue
+        end
+
+        if humanoid and humanoid.Health <= 0 then
+            MovementManager:CleanupBezier(bezierData.character)
+            
+            continue
+        end
+
+        bezierData.currTime += deltaTime
     end
 end)
 

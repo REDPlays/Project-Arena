@@ -32,137 +32,40 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
         return
     end
 
-    local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
-    Hitbox.Transparency = 1
-    if ShowHitboxes then
-        Hitbox.Transparency = .5
-    end
-
-    Hitbox.Size = classData.Hitboxes[moveType].Size
-    Hitbox.CFrame = placementCFrame
-    Hitbox.Parent = IgnoreFolder
-
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = Hitbox
-    weld.Part1 = rootPart
-    weld.Parent = weld.Part0
-
     Stats:SetAttribute("AbilityLocked", true)
 
-    local duration = 3
-    local currTime = 0
-
-    local target = nil
-
-    local thread = coroutine.create(function()
-        while currTime < duration do
-            currTime += RunService.Heartbeat:Wait()
-            
-            local touched = Hitbox.Touched:Connect(function() end)
-            local touchedObjects = Hitbox:GetTouchingParts()
-
-            if touched then
-                touched:Disconnect()
-            end
-
-            for i=1, #touchedObjects do
-                local object = touchedObjects[i]
-                local parent = object.Parent
-
-                if not parent:IsA("Model") then
-                    continue
-                end
-
-                if parent == character then
-                    continue
-                end
-
-                --ignoreTargets
-                if CollectionService:HasTag(parent, "Ignore") then
-                    continue
-                end
-
-                local enemyHum = parent:FindFirstChild("Humanoid")
-                if not enemyHum then
-                    continue
-                end
-
-                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-                if not enemyRoot then
-                    continue
-                end
-
-                if target then
-                    continue
-                end
-
-                if CollectionService:HasTag(parent, "Invulnerable") then
-                    continue
-                end
-
-                target = parent
-
-                local isBlocking = StateManager:CheckState(parent, "Blocking")
-                if isBlocking then
-                    --Block Indication
-                    warn("block shield rush")
-                    continue
-                end
-                
-                if Hitbox then
-                    Hitbox:Destroy()
-                end
-
-                Stats:SetAttribute("AbilityLocked", false)
-
-                Events.Server_Client.AnimationSystem:FireClient(player, "Cancel", moveType)
-
-                --apply burn
-                if classData.MoveData[moveType].Burn then
-                    StateManager:AddTarget(parent, "Burn", 3)
-                end
-
-                --apply stun
-                if classData.MoveData[moveType].Stunned then
-                    StateManager:AddTarget(parent, "Stunned", 2)
-                end
-
-                --apply slow
-                if classData.MoveData[moveType].Slow then
-                    StateManager:AddTarget(parent, "Slow", 2)
-                end
-
-                StateManager:AddTarget(parent, "Attacked", 1)
-
-                HealthManager:Damage(parent, damage, character)
-
-                Events.Server_Client.Movement:FireAllClients(character, {}, true)
-
-                break
-            end
-            
-            task.wait()
-        end
-    end)
-
-    Debris:AddItem(Hitbox, duration)
+    local duration = .5
 
     task.delay(duration, function()
         if Stats:GetAttribute("AbilityLocked") then
             Stats:SetAttribute("AbilityLocked", false)
         end
+
+        local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
+        Hitbox.Transparency = 1
+        if ShowHitboxes then
+            Hitbox.Transparency = .5
+        end
+
+        Hitbox.Size = classData.Hitboxes[moveType].Size
+        Hitbox.CFrame = character:GetPivot() * classData.Hitboxes[moveType].Offset
+        Hitbox.Parent = IgnoreFolder
+
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = Hitbox
+        weld.Part1 = rootPart
+        weld.Parent = weld.Part0
+
+        Debris:AddItem(Hitbox, duration)
     end)
 
-    coroutine.resume(thread)
-
-    local dashData = {
+    local bezierData = {
         duration = duration,
-        speed = 45,
-        isDash = true,
-        allowPass = false,
+        isBezier = true,
+        distance = 25,
     }
 
-    Events.Server_Client.Movement:FireAllClients(character, dashData)
+    Events.Server_Client.Movement:FireAllClients(character, bezierData)
 end
 
 return ShieldJump

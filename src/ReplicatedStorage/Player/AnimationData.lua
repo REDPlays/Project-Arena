@@ -55,7 +55,7 @@ AnimationData["ShieldWarrior"] = {
 
     QMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("QMove"),
     EMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Pyromancer"):WaitForChild("QMove"),
+    FMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("FMove"),
 
     Idle = Animations:WaitForChild("Pyromancer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Pyromancer"):WaitForChild("Run"),

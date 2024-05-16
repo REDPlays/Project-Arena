@@ -34,116 +34,41 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
 
     Stats:SetAttribute("AbilityLocked", true)
 
-    local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
-    Hitbox.Transparency = 1
-    if ShowHitboxes then
-        Hitbox.Transparency = .5
-    end
+    local duration = 1
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size
-    Hitbox.Anchored = true
-    Hitbox.CFrame = placementCFrame
-    Hitbox.Parent = IgnoreFolder
-    
-    local duration = .125
-    local currTime = 0
-
-    local alreadyHit = {}
-
-    local thread = coroutine.create(function()
-        while currTime < duration * 3 do
-            currTime += RunService.Heartbeat:Wait()
-            
-            local touched = Hitbox.Touched:Connect(function() end)
-            local touchedObjects = Hitbox:GetTouchingParts()
-
-            if touched then
-                touched:Disconnect()
-            end
-
-            for i=1, #touchedObjects do
-                local object = touchedObjects[i]
-                local parent = object.Parent
-
-                if not parent:IsA("Model") then
-                    continue
-                end
-
-                if parent == character then
-                    continue
-                end
-
-                --ignoreTargets
-                if CollectionService:HasTag(parent, "Ignore") then
-                    continue
-                end
-
-                local enemyHum = parent:FindFirstChild("Humanoid")
-                if not enemyHum then
-                    continue
-                end
-
-                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-                if not enemyRoot then
-                    continue
-                end
-
-                if alreadyHit[parent.Name] then
-                    continue
-                end
-
-                if CollectionService:HasTag(parent, "Invulnerable") then
-                    continue
-                end
-
-                alreadyHit[parent.Name] = true
-
-                local isBlocking = StateManager:CheckState(parent, "Blocking")
-                if isBlocking then
-                    --Block Indication
-                    warn("block shield bash")
-                    continue
-                end
-
-                --apply burn
-                if classData.MoveData[moveType].Burn then
-                    StateManager:AddTarget(parent, "Burn", 3)
-                end
-
-                --apply stun
-                if classData.MoveData[moveType].Stunned then
-                    StateManager:AddTarget(parent, "Stunned", 2)
-                end
-
-                --apply slow
-                if classData.MoveData[moveType].Slow then
-                    StateManager:AddTarget(parent, "Slow", 2)
-                end
-
-                StateManager:AddTarget(parent, "Attacked", 1)
-
-                HealthManager:Damage(parent, damage, character)
-            end
-            
-            task.wait()
-        end
-    end)
-
-    Debris:AddItem(Hitbox, duration * 3)
-
-    task.delay(duration * 3 , function()
+    task.delay(duration, function()
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
-    coroutine.resume(thread)
+    local size = classData.Hitboxes[moveType].Size
+    local startCFrame = character:GetPivot() * classData.Hitboxes[moveType].Offset
 
-    VisualEffectServer:SpawnEffectsInRange(
+    for _=1, 3 do
+        local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
+        Hitbox.Transparency = 1
+        if ShowHitboxes then
+            Hitbox.Transparency = .5
+        end
+
+        Hitbox.Size = classData.Hitboxes[moveType].Size
+        Hitbox.Anchored = true
+        Hitbox.CFrame = startCFrame
+        Hitbox.Parent = IgnoreFolder
+
+        Debris:AddItem(Hitbox, duration * 2)
+
+        startCFrame *= CFrame.new(0, 0, -size.Z)
+
+        task.wait(.05)
+    end
+
+    --[==[VisualEffectServer:SpawnEffectsInRange(
         "ShieldBash",
         nil,
         character,
         {},
         1000
-    )
+    )]==]
 end
 
 return ShieldSlam
