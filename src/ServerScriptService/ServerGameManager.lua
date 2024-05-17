@@ -70,6 +70,12 @@ function ServerGameManager:ConfigureDummies()
         currTime = 0,
         maxTime = .5,
     }
+
+    ServerGameManager.dummyTimers[Dummies.DummyKnockup] = {
+        dummy = Dummies.DummyKnockup,
+        currTime = 0,
+        maxTime = .5,
+    }
 end
 
 function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
@@ -176,13 +182,18 @@ function ServerGameManager:Update(deltaTime)
             isSlow = true
         end
 
+        local isKnockup = false
+        if data.dummy.Name == "DummyKnockup" then
+            isKnockup = true
+        end
+
         if data.currTime >= data.maxTime then
             data.currTime = 0
 
             local animation = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData.Base.DummyAttack)
             animation:Play()
 
-            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn, isSlow)
+            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn, isSlow, isKnockup)
         end
     end
 end

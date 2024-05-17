@@ -10,6 +10,7 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 local MovementManager = {}
 MovementManager.dashList = {}
 MovementManager.bezierList = {}
+MovementManager.knockupList = {}
 
 local function quadratic(t, p0, p1, p2)
 	return (1 - t) ^ 2 * p0 + 2 * (1 - t) * t * p1 + t ^ 2 * p2
@@ -92,6 +93,30 @@ function MovementManager:Bezier(character, bezierData)
     tween:Play()
 end
 
+function MovementManager:Knockup(character, knockupData)
+    if MovementManager.knockupList[character] then
+        return
+    end
+
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local upwardVelocity = Instance.new("BodyVelocity")
+    upwardVelocity.Name = "upwardVelocity"
+    upwardVelocity.Parent = rootPart
+    upwardVelocity.MaxForce = Vector3.new(0, math.huge, 0)
+    upwardVelocity.Velocity = Vector3.new(0, knockupData.Force, 0)
+
+    MovementManager.knockupList[character] = {
+        duration = knockupData.duration,
+        currTime = 0,
+        character = character,
+        upwardVelocity = upwardVelocity,
+    }
+end
+
 function MovementManager:Cleanup(character)
     if MovementManager.dashList[character] then
         MovementManager.dashList[character].detector:Destroy()
@@ -115,6 +140,17 @@ function MovementManager:CleanupBezier(character)
         end
 
         MovementManager.bezierList[character] = nil
+    end
+end
+
+function MovementManager:CleanupKnockup(character)
+    local knockupData = MovementManager.knockupList[character]
+    if knockupData then
+        if knockupData.upwardVelocity then
+            knockupData.upwardVelocity:Destroy()
+        end
+
+        MovementManager.knockupList[character] = nil
     end
 end
 
@@ -165,6 +201,10 @@ local function movement(character, moveData, cancel)
 
     if moveData.isBezier then
         MovementManager:Bezier(character, moveData)
+    end
+
+    if moveData.isKnockup then
+        MovementManager:Knockup(character, moveData)
     end
 end
 
@@ -218,6 +258,34 @@ RunService.Heartbeat:Connect(function(deltaTime)
         end
 
         bezierData.currTime += deltaTime
+    end
+
+    for id, knockupData in pairs(MovementManager.knockupList) do
+        local humanoid = knockupData.character:FindFirstChild("Humanoid")
+        if not humanoid then
+            MovementManager:CleanupKnockup(knockupData.character)
+
+            continue
+        end
+
+        local rootPart = knockupData.character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then
+            MovementManager:CleanupKnockup(knockupData.character)
+            continue
+        end
+
+        if knockupData.currTime >= knockupData.duration then
+            MovementManager:CleanupKnockup(knockupData.character)
+            continue
+        end
+
+        if humanoid and humanoid.Health <= 0 then
+            MovementManager:CleanupKnockup(knockupData.character)
+            
+            continue
+        end
+
+        knockupData.currTime += deltaTime
     end
 end)
 

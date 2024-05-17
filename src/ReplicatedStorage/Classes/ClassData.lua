@@ -66,6 +66,7 @@ ClassData["AngelKnight"] = {
             Burn = false,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -74,6 +75,7 @@ ClassData["AngelKnight"] = {
             Burn = false,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
         ["EMove"] = {
             hasEvent = false,
@@ -82,6 +84,7 @@ ClassData["AngelKnight"] = {
             Burn = false,
             Slow = true,
             CameraLock = false,
+            Knockup = false,
         },
         ["FMove"] = {
             hasEvent = false,
@@ -90,6 +93,7 @@ ClassData["AngelKnight"] = {
             Burn = false,
             Slow = false,
             CameraLock = true,
+            Knockup = false,
         },
     },
     VisualEffects = {
@@ -145,6 +149,7 @@ ClassData["Pyromancer"] = {
             Burn = true,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -153,6 +158,7 @@ ClassData["Pyromancer"] = {
             Burn = true,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
         ["EMove"] = {
             hasEvent = false,
@@ -161,6 +167,7 @@ ClassData["Pyromancer"] = {
             Burn = true,
             Slow = false,
             CameraLock = true,
+            Knockup = false,
         },
         ["FMove"] = {
             hasEvent = false,
@@ -169,6 +176,7 @@ ClassData["Pyromancer"] = {
             Burn = true,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
     },
     VisualEffects = {
@@ -182,7 +190,7 @@ ClassData["Pyromancer"] = {
 ClassData["ShieldWarrior"] = {
     Health = 250,
     Defense = 150,
-    Speed = 20,
+    Speed = 25,
     Role = "Tank",
     Cost = 200,
     Description = "Shield Hero",
@@ -224,6 +232,7 @@ ClassData["ShieldWarrior"] = {
             Burn = false,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
         ["QMove"] = {
             hasEvent = true,
@@ -232,6 +241,7 @@ ClassData["ShieldWarrior"] = {
             Burn = false,
             Slow = false,
             CameraLock = false,
+            Knockup = true,
         },
         ["EMove"] = {
             hasEvent = true,
@@ -240,6 +250,7 @@ ClassData["ShieldWarrior"] = {
             Burn = false,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
         ["FMove"] = {
             hasEvent = true,
@@ -248,6 +259,7 @@ ClassData["ShieldWarrior"] = {
             Burn = false,
             Slow = false,
             CameraLock = false,
+            Knockup = false,
         },
     },
     VisualEffects = {
