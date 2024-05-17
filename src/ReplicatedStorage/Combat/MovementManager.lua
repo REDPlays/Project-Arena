@@ -7,6 +7,10 @@ local Hitboxes = Assets:WaitForChild("Hitboxes")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
+local IgnoreFolder = workspace:WaitForChild("Ignore")
+
+local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
+
 local MovementManager = {}
 MovementManager.dashList = {}
 MovementManager.bezierList = {}
@@ -48,6 +52,18 @@ function MovementManager:Dash(character, dashData)
     }
 end
 
+function MovementManager:ShowPath(cframes: table)
+    for _, cframe in pairs(cframes) do
+        local point = Hitboxes.Point:Clone()
+        point.Transparency = 0
+        point.Material = Enum.Material.Neon
+        point.Anchored = true
+        point.CFrame = cframe
+        point.Size = Vector3.new(1, 1, 1)
+        point.Parent = IgnoreFolder
+    end
+end
+
 function MovementManager:Bezier(character, bezierData)
     if MovementManager.bezierList[character] then
         return
@@ -62,10 +78,14 @@ function MovementManager:Bezier(character, bezierData)
     local endCFrame = startCFrame * CFrame.new(0, 0, -bezierData.distance)
     local middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, 20, 0)
 
+    if ShowHitboxes then
+        MovementManager:ShowPath({startCFrame, middleCFrame, endCFrame})
+    end
+
     local numValue = Instance.new("NumberValue")
     numValue.Value = 0
 
-    local info = TweenInfo.new(bezierData.duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+    local info = TweenInfo.new(bezierData.duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
     local tween = TweenService:Create(numValue, info, {Value = 1})
 
     local thread = task.spawn(function()

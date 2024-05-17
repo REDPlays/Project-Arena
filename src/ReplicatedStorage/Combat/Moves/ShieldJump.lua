@@ -41,20 +41,95 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
             Stats:SetAttribute("AbilityLocked", false)
         end
 
-        local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
+        local alreadyHit = {}
+
+        local Hitbox: BasePart = Hitboxes.CylinderHitbox:Clone()
         Hitbox.Transparency = 1
         if ShowHitboxes then
             Hitbox.Transparency = .5
         end
 
         Hitbox.Size = classData.Hitboxes[moveType].Size
+        Hitbox.Anchored = true
         Hitbox.CFrame = character:GetPivot() * classData.Hitboxes[moveType].Offset
         Hitbox.Parent = IgnoreFolder
 
-        local weld = Instance.new("WeldConstraint")
-        weld.Part0 = Hitbox
-        weld.Part1 = rootPart
-        weld.Parent = weld.Part0
+        local touched = Hitbox.Touched:Connect(function() end)
+        local touchedObjects = Hitbox:GetTouchingParts()
+
+        if touched then
+            touched:Disconnect()
+        end
+
+        for i=1, #touchedObjects do
+            local object = touchedObjects[i]
+            local parent = object.Parent
+
+            if not parent:IsA("Model") then
+                continue
+            end
+
+            if parent == character then
+                continue
+            end
+
+            --ignoreTargets
+            if CollectionService:HasTag(parent, "Ignore") then
+                continue
+            end
+
+            local enemyHum = parent:FindFirstChild("Humanoid")
+            if not enemyHum then
+                continue
+            end
+
+            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+            if not enemyRoot then
+                continue
+            end
+
+            if alreadyHit[parent.Name] then
+                continue
+            end
+
+            if CollectionService:HasTag(parent, "Invulnerable") then
+                continue
+            end
+
+            alreadyHit[parent.Name] = true
+
+            local isBlocking = StateManager:CheckState(parent, "Blocking")
+            if isBlocking then
+                --Block Indication
+                warn("block Shield Slam")
+
+                continue
+            end
+
+            --apply burn
+            if classData.MoveData[moveType].Burn then
+                StateManager:AddTarget(parent, "Burn", 3)
+            end
+
+            --apply stun
+            if classData.MoveData[moveType].Stunned then
+                StateManager:AddTarget(parent, "Stunned", 2)
+            end
+
+            --apply slow
+            if classData.MoveData[moveType].Slow then
+                StateManager:AddTarget(parent, "Slow", 1)
+            end
+
+            --apply knockup
+            if classData.MoveData[moveType].Knockup then
+                StateManager:AddTarget(parent, "Knockup", 50)
+            end
+
+            StateManager:AddTarget(parent, "Attacked", 1)
+
+            HealthManager:Damage(parent, damage, character)
+        end
 
         Debris:AddItem(Hitbox, duration)
     end)

@@ -133,7 +133,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
             HealthManager:Damage(parent, damage, character)
         end
 
-        Debris:AddItem(Hitbox, duration * 2)
+        Debris:AddItem(Hitbox, duration)
 
         startCFrame *= CFrame.new(0, 0, -size.Z)
 
