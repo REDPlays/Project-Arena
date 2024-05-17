@@ -64,7 +64,7 @@ function MovementManager:Bezier(character, bezierData)
     local numValue = Instance.new("NumberValue")
     numValue.Value = 0
 
-    local info = TweenInfo.new(bezierData.duration, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+    local info = TweenInfo.new(bezierData.duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
     local tween = TweenService:Create(numValue, info, {Value = 1})
 
     local thread = task.spawn(function()

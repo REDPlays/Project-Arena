@@ -69,6 +69,7 @@ ClassData["AngelKnight"] = {
         },
         ["QMove"] = {
             hasEvent = false,
+            noMovement = false,
             Stunned = false,
             Burn = false,
             Slow = false,
@@ -76,6 +77,7 @@ ClassData["AngelKnight"] = {
         },
         ["EMove"] = {
             hasEvent = false,
+            noMovement = false,
             Stunned = false,
             Burn = false,
             Slow = true,
@@ -83,6 +85,7 @@ ClassData["AngelKnight"] = {
         },
         ["FMove"] = {
             hasEvent = false,
+            noMovement = false,
             Stunned = false,
             Burn = false,
             Slow = false,
@@ -145,6 +148,7 @@ ClassData["Pyromancer"] = {
         },
         ["QMove"] = {
             hasEvent = false,
+            noMovement = false,
             Stunned = false,
             Burn = true,
             Slow = false,
@@ -152,6 +156,7 @@ ClassData["Pyromancer"] = {
         },
         ["EMove"] = {
             hasEvent = false,
+            noMovement = false,
             Stunned = false,
             Burn = true,
             Slow = false,
@@ -159,6 +164,7 @@ ClassData["Pyromancer"] = {
         },
         ["FMove"] = {
             hasEvent = false,
+            noMovement = false,
             Stunned = false,
             Burn = true,
             Slow = false,
@@ -221,6 +227,7 @@ ClassData["ShieldWarrior"] = {
         },
         ["QMove"] = {
             hasEvent = true,
+            noMovement = true,
             Stunned = false,
             Burn = false,
             Slow = false,
@@ -228,6 +235,7 @@ ClassData["ShieldWarrior"] = {
         },
         ["EMove"] = {
             hasEvent = true,
+            noMovement = true,
             Stunned = true,
             Burn = false,
             Slow = false,
@@ -235,6 +243,7 @@ ClassData["ShieldWarrior"] = {
         },
         ["FMove"] = {
             hasEvent = true,
+            noMovement = false,
             Stunned = false,
             Burn = false,
             Slow = false,

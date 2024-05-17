@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
@@ -234,6 +235,23 @@ function UIController:DisplayWinners(rewardData, rewardCount)
     end)
 end
 
+function UIController:LockInPlace(noMovement, moveType)
+    if noMovement then
+        local animationLength = self.animationSystem:animInfo(self.class, moveType)
+
+        if self.rootPart:FindFirstChild("noMovement") then
+            self.rootPart:FindFirstChild("noMovement"):Destroy()
+        end
+        
+        local bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.Name = "noMovement"
+        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bodyVelocity.Velocity = Vector3.zero
+        bodyVelocity.Parent = self.rootPart
+        Debris:AddItem(bodyVelocity, animationLength)
+    end
+end
+
 function UIController:Connect()
     self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         if gameProcessedEvent then
@@ -360,6 +378,9 @@ function UIController:Connect()
                 end
 
                 local hasEvent = currentClassData.MoveData.QMove.hasEvent
+                local noMovement = currentClassData.MoveData.QMove.noMovement
+                self:LockInPlace(noMovement, "QMove")
+
                 self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
@@ -397,6 +418,9 @@ function UIController:Connect()
                 end
 
                 local hasEvent = currentClassData.MoveData.EMove.hasEvent
+                local noMovement = currentClassData.MoveData.EMove.noMovement
+                self:LockInPlace(noMovement, "EMove")
+
                 self.animationSystem:Play(self.class, "EMove", nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
@@ -434,6 +458,9 @@ function UIController:Connect()
                 end
 
                 local hasEvent = currentClassData.MoveData.FMove.hasEvent
+                local noMovement = currentClassData.MoveData.FMove.noMovement
+                self:LockInPlace(noMovement, "FMove")
+
                 self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
