@@ -37,7 +37,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
     local duration = 1
     local hitboxDelay = 0.05
 
-    task.delay(duration, function()
+    task.delay(duration / 2, function()
         Stats:SetAttribute("AbilityLocked", false)
     end)
 

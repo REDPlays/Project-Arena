@@ -74,12 +74,12 @@ function MovementManager:Bezier(character, bezierData)
         return
     end
 
-    local startCFrame = rootPart.CFrame
-    local endCFrame = startCFrame * CFrame.new(0, 0, -bezierData.distance)
-    local middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, 20, 0)
+    local startCFrame = bezierData.startCFrame
+    local endCFrame = bezierData.endCFrame
+    local middleCFrame = bezierData.middleCFrame
 
     if ShowHitboxes then
-        MovementManager:ShowPath({startCFrame, middleCFrame, endCFrame})
+        --MovementManager:ShowPath({startCFrame, middleCFrame, endCFrame})
     end
 
     local numValue = Instance.new("NumberValue")
