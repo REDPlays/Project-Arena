@@ -35,6 +35,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
     Stats:SetAttribute("AbilityLocked", true)
 
     local duration = 1
+    local hitboxDelay = 0.05
 
     task.delay(duration, function()
         Stats:SetAttribute("AbilityLocked", false)
@@ -44,7 +45,10 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
     local startCFrame = character:GetPivot() * classData.Hitboxes[moveType].Offset
 
     local alreadyHit = {}
+
     for _=1, 3 do
+        local lifeTime = .1
+
         local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
         Hitbox.Transparency = 1
         if ShowHitboxes then
@@ -55,92 +59,107 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
         Hitbox.Anchored = true
         Hitbox.CFrame = startCFrame
         Hitbox.Parent = IgnoreFolder
+        Debris:AddItem(Hitbox, lifeTime)
 
-        local touched = Hitbox.Touched:Connect(function() end)
-        local touchedObjects = Hitbox:GetTouchingParts()
+        local hitDetect = task.spawn(function()
+            while true do
+                if not Hitbox then
+                    break
+                end
 
-        if touched then
-            touched:Disconnect()
-        end
-
-        for i=1, #touchedObjects do
-            local object = touchedObjects[i]
-            local parent = object.Parent
-
-            if not parent:IsA("Model") then
-                continue
+                local touched = Hitbox.Touched:Connect(function() end)
+                local touchedObjects = Hitbox:GetTouchingParts()
+        
+                if touched then
+                    touched:Disconnect()
+                end
+        
+                for i=1, #touchedObjects do
+                    local object = touchedObjects[i]
+                    local parent = object.Parent
+        
+                    if not parent:IsA("Model") then
+                        continue
+                    end
+        
+                    if parent == character then
+                        continue
+                    end
+        
+                    --ignoreTargets
+                    if CollectionService:HasTag(parent, "Ignore") then
+                        continue
+                    end
+        
+                    local enemyHum = parent:FindFirstChild("Humanoid")
+                    if not enemyHum then
+                        continue
+                    end
+        
+                    local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+                    if not enemyRoot then
+                        continue
+                    end
+        
+                    if alreadyHit[parent.Name] then
+                        continue
+                    end
+        
+                    if CollectionService:HasTag(parent, "Invulnerable") then
+                        continue
+                    end
+        
+                    alreadyHit[parent.Name] = true
+        
+                    local isBlocking = StateManager:CheckState(parent, "Blocking")
+                    if isBlocking then
+                        --Block Indication
+                        warn("block Shield Slam")
+        
+                        continue
+                    end
+        
+                    --apply burn
+                    if classData.MoveData[moveType].Burn then
+                        StateManager:AddTarget(parent, "Burn", 3)
+                    end
+        
+                    --apply stun
+                    if classData.MoveData[moveType].Stunned then
+                        StateManager:AddTarget(parent, "Stunned", 2)
+                    end
+        
+                    --apply slow
+                    if classData.MoveData[moveType].Slow then
+                        StateManager:AddTarget(parent, "Slow", 1)
+                    end
+        
+                    --apply knockup
+                    if classData.MoveData[moveType].Knockup then
+                        StateManager:AddTarget(parent, "Knockup", 50)
+                    end
+        
+                    StateManager:AddTarget(parent, "Attacked", 1)
+        
+                    HealthManager:Damage(parent, damage, character)
+                end
+                
+                task.wait()
             end
+        end)
 
-            if parent == character then
-                continue
+        task.delay(lifeTime, function()
+            if hitDetect then
+                task.cancel(hitDetect)
             end
-
-            --ignoreTargets
-            if CollectionService:HasTag(parent, "Ignore") then
-                continue
-            end
-
-            local enemyHum = parent:FindFirstChild("Humanoid")
-            if not enemyHum then
-                continue
-            end
-
-            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-            if not enemyRoot then
-                continue
-            end
-
-            if alreadyHit[parent.Name] then
-                continue
-            end
-
-            if CollectionService:HasTag(parent, "Invulnerable") then
-                continue
-            end
-
-            alreadyHit[parent.Name] = true
-
-            local isBlocking = StateManager:CheckState(parent, "Blocking")
-            if isBlocking then
-                --Block Indication
-                warn("block Shield Slam")
-
-                continue
-            end
-
-            --apply burn
-            if classData.MoveData[moveType].Burn then
-                StateManager:AddTarget(parent, "Burn", 3)
-            end
-
-            --apply stun
-            if classData.MoveData[moveType].Stunned then
-                StateManager:AddTarget(parent, "Stunned", 2)
-            end
-
-            --apply slow
-            if classData.MoveData[moveType].Slow then
-                StateManager:AddTarget(parent, "Slow", 1)
-            end
-
-            --apply knockup
-            if classData.MoveData[moveType].Knockup then
-                StateManager:AddTarget(parent, "Knockup", 50)
-            end
-
-            StateManager:AddTarget(parent, "Attacked", 1)
-
-            HealthManager:Damage(parent, damage, character)
-        end
-
-        Debris:AddItem(Hitbox, duration)
+        end)
 
         startCFrame *= CFrame.new(0, 0, -size.Z)
 
-        task.wait(.05)
+        task.wait(hitboxDelay)
     end
 
-    alreadyHit = nil
+    alreadyHit = {}
 end
 
 return ShieldSlam

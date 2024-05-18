@@ -123,17 +123,31 @@ function MovementManager:Knockup(character, knockupData)
         return
     end
 
-    local upwardVelocity = Instance.new("BodyVelocity")
+    --[==[local upwardVelocity = Instance.new("BodyVelocity")
     upwardVelocity.Name = "upwardVelocity"
     upwardVelocity.Parent = rootPart
     upwardVelocity.MaxForce = Vector3.new(0, math.huge, 0)
-    upwardVelocity.Velocity = Vector3.new(0, knockupData.Force, 0)
+    upwardVelocity.Velocity = Vector3.new(0, knockupData.Force, 0)]==]
+
+    local attach = Instance.new("Attachment")
+    attach.Name = "upwardAttach"
+    attach.Parent = rootPart
+
+    local linearVel = Instance.new("LinearVelocity")
+    linearVel.Attachment0 = attach
+    linearVel.MaxForce = math.huge
+    linearVel.Enabled = true
+    linearVel.RelativeTo = Enum.ActuatorRelativeTo.World
+    linearVel.VectorVelocity = Vector3.new(0, knockupData.Force, 0)
+    linearVel.Parent = rootPart
 
     MovementManager.knockupList[character] = {
         duration = knockupData.duration,
         currTime = 0,
         character = character,
-        upwardVelocity = upwardVelocity,
+        --upwardVelocity = upwardVelocity,
+        attach = attach,
+        linearVel = linearVel,
     }
 end
 
@@ -168,6 +182,14 @@ function MovementManager:CleanupKnockup(character)
     if knockupData then
         if knockupData.upwardVelocity then
             knockupData.upwardVelocity:Destroy()
+        end
+
+        if knockupData.attach then
+            knockupData.attach:Destroy()
+        end
+
+        if knockupData.linearVel then
+            knockupData.linearVel:Destroy()
         end
 
         MovementManager.knockupList[character] = nil

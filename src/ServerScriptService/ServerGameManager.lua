@@ -56,7 +56,7 @@ function ServerGameManager:ConfigureDummies()
     ServerGameManager.dummyTimers[Dummies.DummyStunner] = {
         dummy = Dummies.DummyStunner,
         currTime = 0,
-        maxTime = .5,
+        maxTime = 1.5,
     }
 
     ServerGameManager.dummyTimers[Dummies.DummyBurn] = {
