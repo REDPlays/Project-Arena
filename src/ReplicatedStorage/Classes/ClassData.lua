@@ -202,9 +202,9 @@ ClassData["ShieldWarrior"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 1,-- 3.5,
-        ["EMove"] = 1, --10,
-        ["FMove"] = 10,
+        ["QMove"] = 3.5,
+        ["EMove"] = 10,
+        ["FMove"] = 15,
     },
     Hitboxes = {
         ["LMBMove"] = {

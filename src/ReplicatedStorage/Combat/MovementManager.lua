@@ -115,19 +115,26 @@ end
 
 function MovementManager:Knockup(character, knockupData)
     if MovementManager.knockupList[character] then
+        warn("already knock up")
         return
     end
 
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    local rootPart: BasePart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
         return
     end
 
+    for _, velocity in pairs(rootPart:GetChildren()) do
+        if velocity:IsA("BodyVelocity") or velocity:IsA("LinearVelocity") then
+            velocity:Destroy()
+        end
+    end
+
     --[==[local upwardVelocity = Instance.new("BodyVelocity")
     upwardVelocity.Name = "upwardVelocity"
-    upwardVelocity.Parent = rootPart
     upwardVelocity.MaxForce = Vector3.new(0, math.huge, 0)
-    upwardVelocity.Velocity = Vector3.new(0, knockupData.Force, 0)]==]
+    upwardVelocity.Velocity = Vector3.new(0, knockupData.Force, 0)
+    upwardVelocity.Parent = rootPart]==]
 
     local attach = Instance.new("Attachment")
     attach.Name = "upwardAttach"
@@ -136,10 +143,11 @@ function MovementManager:Knockup(character, knockupData)
     local linearVel = Instance.new("LinearVelocity")
     linearVel.Attachment0 = attach
     linearVel.MaxForce = math.huge
-    linearVel.Enabled = true
     linearVel.RelativeTo = Enum.ActuatorRelativeTo.World
-    linearVel.VectorVelocity = Vector3.new(0, knockupData.Force, 0)
+    linearVel.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
     linearVel.Parent = rootPart
+    linearVel.Enabled = true
+    linearVel.VectorVelocity = Vector3.new(0, knockupData.Force, 0)
 
     MovementManager.knockupList[character] = {
         duration = knockupData.duration,

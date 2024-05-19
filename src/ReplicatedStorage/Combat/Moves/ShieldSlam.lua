@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
@@ -96,7 +97,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
                         continue
                     end
         
-                    local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+                    local enemyRoot: BasePart = parent:FindFirstChild("HumanoidRootPart")
                     if not enemyRoot then
                         continue
                     end
@@ -136,9 +137,14 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
         
                     --apply knockup
                     if classData.MoveData[moveType].Knockup then
+                        local parentPlayer = Players:GetPlayerFromCharacter(parent)
+                        if not parentPlayer then
+                            enemyRoot:SetNetworkOwner(player)
+                        end
+
                         StateManager:AddTarget(parent, "Knockup", 50)
                     end
-        
+
                     StateManager:AddTarget(parent, "Attacked", 1)
         
                     HealthManager:Damage(parent, damage, character)

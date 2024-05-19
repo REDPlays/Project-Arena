@@ -47,7 +47,12 @@ function Knockup:AddTarget(target: Model, Force)
         duration = duration,
     }
 
-    Events.Server_Client.Movement:FireAllClients(target, knockupData)
+    local player = Players:GetPlayerFromCharacter(target)
+    if player then
+        Events.Server_Client.Movement:FireClient(player, target, knockupData)
+    else
+        Events.Server_Client.Movement:FireAllClients(target, knockupData)
+    end
 
     Knockup.InState[target] = {
         target = target,

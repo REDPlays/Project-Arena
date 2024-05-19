@@ -30,17 +30,17 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
     local angle = 0
     local maxAngle = 360
 
-    local distance = 20
+    local distance = 30
     local tiltAngle = 15
 
-    local WallSize = Vector3.new(12, 12, 3)
+    local WallSize = Vector3.new(17, 17, 3)
 
     local startCFrame = placementCFrame
 
     local wallObjects = {}
 
     for i=1, numOfWalls do
-        local newCFrame = startCFrame * CFrame.Angles(0, math.rad(angle), 0) * CFrame.new(0, -WallSize.Y/2, -distance) * CFrame.Angles(math.rad(tiltAngle), 0, 0)
+        local newCFrame = startCFrame * CFrame.Angles(0, math.rad(angle), 0) * CFrame.new(0, -WallSize.Y/2, -distance)
         local LastCFrame = newCFrame * CFrame.new(0, WallSize.Y, 0)
 
         local Wall = Hitboxes.Hitbox:Clone()
