@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
@@ -45,9 +46,22 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
     local size = classData.Hitboxes[moveType].Size
     local startCFrame = character:GetPivot() * classData.Hitboxes[moveType].Offset
 
+    local VFX_ID = HttpService:GenerateGUID(false)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "ShieldSlam",
+        nil,
+        character,
+        {},
+        1000,
+        VFX_ID
+    )
+
+    local numHits = 3
+
     local alreadyHit = {}
 
-    for _=1, 3 do
+    for _=1, numHits do
         local lifeTime = .1
 
         local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
@@ -61,6 +75,16 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
         Hitbox.CFrame = startCFrame
         Hitbox.Parent = IgnoreFolder
         Debris:AddItem(Hitbox, lifeTime)
+
+        VisualEffectServer:SpawnEffectsInRange(
+            "ShieldSlam",
+            nil,
+            character,
+            {spawnPosition = startCFrame.Position - Vector3.new(0, Hitbox.Size.Y/2, 0)},
+            1000,
+            VFX_ID,
+            true
+        )
 
         local hitDetect = task.spawn(function()
             while true do
@@ -164,6 +188,16 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
 
         task.wait(hitboxDelay)
     end
+
+    VisualEffectServer:TerminateVFX(
+        "ShieldSlam",
+        nil,
+        character,
+        {},
+        VFX_ID
+    )
+
+    VFX_ID = nil
 
     alreadyHit = {}
 end

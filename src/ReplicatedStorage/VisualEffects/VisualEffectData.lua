@@ -13,7 +13,7 @@ VisualEffectData["Flamethrower"] = require(Visuals:WaitForChild("Pyromancer"):Wa
 VisualEffectData["Eruption"] = require(Visuals:WaitForChild("Pyromancer"):WaitForChild("EruptionVFX"))
 
 VisualEffectData["ShieldWarriorM1"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ShieldWarriorM1"))
-VisualEffectData["ShieldBash"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ShieldBashVFX"))
+VisualEffectData["ShieldSlam"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ShieldSlamVFX"))
 
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))
 
