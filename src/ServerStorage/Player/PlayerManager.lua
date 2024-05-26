@@ -6,6 +6,8 @@ local ServerStorage = game:GetService("ServerStorage")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local PlayerDataManager = require(ServerStorage.ServerFiles.Player.PlayerDataManager)
 
+local OwnerID = 126372777
+
 local PlayerManager = {}
 PlayerManager.playerDatas = {}
 
@@ -66,6 +68,29 @@ local function RewardPlayers(player: Player, tokenAmount: number, placement: num
     end
 end
 
+local function DebuggerTool(player: Player, debugType)
+    local userId = player.UserId
+
+    if userId ~= OwnerID then
+        return "Not Owner | WARNED!!!"
+    end
+
+    if not debugType then
+        return "No Debug Type!!!"
+    end
+
+    if debugType == "Tokens" then
+        PlayerManager:AddToken(player, 100)
+    elseif debugType == "Kills" then
+        PlayerManager:AddKill(player)
+    elseif debugType == "Wins" then
+        PlayerManager:AddWin(player)
+    end
+
+    return "Successful!!!"
+end
+
 Events.Server_Server.RewardPlayers.Event:Connect(RewardPlayers)
+Events.Client_Server.Debugger.OnServerInvoke = DebuggerTool
 
 return PlayerManager

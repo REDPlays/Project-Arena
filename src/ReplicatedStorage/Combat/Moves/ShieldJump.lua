@@ -52,6 +52,14 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
     bezierData.middleCFrame = middleCFrame
 
     task.delay(duration, function()
+        VisualEffectServer:SpawnEffectsInRange(
+            "ShieldJump",
+            nil,
+            character,
+            {spawnCFrame = endCFrame},
+            1000
+        )
+        
         local alreadyHit = {}
 
         local characterList = {}

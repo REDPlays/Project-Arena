@@ -17,7 +17,8 @@ Events.Client_Server = {
     Input = Client_Server:WaitForChild("Input"),
     Hitbox = Client_Server:WaitForChild("Hitbox"),
     Moves = Client_Server:WaitForChild("Moves"),
-    ProjectileTarget = Client_Server:WaitForChild("ProjectileTarget")
+    ProjectileTarget = Client_Server:WaitForChild("ProjectileTarget"),
+    Debugger = Client_Server:WaitForChild("Debugger"),
 }
 
 Events.Server_Client = {

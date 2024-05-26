@@ -71,6 +71,12 @@ function ShieldSlamVFX:Burst(spawnPosition)
     burstParticles.Transparency = 1
     burstParticles.Parent = self.Folder
 
+    self.sfx1 = Sounds.ShieldWarrior.SmallRupture:Clone()
+    self.sfx1.Volume = .5
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = burstParticles
+    self.sfx1:Play()
+
     for _, particle in pairs(burstParticles:GetDescendants()) do
         if particle:IsA("ParticleEmitter") then
             particle:Emit(particle:GetAttribute("EmitCount") or 5)

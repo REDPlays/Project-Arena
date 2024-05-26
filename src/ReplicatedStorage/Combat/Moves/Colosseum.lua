@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
@@ -39,6 +40,17 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
 
     local wallObjects = {}
 
+    local VFX_ID = HttpService:GenerateGUID(false)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "Colosseum",
+        nil,
+        character,
+        {},
+        1000,
+        VFX_ID
+    )
+
     for i=1, numOfWalls do
         local newCFrame = startCFrame * CFrame.Angles(0, math.rad(angle), 0) * CFrame.new(0, -WallSize.Y/2, -distance)
         local LastCFrame = newCFrame * CFrame.new(0, WallSize.Y, 0)
@@ -53,11 +65,27 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
         Wall.Anchored = true
         Wall.Transparency = 1
         if ShowHitboxes then
-            Wall.Transparency = 0
+            Wall.Transparency = 0.5
         end
         Wall.Parent = workspace.Obstacles
 
         wallObjects[i] = Wall
+
+        local conditionalData = {
+            spawnCFrame = newCFrame,
+            collideDelay = collideDelay,
+            height = WallSize.Y
+        }
+
+        VisualEffectServer:SpawnEffectsInRange(
+            "Colosseum",
+            nil,
+            character,
+            conditionalData,
+            1000,
+            VFX_ID,
+            true
+        )
 
         local info1 = TweenInfo.new(collideDelay, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
         TweenService:Create(Wall, info1, {CFrame = LastCFrame}):Play()
@@ -80,6 +108,14 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
     end
 
     task.delay(duration, function()
+        VisualEffectServer:TerminateVFX(
+            "Colosseum",
+            nil,
+            character,
+            {duration = 1},
+            VFX_ID
+        )
+
         for _, wall in pairs(wallObjects) do
             Debris:AddItem(wall, 1)
         end

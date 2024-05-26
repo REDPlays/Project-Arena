@@ -7,6 +7,8 @@ local Debris = game:GetService("Debris")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
+local TestState = workspace:GetAttribute("TestState")
+
 local UIController = {}
 UIController.__index = UIController
 
@@ -48,6 +50,12 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.Winnerboard.Visible = false
     self.Winnerboard.GroupTransparency = 1
 
+    self.Debugger = self.HUD:WaitForChild("Debugger")
+    self.Debugger.Visible = false
+    self.TokenBtn = self.Debugger:WaitForChild("Tokens")
+    self.KillBtn = self.Debugger:WaitForChild("Kills")
+    self.WinBtn = self.Debugger:WaitForChild("Wins")
+
     self.placementUI = {
         [1] = self.Winnerboard:WaitForChild("First"),
         [2] = self.Winnerboard:WaitForChild("Second"),
@@ -76,9 +84,31 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
         FMove = false,
     }
 
+    if TestState then
+        self.Debugger.Visible = true
+        self:SetupTestConnect()
+    end
+
     self:UISetup()
     self:StatConnect()
     self:Connect()
+end
+
+function UIController:SetupTestConnect()
+    self.tokenInput = self.TokenBtn.MouseButton1Click:Connect(function()
+        local feedback = Events.Client_Server.Debugger:InvokeServer("Tokens")
+        --warn("Feedback:", feedback)
+    end)
+
+    self.killInput = self.KillBtn.MouseButton1Click:Connect(function()
+        local feedback = Events.Client_Server.Debugger:InvokeServer("Kills")
+        --warn("Feedback:", feedback)
+    end)
+
+    self.winInput = self.WinBtn.MouseButton1Click:Connect(function()
+        local feedback = Events.Client_Server.Debugger:InvokeServer("Wins")
+        --warn("Feedback:", feedback)
+    end)
 end
 
 function UIController:UISetup()
@@ -174,6 +204,10 @@ function UIController:HideLeaderboard()
             self.hideTween:Pause()
         end
 
+        if TestState then
+            self.Debugger.Visible = false
+        end
+
         self.hideTween = TweenService:Create(self.Leaderboard, info, {Position = UDim2.new(1.25, 0, .5, 0)})
         self.hideTween:Play()
     elseif self.hideLeaderboard then
@@ -181,6 +215,10 @@ function UIController:HideLeaderboard()
 
         if self.hideTween then
             self.hideTween:Pause()
+        end
+
+        if TestState then
+            self.Debugger.Visible = true
         end
 
         self.hideTween = TweenService:Create(self.Leaderboard, info, {Position = UDim2.new(1, 0, .5, 0)})

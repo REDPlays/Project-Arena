@@ -14,6 +14,9 @@ VisualEffectData["Eruption"] = require(Visuals:WaitForChild("Pyromancer"):WaitFo
 
 VisualEffectData["ShieldWarriorM1"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ShieldWarriorM1"))
 VisualEffectData["ShieldSlam"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ShieldSlamVFX"))
+VisualEffectData["ShieldJump"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ShieldJumpVFX"))
+VisualEffectData["Colosseum"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ColosseumVFX"))
+
 
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))
 

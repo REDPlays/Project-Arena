@@ -216,7 +216,7 @@ ClassData["ShieldWarrior"] = {
             Offset = CFrame.new(0, 3, -6),
         },
         ["EMove"] = {
-            Size = Vector3.new(5, 25, 25),
+            Size = Vector3.new(5, 20, 20),
             Offset = CFrame.new(0, 2.5, 0) * CFrame.Angles(0, 0, math.rad(-90)),
         },
         ["FMove"] = {
@@ -254,7 +254,7 @@ ClassData["ShieldWarrior"] = {
         },
         ["FMove"] = {
             hasEvent = true,
-            noMovement = false,
+            noMovement = true,
             Stunned = false,
             Burn = false,
             Slow = false,
