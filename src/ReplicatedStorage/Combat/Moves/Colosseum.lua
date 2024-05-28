@@ -32,7 +32,6 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
     local maxAngle = 360
 
     local distance = 30
-    local tiltAngle = 15
 
     local WallSize = Vector3.new(17, 17, 3)
 
