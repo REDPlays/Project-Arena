@@ -1,9 +1,11 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local MapAssets = Assets:WaitForChild("Map")
+local Maps = ServerStorage:WaitForChild("Maps")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
@@ -50,9 +52,37 @@ function RoundManager:Init(ServerGameManager)
     self.roundMaxDuration = 120
 
     --map selection will be needed later on
+    self.availableMaps = {
+        Maps:WaitForChild("GreatSkyPlatform")
+    }
+
+    self.mapCount = 1
+
+    self.MapSelected = false
     self.Map = workspace.Map
 
     self.healthPads = {}
+end
+
+function RoundManager:SelectMap()
+    warn("selecting map...")
+    self.MapSelected = true
+
+    local choice = math.random(1, self.mapCount)
+    
+    self.Map = self.availableMaps[choice]:Clone()
+    self.Map.Parent = workspace
+
+    warn(self.Map.Name, "selected!!!")
+end
+
+function RoundManager:CleanupMap()
+    if self.Map then
+        self.Map:Destroy()
+    end
+
+    self.Map = nil
+    self.MapSelected = false
 end
 
 function RoundManager:ConfigurePickups(pickupFolder)
@@ -83,6 +113,8 @@ function RoundManager:CleanupPickups()
 
         self.healthPads[padId] = nil
     end
+
+    self.healthPads = {}
 end
 
 function RoundManager:TeleportAllPlayers()
@@ -96,8 +128,8 @@ function RoundManager:TeleportAllPlayers()
             continue
         end
 
-        local xRange = teleporter.Size.X
-        local zRange = teleporter.Size.Z
+        local xRange = teleporter.Size.X/2
+        local zRange = teleporter.Size.Z/2
 
         local xOffset = math.random(-xRange, xRange)
         local zOffset = math.random(-zRange, zRange)
@@ -148,8 +180,8 @@ function RoundManager:TeleportPlayer(player: Player)
         return
     end
 
-    local xRange = teleporter.Size.X
-    local zRange = teleporter.Size.Z
+    local xRange = teleporter.Size.X/2
+    local zRange = teleporter.Size.Z/2
 
     local xOffset = math.random(-xRange, xRange)
     local zOffset = math.random(-zRange, zRange)
@@ -326,7 +358,12 @@ function RoundManager:Update(deltaTime)
         if not self.roundStart then
             if not self.startCountDown then
                 self.startCountDown = true
-                self.countDown = 1000 --15
+                self.countDown = 15
+
+                --map selection
+            if not self.MapSelected then
+                self:SelectMap()
+            end
 
                 Events.Server_Client.CountDown:FireAllClients("CountDown", self.countDown)
             end
@@ -367,6 +404,8 @@ function RoundManager:Update(deltaTime)
                 self:CleanupPickups()
 
                 self:ResetAllPlayers()
+
+                self:CleanupMap()
 
                 self.intermission = true
                 self.intermissionDuration = 20

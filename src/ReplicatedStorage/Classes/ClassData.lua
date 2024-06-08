@@ -112,9 +112,9 @@ ClassData["Pyromancer"] = {
     Cost = 200,
     Description = "Fire Connoisseur",
     DamageList = {
-        ["LMBMove"] = {5, 5, 5},
-        ["QMove"] = 6,
-        ["EMove"] = 6,
+        ["LMBMove"] = {3, 3, 3},
+        ["QMove"] = 4,
+        ["EMove"] = 3,
         ["FMove"] = 20,
     },
     Cooldowns = {
@@ -202,9 +202,9 @@ ClassData["ShieldWarrior"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 1;--3.5,
-        ["EMove"] = 1;--10,
-        ["FMove"] = 1;--15,
+        ["QMove"] = 3.5,
+        ["EMove"] = 10,
+        ["FMove"] = 15,
     },
     Hitboxes = {
         ["LMBMove"] = {

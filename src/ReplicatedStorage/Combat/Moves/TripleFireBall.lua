@@ -37,9 +37,9 @@ function TripleFireBall:Activate(player, character, rootPart, placementCFrame, c
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
-    local angle = -15
-    local angleDiff = 15
-    local numProjectiles = 3
+    local angle = -10
+    local angleDiff = 20
+    local numProjectiles = 2
 
     for i=1, numProjectiles do
         local offSet = CFrame.fromEulerAnglesXYZ(0, math.rad(angle), 0)
