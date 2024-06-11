@@ -190,20 +190,20 @@ ClassData["Pyromancer"] = {
 ClassData["ShieldWarrior"] = {
     Health = 250,
     Defense = 150,
-    Speed = 25,
+    Speed = 27,
     Role = "Tank",
     Cost = 200,
     Description = "Shield Hero",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 10,
-        ["EMove"] = 15,
+        ["LMBMove"] = {6, 6, 6},
+        ["QMove"] = 15,
+        ["EMove"] = 25,
         ["FMove"] = 0,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
         ["QMove"] = 3.5,
-        ["EMove"] = 10,
+        ["EMove"] = 1, --10,
         ["FMove"] = 15,
     },
     Hitboxes = {

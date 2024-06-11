@@ -57,132 +57,154 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
         VFX_ID
     )
 
-    local numHits = 3
+    local numHits = 4
 
     local alreadyHit = {}
 
     for _=1, numHits do
         local lifeTime = .1
 
-        local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
-        Hitbox.Transparency = 1
-        if ShowHitboxes then
-            Hitbox.Transparency = .5
+        local characterList = {}
+        for _, plr in pairs(Players:GetPlayers()) do
+            local plrChar = plr.Character
+            if not plrChar then
+                continue
+            end
+            table.insert(characterList, plrChar)
         end
 
-        Hitbox.Size = classData.Hitboxes[moveType].Size
-        Hitbox.Anchored = true
-        Hitbox.CFrame = startCFrame
-        Hitbox.Parent = IgnoreFolder
-        Debris:AddItem(Hitbox, lifeTime)
+        local rayparams = RaycastParams.new()
+        rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
+        rayparams.FilterType = Enum.RaycastFilterType.Exclude
 
-        VisualEffectServer:SpawnEffectsInRange(
-            "ShieldSlam",
-            nil,
-            character,
-            {spawnPosition = startCFrame.Position - Vector3.new(0, Hitbox.Size.Y/2, 0)},
-            1000,
-            VFX_ID,
-            true
-        )
+        local sudoCFrame = startCFrame * CFrame.new(0, 15, 0)
 
-        local hitDetect = task.spawn(function()
-            while true do
-                if not Hitbox then
-                    break
-                end
+        local ray = workspace:Raycast(sudoCFrame.Position, sudoCFrame.UpVector * -100, rayparams)
+        if ray then
+            local floorPosition = ray.Position
+            local newPosition = Vector3.new(startCFrame.Position.X, floorPosition.Y, startCFrame.Position.Z)
 
-                local touched = Hitbox.Touched:Connect(function() end)
-                local touchedObjects = Hitbox:GetTouchingParts()
-        
-                if touched then
-                    touched:Disconnect()
-                end
-        
-                for i=1, #touchedObjects do
-                    local object = touchedObjects[i]
-                    local parent = object.Parent
-        
-                    if not parent:IsA("Model") then
-                        continue
+            local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
+            Hitbox.Transparency = 1
+            if ShowHitboxes then
+                Hitbox.Transparency = .5
+            end
+
+            Hitbox.Size = classData.Hitboxes[moveType].Size
+            Hitbox.Anchored = true
+            Hitbox.CFrame = startCFrame
+            Hitbox.Position = newPosition + Vector3.new(0, Hitbox.Size.Y/2, 0)
+            Hitbox.Parent = IgnoreFolder
+            Debris:AddItem(Hitbox, lifeTime)
+
+            VisualEffectServer:SpawnEffectsInRange(
+                "ShieldSlam",
+                nil,
+                character,
+                {spawnPosition = newPosition},
+                1000,
+                VFX_ID,
+                true
+            )
+
+            local hitDetect = task.spawn(function()
+                while true do
+                    if not Hitbox then
+                        break
                     end
-        
-                    if parent == character then
-                        continue
+
+                    local touched = Hitbox.Touched:Connect(function() end)
+                    local touchedObjects = Hitbox:GetTouchingParts()
+            
+                    if touched then
+                        touched:Disconnect()
                     end
-        
-                    --ignoreTargets
-                    if CollectionService:HasTag(parent, "Ignore") then
-                        continue
-                    end
-        
-                    local enemyHum = parent:FindFirstChild("Humanoid")
-                    if not enemyHum then
-                        continue
-                    end
-        
-                    local enemyRoot: BasePart = parent:FindFirstChild("HumanoidRootPart")
-                    if not enemyRoot then
-                        continue
-                    end
-        
-                    if alreadyHit[parent.Name] then
-                        continue
-                    end
-        
-                    if CollectionService:HasTag(parent, "Invulnerable") then
-                        continue
-                    end
-        
-                    alreadyHit[parent.Name] = true
-        
-                    local isBlocking = StateManager:CheckState(parent, "Blocking")
-                    if isBlocking then
-                        --Block Indication
-                        warn("block Shield Slam")
-        
-                        continue
-                    end
-        
-                    --apply burn
-                    if classData.MoveData[moveType].Burn then
-                        StateManager:AddTarget(parent, "Burn", 3)
-                    end
-        
-                    --apply stun
-                    if classData.MoveData[moveType].Stunned then
-                        StateManager:AddTarget(parent, "Stunned", 2)
-                    end
-        
-                    --apply slow
-                    if classData.MoveData[moveType].Slow then
-                        StateManager:AddTarget(parent, "Slow", 1)
-                    end
-        
-                    --apply knockup
-                    if classData.MoveData[moveType].Knockup then
-                        local parentPlayer = Players:GetPlayerFromCharacter(parent)
-                        if not parentPlayer then
-                            enemyRoot:SetNetworkOwner(player)
+            
+                    for i=1, #touchedObjects do
+                        local object = touchedObjects[i]
+                        local parent = object.Parent
+            
+                        if not parent:IsA("Model") then
+                            continue
+                        end
+            
+                        if parent == character then
+                            continue
+                        end
+            
+                        --ignoreTargets
+                        if CollectionService:HasTag(parent, "Ignore") then
+                            continue
+                        end
+            
+                        local enemyHum = parent:FindFirstChild("Humanoid")
+                        if not enemyHum then
+                            continue
+                        end
+            
+                        local enemyRoot: BasePart = parent:FindFirstChild("HumanoidRootPart")
+                        if not enemyRoot then
+                            continue
+                        end
+            
+                        if alreadyHit[parent.Name] then
+                            continue
+                        end
+            
+                        if CollectionService:HasTag(parent, "Invulnerable") then
+                            continue
+                        end
+            
+                        alreadyHit[parent.Name] = true
+            
+                        local isBlocking = StateManager:CheckState(parent, "Blocking")
+                        if isBlocking then
+                            --Block Indication
+                            warn("block Shield Slam")
+            
+                            continue
+                        end
+            
+                        --apply burn
+                        if classData.MoveData[moveType].Burn then
+                            StateManager:AddTarget(parent, "Burn", 3)
+                        end
+            
+                        --apply stun
+                        if classData.MoveData[moveType].Stunned then
+                            StateManager:AddTarget(parent, "Stunned", 2)
+                        end
+            
+                        --apply slow
+                        if classData.MoveData[moveType].Slow then
+                            StateManager:AddTarget(parent, "Slow", 1)
+                        end
+            
+                        --apply knockup
+                        if classData.MoveData[moveType].Knockup then
+                            local parentPlayer = Players:GetPlayerFromCharacter(parent)
+                            if not parentPlayer then
+                                enemyRoot:SetNetworkOwner(player)
+                            end
+
+                            StateManager:AddTarget(parent, "Knockup", 50)
                         end
 
-                        StateManager:AddTarget(parent, "Knockup", 50)
+                        StateManager:AddTarget(parent, "Attacked", 1)
+            
+                        HealthManager:Damage(parent, damage, character)
                     end
-
-                    StateManager:AddTarget(parent, "Attacked", 1)
-        
-                    HealthManager:Damage(parent, damage, character)
+                    
+                    task.wait()
                 end
-                
-                task.wait()
-            end
-        end)
+            end)
 
-        task.delay(lifeTime, function()
-            if hitDetect then
-                task.cancel(hitDetect)
-            end
-        end)
+            task.delay(lifeTime, function()
+                if hitDetect then
+                    task.cancel(hitDetect)
+                end
+            end)
+        end
 
         startCFrame *= CFrame.new(0, 0, -size.Z)
 

@@ -70,6 +70,8 @@ function ShieldJumpVFX:Update(deltaTime)
 end
 
 function ShieldJumpVFX:Burst(spawnCFrame)
+    spawnCFrame *= CFrame.new(0, 5, 0)
+    
     local characterList = {}
         for _, plr in pairs(Players:GetPlayers()) do
             local plrChar = plr.Character

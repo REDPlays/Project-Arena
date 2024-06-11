@@ -10,6 +10,8 @@ local Maps = ServerStorage:WaitForChild("Maps")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
+local TestState = workspace:GetAttribute("TestState")
+
 local RoundManager = {}
 RoundManager.__index = RoundManager
 
@@ -34,6 +36,11 @@ function RoundManager:Init(ServerGameManager)
     self.serverGameManager = ServerGameManager
 
     self.belowLimit = 1
+
+    if TestState then
+        self.belowLimit = 0
+    end
+
     self.maxTick = 1
     self.currTick = 0
 
@@ -358,7 +365,12 @@ function RoundManager:Update(deltaTime)
         if not self.roundStart then
             if not self.startCountDown then
                 self.startCountDown = true
-                self.countDown = 15
+                
+                if TestState then
+                    self.countDown = 1000
+                else
+                    self.countDown = 15
+                end
 
                 --map selection
             if not self.MapSelected then
