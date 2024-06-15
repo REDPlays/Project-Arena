@@ -269,8 +269,88 @@ ClassData["ShieldWarrior"] = {
         ["FMove"] = "SunBeam",
     }
 }
-
---ClassData["Samurai"] = {}
+ClassData["Samurai"] = {
+    Health = 100,
+    Defense = 100,
+    Speed = 35,
+    Role = "Brawler",
+    Cost = 200,
+    Description = "The way of the blade",
+    DamageList = {
+        ["LMBMove"] = {6, 6, 6},
+        ["QMove"] = 15,
+        ["EMove"] = 25,
+        ["FMove"] = 0,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .5,
+        ["QMove"] = 3.5,
+        ["EMove"] = 1, --10,
+        ["FMove"] = 15,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(7, 5, 5),
+            Offset = CFrame.new(0, 2.5, -2.5),
+        },
+        ["QMove"] = {
+            Size = Vector3.new(6, 6, 6),
+            Offset = CFrame.new(0, 3, -6),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(5, 20, 20),
+            Offset = CFrame.new(0, 2.5, 0) * CFrame.Angles(0, 0, math.rad(-90)),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(20, 20, 20),
+            Offset = CFrame.new(0, 0, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+        ["QMove"] = {
+            hasEvent = true,
+            noMovement = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = true,
+        },
+        ["EMove"] = {
+            hasEvent = true,
+            noMovement = true,
+            Stunned = true,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+        ["FMove"] = {
+            hasEvent = true,
+            noMovement = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "AngelKnightM1",
+        ["QMove"] = "ShieldSlam",
+        ["EMove"] = "ShieldJump",
+        ["FMove"] = "SunBeam",
+    }
+}
 
 --ClassData["Engineer"] = {}
 

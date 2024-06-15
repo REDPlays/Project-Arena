@@ -14,6 +14,7 @@ local DataTemplate = {
 		["AngelKnight"] = false,
         ["Pyromancer"] = false,
         ["ShieldWarrior"] = false,
+        ["Samurai"] = false,
 	},
 }
 

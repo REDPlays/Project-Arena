@@ -61,4 +61,21 @@ AnimationData["ShieldWarrior"] = {
     Run = Animations:WaitForChild("Pyromancer"):WaitForChild("Run"),
 }
 
+AnimationData["Samurai"] = {
+    LMBMove = {
+        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_1"),
+        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_2"),
+        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("AngelKnight"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("AngelKnight"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("AngelKnight"):WaitForChild("Run"),
+}
+
 return AnimationData
