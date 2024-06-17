@@ -83,6 +83,19 @@ function AnimationSystem:CreateConditionalData()
     return conditionalData
 end
 
+function AnimationSystem:ChangeClass(class)
+    self.currentAnimations.Idle:Stop()
+
+    self.currentAnimations.Idle = self.animator:LoadAnimation(AnimationData[class].Idle)
+    self.currentAnimations.Idle.Priority = Enum.AnimationPriority.Idle
+    self.currentAnimations.Idle:Play()
+
+    self.currentAnimations.Walk:Stop()
+
+    self.currentAnimations.Walk = self.animator:LoadAnimation(AnimationData[class].Run)
+    self.currentAnimations.Walk.Priority = Enum.AnimationPriority.Movement
+end
+
 function AnimationSystem:Play(class, animName, animCount, conditionalData, hitBoxCallBack, hasEvent)
     conditionalData = conditionalData or self:CreateConditionalData()
     hasEvent = hasEvent or false
@@ -154,10 +167,18 @@ function AnimationSystem:Update(deltaTime)
     local moveDir = self.humanoid.MoveDirection.Magnitude
 
     if moveDir <= 0.5 then
+        if not self.currentAnimations.Idle.IsPlaying then
+            self.currentAnimations.Idle:Play()
+        end
+
         if self.currentAnimations.Walk.IsPlaying then
             self.currentAnimations.Walk:Stop()
         end
     elseif moveDir > 0.5 then
+        if self.currentAnimations.Idle.IsPlaying then
+            self.currentAnimations.Idle:Stop()
+        end
+
         if not self.currentAnimations.Walk.IsPlaying then
             self.currentAnimations.Walk:Play()
         elseif self.currentAnimations.Walk.IsPlaying then

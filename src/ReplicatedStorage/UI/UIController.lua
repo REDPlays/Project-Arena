@@ -579,7 +579,7 @@ function UIController:LoadCharacter(class)
     self.class = class
 
     --set icons for moves
-
+    self.animationSystem:ChangeClass(class)
 end
 
 function UIController:Disconnect()

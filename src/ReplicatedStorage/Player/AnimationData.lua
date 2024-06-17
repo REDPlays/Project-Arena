@@ -74,8 +74,8 @@ AnimationData["Samurai"] = {
     EMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("EMove"),
     FMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("FMove"),
 
-    Idle = Animations:WaitForChild("AngelKnight"):WaitForChild("Idle"),
-    Run = Animations:WaitForChild("AngelKnight"):WaitForChild("Run"),
+    Idle = Animations:WaitForChild("Samurai"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Samurai"):WaitForChild("Run"),
 }
 
 return AnimationData
