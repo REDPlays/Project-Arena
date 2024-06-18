@@ -63,9 +63,9 @@ AnimationData["ShieldWarrior"] = {
 
 AnimationData["Samurai"] = {
     LMBMove = {
-        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_1"),
-        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_2"),
-        Animations:WaitForChild("AngelKnight"):WaitForChild("M1_3"),
+        Animations:WaitForChild("Samurai"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Samurai"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Samurai"):WaitForChild("M1_3"),
     },
 
     Block = Animations:WaitForChild("AngelKnight"):WaitForChild("Block"),
