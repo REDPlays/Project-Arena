@@ -146,6 +146,11 @@ function CharacterSelectServer:GiveUI(character, Stats)
         oldOverhead:Destroy()
     end
 
+    local oldStatusUI = character:FindFirstChild("StatusUI")
+    if oldStatusUI then
+        oldStatusUI:Destroy()
+    end
+
     local newAttach = Instance.new("Attachment")
     newAttach.Name = "UI"
     newAttach.Parent = rootPart
@@ -157,6 +162,10 @@ function CharacterSelectServer:GiveUI(character, Stats)
     Overhead.Adornee = newAttach
     Overhead.PlayerName.Text = character.Name
     Overhead.Parent = character
+
+    local StatusUI: BillboardGui = UI.StatusUI:Clone()
+    StatusUI.Adornee = newAttach
+    StatusUI.Parent = character
 
     if CharacterSelectServer.uiConnections[character] then
         if CharacterSelectServer.uiConnections[character].health then

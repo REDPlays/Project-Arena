@@ -14,7 +14,7 @@ Burn.InState = {}
 local Color = Color3.fromRGB(255, 119, 0)
 
 local maxStacks = 2
-local burnDamage = .1
+local burnDamage = .5
 local currTick = 0
 local maxTick = 1
 
@@ -46,8 +46,13 @@ function Burn:AddTarget(target: Model, duration)
         return
     end
 
-    local UIAttach = rootPart:FindFirstChild("UI")
-    if not UIAttach then
+    local StatusUI = target:FindFirstChild("StatusUI")
+    if not StatusUI then
+        return
+    end
+
+    local HolderFrame = StatusUI:FindFirstChild("Holder")
+    if not HolderFrame then
         return
     end
 
@@ -66,11 +71,14 @@ function Burn:AddTarget(target: Model, duration)
 
     local VFX_ID = "Burn_" .. HttpService:GenerateGUID(false)
 
-    local display = UI.StatusUI:Clone()
-    display.Adornee = UIAttach
-    display.StatusName.Text = "BURNED"
-    display.StatusName.TextColor3 = Color
-    display.Parent = target
+    local prevIcon = HolderFrame:FindFirstChild("Burn")
+    if prevIcon then
+        prevIcon:Destroy()
+    end
+
+    local Icon = UI.StatusIcons.Burn:Clone()
+    Icon.Name = "Burn"
+    Icon.Parent = HolderFrame
 
     VisualEffectServer:SpawnEffectsInRange(
         "Burn",
@@ -86,7 +94,7 @@ function Burn:AddTarget(target: Model, duration)
         duration = duration,
         currTime = 0,
         burnCount = 1,
-        display = display,
+        Icon = Icon,
         VFX_ID = VFX_ID,
     }
 end
@@ -109,8 +117,8 @@ function Burn:RemoveTarget(target: Model)
     Stats:SetAttribute("Burn", nil)
 
     if Burn.InState[target] then
-        if Burn.InState[target].display then
-            Burn.InState[target].display:Destroy()
+        if Burn.InState[target].Icon then
+            Burn.InState[target].Icon:Destroy()
         end
 
         VisualEffectServer:TerminateVFX(

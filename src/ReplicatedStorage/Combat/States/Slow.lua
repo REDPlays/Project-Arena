@@ -38,8 +38,13 @@ function Slow:AddTarget(target: Model, duration)
         return
     end
 
-    local UIAttach = rootPart:FindFirstChild("UI")
-    if not UIAttach then
+    local StatusUI = target:FindFirstChild("StatusUI")
+    if not StatusUI then
+        return
+    end
+
+    local HolderFrame = StatusUI:FindFirstChild("Holder")
+    if not HolderFrame then
         return
     end
 
@@ -52,18 +57,22 @@ function Slow:AddTarget(target: Model, duration)
 
     Stats:SetAttribute("Slowed", true)
 
-    local display = UI.StatusUI:Clone()
-    display.Adornee = UIAttach
-    display.StatusName.Text = "SLOWED"
-    display.StatusName.TextColor3 = Color
-    display.Parent = target
+    local prevIcon = HolderFrame:FindFirstChild("Slowed")
+    if prevIcon then
+        prevIcon:Destroy()
+    end
+
+    local Icon = UI.StatusIcons.Slowed:Clone()
+    Icon.Name = "Slowed"
+    Icon.Parent = HolderFrame
 
     Slow.InState[target] = {
         target = target,
+        Stats = Stats,
         duration = duration,
         currTime = 0,
-        prevSpeed = humanoid.WalkSpeed,
-        display = display,
+        prevSpeed = Stats:GetAttribute("Speed"),
+        Icon = Icon,
     }
 
     humanoid.WalkSpeed = 4
@@ -86,11 +95,13 @@ function Slow:RemoveTarget(target: Model)
 
     Stats:SetAttribute("Slowed", false)
 
-    humanoid.WalkSpeed = Slow.InState[target].prevSpeed
+    if not Stats:GetAttribute("Stunned") then
+        humanoid.WalkSpeed = Slow.InState[target].prevSpeed
+    end
 
     if Slow.InState[target] then
-        if Slow.InState[target].display then
-            Slow.InState[target].display:Destroy()
+        if Slow.InState[target].Icon then
+            Slow.InState[target].Icon:Destroy()
         end
 
         Slow.InState[target] = nil
@@ -99,6 +110,20 @@ end
 
 function Slow:Update(deltaTime)
     for targetId, data in pairs(Slow.InState) do
+        if data.target then
+            local Stats = data.Stats
+            if not Stats then
+                continue
+            end
+            
+            local humanoid = data.target:FindFirstChild("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                if not Stats:GetAttribute("Stunned") then
+                    humanoid.WalkSpeed = 4
+                end
+            end
+        end
+
         if data.currTime >= data.duration then
             Slow:RemoveTarget(targetId)
             continue

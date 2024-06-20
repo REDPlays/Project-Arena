@@ -38,8 +38,13 @@ function Stunned:AddTarget(target: Model, duration)
         return
     end
 
-    local UIAttach = rootPart:FindFirstChild("UI")
-    if not UIAttach then
+    local StatusUI = target:FindFirstChild("StatusUI")
+    if not StatusUI then
+        return
+    end
+
+    local HolderFrame = StatusUI:FindFirstChild("Holder")
+    if not HolderFrame then
         return
     end
 
@@ -54,19 +59,23 @@ function Stunned:AddTarget(target: Model, duration)
         return
     end
 
-    local display = UI.StatusUI:Clone()
-    display.Adornee = UIAttach
-    display.StatusName.Text = "STUNNED"
-    display.StatusName.TextColor3 = Color
-    display.Parent = target
+    local prevIcon = HolderFrame:FindFirstChild("Stunned")
+    if prevIcon then
+        prevIcon:Destroy()
+    end
+
+    local Icon = UI.StatusIcons.Stunned:Clone()
+    Icon.Name = "Stunned"
+    Icon.Parent = HolderFrame
 
     Stunned.InState[target] = {
         target = target,
+        Stats = Stats,
         duration = duration,
         currTime = 0,
         stunCount = 1,
-        prevSpeed = humanoid.WalkSpeed,
-        display = display,
+        prevSpeed = Stats:GetAttribute("Speed"),
+        Icon = Icon,
     }
 
     humanoid.WalkSpeed = 0
@@ -90,11 +99,13 @@ function Stunned:RemoveTarget(target: Model)
     Stats:SetAttribute("Stunned", false)
     Stats:SetAttribute("AbilityLocked", false)
 
-    humanoid.WalkSpeed = Stunned.InState[target].prevSpeed
+    if not Stats:GetAttribute("Slowed") then
+        humanoid.WalkSpeed = Stunned.InState[target].prevSpeed
+    end
 
     if Stunned.InState[target] then
-        if Stunned.InState[target].display then
-            Stunned.InState[target].display:Destroy()
+        if Stunned.InState[target].Icon then
+            Stunned.InState[target].Icon:Destroy()
         end
 
         Stunned.InState[target] = nil
@@ -103,6 +114,13 @@ end
 
 function Stunned:Update(deltaTime)
     for targetId, data in pairs(Stunned.InState) do
+        if data.target then
+            local humanoid = data.target:FindFirstChild("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                humanoid.WalkSpeed = 0
+            end
+        end
+
         if data.currTime >= data.duration then
             Stunned:RemoveTarget(targetId)
             continue

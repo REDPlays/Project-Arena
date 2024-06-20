@@ -76,6 +76,12 @@ function ServerGameManager:ConfigureDummies()
         currTime = 0,
         maxTime = .5,
     }
+
+    ServerGameManager.dummyTimers[Dummies.DummyAllForOne] = {
+        dummy = Dummies.DummyAllForOne,
+        currTime = 0,
+        maxTime = 1.5,
+    }
 end
 
 function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
@@ -185,6 +191,13 @@ function ServerGameManager:Update(deltaTime)
         local isKnockup = false
         if data.dummy.Name == "DummyKnockup" then
             isKnockup = true
+        end
+
+        if data.dummy.Name == "DummyAllForOne" then
+            isStun = true
+            isBurn = true
+            isSlow = true
+            --isKnockup = true
         end
 
         if data.currTime >= data.maxTime then
