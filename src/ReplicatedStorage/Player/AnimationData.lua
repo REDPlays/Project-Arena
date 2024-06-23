@@ -68,7 +68,7 @@ AnimationData["Samurai"] = {
         Animations:WaitForChild("Samurai"):WaitForChild("M1_3"),
     },
 
-    Block = Animations:WaitForChild("AngelKnight"):WaitForChild("Block"),
+    Block = Animations:WaitForChild("Samurai"):WaitForChild("Block"),
 
     QMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("QMove"),
     EMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("EMove"),

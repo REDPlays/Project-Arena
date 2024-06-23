@@ -380,6 +380,8 @@ function UIController:Connect()
                 end
 
                 self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack, true)
+            else
+                self.LMBs -= 1
             end
         end
 

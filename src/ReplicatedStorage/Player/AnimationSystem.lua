@@ -106,6 +106,10 @@ function AnimationSystem:Play(class, animName, animCount, conditionalData, hitBo
     conditionalData.loop = conditionalData.loop or false
     conditionalData.isAttack = conditionalData.isAttack or false
 
+    if animName == "LMBMove" then
+        conditionalData.weight = 1.5
+    end
+
     local anim = AnimationData[class][animName]
     if type(anim) == "table" then
         anim = AnimationData[class][animName][animCount]
