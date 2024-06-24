@@ -11,6 +11,7 @@ local states = {
     Burn = require(States:WaitForChild("Burn")),
     Slow = require(States:WaitForChild("Slow")),
     Knockup = require(States:WaitForChild("Knockup")),
+    Invulnerable = require(States:WaitForChild("Invulnerable")),
 }
 
 local StateManager = {}
@@ -56,6 +57,7 @@ if RunService:IsServer() then
         states.Burn:Update(deltaTime)
         states.Slow:Update(deltaTime)
         states.Knockup:Update(deltaTime)
+        states.Invulnerable:Update(deltaTime)
     end
 end
 

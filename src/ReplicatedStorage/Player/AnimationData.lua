@@ -70,9 +70,9 @@ AnimationData["Samurai"] = {
 
     Block = Animations:WaitForChild("Samurai"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("FMove"),
+    QMove = Animations:WaitForChild("Samurai"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Samurai"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("Samurai"):WaitForChild("FMove"),
 
     Idle = Animations:WaitForChild("Samurai"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Samurai"):WaitForChild("Run"),

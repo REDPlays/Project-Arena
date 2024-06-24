@@ -344,7 +344,7 @@ function UIController:Connect()
                 self.LMBs = 1
             end
 
-            if self.currTime - self.prevTime >= 1 then
+            if self.currTime - self.prevTime >= 1.5 then
                 self.LMBs = 1
             end
             

@@ -1,11 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
+local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
-local Indicators = Assets:WaitForChild("Indicators")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
@@ -16,9 +16,9 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 
 local IgnoreFolder = workspace.Ignore
 
-local SunBeam = {}
+local RapidSlashes = {}
 
-function SunBeam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function RapidSlashes:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
     local damage = classData.DamageList[moveType]
@@ -32,6 +32,12 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     if not humanoid then
         return
     end
+
+    local duration = 2
+    local currTime = 0
+    local damageTick = .075
+
+    Stats:SetAttribute("AbilityLocked", true)
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
@@ -47,36 +53,6 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     weld.Part0 = Hitbox
     weld.Part1 = rootPart
     weld.Parent = weld.Part0
-
-    local caution = Indicators.CautionLines:Clone()
-    caution.Size = Vector3.new(Hitbox.Size.X, .1, Hitbox.Size.Z)
-    caution.A0.Position = Vector3.new(0, .05, -caution.Size.Z/2)
-    caution.A1.Position = Vector3.new(0, .05, caution.Size.Z/2)
-    caution.Beam.Width0 = caution.Size.X
-    caution.Beam.Width1 = caution.Size.X
-    caution.CFrame = placementCFrame * CFrame.new(0, -Hitbox.Size.Y/2 + 0.05, 0)
-    caution.Parent = IgnoreFolder
-
-    local weld2 = Instance.new("WeldConstraint")
-    weld2.Part0 = caution
-    weld2.Part1 = rootPart
-    weld2.Parent = weld2.Part0
-
-    Stats:SetAttribute("AbilityLocked", true)
-
-    local duration = 3
-    local currTime = 0
-    local damageTick = .25
-
-    StateManager:AddTarget(character, "Slow", duration)
-
-    VisualEffectServer:SpawnEffectsInRange(
-        "SunBeam",
-        nil,
-        character,
-        {},
-        1000
-    )
 
     local alreadyHit = {}
 
@@ -131,7 +107,7 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block Sun Beam")
+                    warn("block flamethrower Beam")
                     task.delay(damageTick, function()
                         if alreadyHit[parent.Name] then
                             alreadyHit[parent.Name] = nil
@@ -172,17 +148,12 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     end)
 
     Debris:AddItem(Hitbox, duration)
-    Debris:AddItem(caution, duration)
 
     task.delay(duration, function()
-        if thread then
-            task.cancel(thread)
-        end
-        
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
     coroutine.resume(thread)
 end
 
-return SunBeam
+return RapidSlashes

@@ -171,7 +171,7 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
                     end
                 end)
             end
-            
+
             task.wait()
         end
     end)
@@ -180,6 +180,9 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
     Debris:AddItem(caution, duration)
 
     task.delay(duration, function()
+        if thread then
+            task.cancel(thread)
+        end
         Stats:SetAttribute("AbilityLocked", false)
     end)
 

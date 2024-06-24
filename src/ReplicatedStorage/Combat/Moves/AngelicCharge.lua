@@ -144,6 +144,9 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
     Debris:AddItem(Hitbox, duration * 2)
 
     task.delay(duration * 2 , function()
+        if thread then
+            task.cancel(thread)
+        end
         Stats:SetAttribute("AbilityLocked", false)
     end)
 

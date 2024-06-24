@@ -366,10 +366,9 @@ function RoundManager:Update(deltaTime)
             if not self.startCountDown then
                 self.startCountDown = true
                 
+                self.countDown = 15
                 if TestState then
-                    self.countDown = 1000
-                else
-                    self.countDown = 15
+                    --self.countDown = 1000
                 end
 
                 --map selection
