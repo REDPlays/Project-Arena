@@ -27,13 +27,13 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
     if not Stats then
         return
     end
-
+    
     local humanoid = character:FindFirstChild("Humanoid")
     if not humanoid then
         return
     end
-
-    local duration = 2
+   
+    local duration = 1
     local _delay = .5
     local speed = 100
 
@@ -58,32 +58,107 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
 
+    local alreadyHit = {}
     local function hitDetection()
+        local touched = Hitbox.Touched:Connect(function() end)
+        local touchedObjects = Hitbox:GetTouchingParts()
 
-    end
+        if touched then
+            touched:Disconnect()
+        end
 
-    local function movement(deltaTime)
-        local characterList = {}
-        for _, plr in pairs(Players:GetPlayers()) do
-            local plrChar = plr.Character
-            if not plrChar then
+        for i=1, #touchedObjects do
+            local object = touchedObjects[i]
+            local parent = object.Parent
+            
+            if not parent:IsA("Model") then
                 continue
             end
-            table.insert(characterList, plrChar)
+            
+            if parent == character then
+                continue
+            end
+            
+            --ignoreTargets
+            if CollectionService:HasTag(parent, "Ignore") then
+                continue
+            end
+            
+            local enemyHum = parent:FindFirstChild("Humanoid")
+            if not enemyHum then
+                continue
+            end
+            
+            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+            if not enemyRoot then
+                continue
+            end
+            
+            if alreadyHit[parent.Name] then
+                continue
+            end
+            
+            if CollectionService:HasTag(parent, "Invulnerable") then
+                continue
+            end
+
+            alreadyHit[parent.Name] = true
+            
+            local isBlocking = StateManager:CheckState(parent, "Blocking")
+            if isBlocking then
+                --Block Indication
+                warn("block WindTornado")
+                continue
+            end
+            
+            --apply burn
+            if classData.MoveData[moveType].Burn then
+                StateManager:AddTarget(parent, "Burn", 3)
+            end
+
+            --apply stun
+            if classData.MoveData[moveType].Stunned then
+                StateManager:AddTarget(parent, "Stunned", 2)
+            end
+
+            --apply slow
+            if classData.MoveData[moveType].Slow then
+                StateManager:AddTarget(parent, "Slow", 2)
+            end
+
+            --apply knockup
+            if classData.MoveData[moveType].Knockup then
+                StateManager:AddTarget(parent, "Knockup", 50)
+            end
+
+            StateManager:AddTarget(parent, "Attacked", 2)
+
+            HealthManager:Damage(parent, damage, character)
         end
+    end
 
-        rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
-    
-        local newRayCFrame = Hitbox.CFrame * CFrame.new(0, 100, 0)
+    local function movement(dt)
+        Hitbox.CFrame *= CFrame.new(0, 0, -speed * dt)
 
-        local ray = workspace:Raycast(newRayCFrame.Position, newRayCFrame.UpVector * -1000, rayparams)
-        if ray then
-            local rayPosition = ray.Position
+            local newCFR = Hitbox.CFrame
 
-            Hitbox.Position = rayPosition + Vector3.new(0, Hitbox.Size.Y/2, 0)
+            local characterList = {}
+            for _, plr in pairs(Players:GetPlayers()) do
+                local plrChar = plr.Character
+                if not plrChar then
+                    continue
+                end
+                table.insert(characterList, plrChar)
+            end
 
-            Hitbox.CFrame *= CFrame.new(0, 0, -speed * deltaTime)
-        end
+            rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
+
+            local ray = workspace:Raycast(newCFR.Position, newCFR.UpVector * -1000, rayparams)
+            if ray then
+                local rayPosition = ray.Position
+
+                Hitbox.Position = rayPosition + Vector3.new(0, Hitbox.Size.Y/2, 0)
+            end
     end
 
     local thread = coroutine.create(function()
@@ -92,7 +167,7 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
 
             hitDetection()
 
-            Hitbox.CFrame *= CFrame.new(0, 0, -speed * dt)
+            movement(dt)
         end
     end)
 

@@ -59,6 +59,11 @@ function CharacterSelectServer:Setup()
 end
 
 function CharacterSelectServer:DummyJoined(dummy)
+    local rootPart = dummy:FindFirstChild("HumanoidRootPart")
+    if rootPart then
+        rootPart.CFrame *= CFrame.new(0, 1, 0)
+    end
+
     local Stats = Instance.new("Folder")
     Stats.Name = "Stats"
     Stats.Parent = dummy

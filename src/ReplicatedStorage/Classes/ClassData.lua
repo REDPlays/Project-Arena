@@ -280,13 +280,13 @@ ClassData["Samurai"] = {
         ["LMBMove"] = {6, 6, 6},
         ["QMove"] = 15,
         ["EMove"] = 2,
-        ["FMove"] = 0,
+        ["FMove"] = 25,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
         ["QMove"] = 5,
-        ["EMove"] = 1, --10,
-        ["FMove"] = 1 --15,
+        ["EMove"] = 10,
+        ["FMove"] = 15,
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -302,8 +302,8 @@ ClassData["Samurai"] = {
             Offset = CFrame.new(0, 4, -6),
         },
         ["FMove"] = {
-            Size = Vector3.new(10, 20, 10),
-            Offset = CFrame.new(0, 10, 0),
+            Size = Vector3.new(10, 15, 10),
+            Offset = CFrame.new(0, 7.5, 0),
         },
     },
     MoveData = {
@@ -339,7 +339,7 @@ ClassData["Samurai"] = {
             noMovement = false,
             Stunned = false,
             Burn = false,
-            Slow = true,
+            Slow = false,
             CameraLock = false,
             Knockup = true,
         },
@@ -347,8 +347,8 @@ ClassData["Samurai"] = {
     VisualEffects = {
         ["LMBMove"] = "",
         ["QMove"] = "ShadowStep",
-        ["EMove"] = "ShieldJump",
-        ["FMove"] = "SunBeam",
+        ["EMove"] = "RapidSlashes",
+        ["FMove"] = "WindTornado",
     }
 }
 
