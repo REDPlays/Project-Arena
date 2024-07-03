@@ -356,6 +356,11 @@ function UIController:Connect()
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["LMBMove"]
+
+                if self.LMBs >= 3 then
+                    cooldownDuration = 1
+                end
+                
                 self:toggleUICountdown("LMBMove", cooldownDuration)
 
                 local conditionalData = {
@@ -380,8 +385,6 @@ function UIController:Connect()
                 end
 
                 self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack, true)
-            else
-                self.LMBs -= 1
             end
         end
 
