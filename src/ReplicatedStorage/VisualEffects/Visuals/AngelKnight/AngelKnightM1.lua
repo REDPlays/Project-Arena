@@ -119,25 +119,25 @@ function AngelKnightM1:Hit(target)
         return
     end
 
-    self.HitVFX = AngelKnightVFX.M1s.Hit:Clone()
-    self.HitVFX.Transparency = 1
-    self.HitVFX.CFrame = targetRoot.CFrame
-    self.HitVFX.Parent = self.Folder
+    local HitVFX = AngelKnightVFX.M1s.Hit:Clone()
+    HitVFX.Transparency = 1
+    HitVFX.CFrame = targetRoot.CFrame
+    HitVFX.Parent = self.Folder
 
     self.sfx2 = Sounds.Base.SwordHit:Clone()
     self.sfx2.Volume = .25
     self.sfx2._Pitch.Octave = math.random(95,  105) / 100
-    self.sfx2.Parent = self.slash
+    self.sfx2.Parent = HitVFX
     self.sfx2:Play()
 
     if self.conditionalData.moveCount == 1 then
-        self.HitVFX.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(30))
+        HitVFX.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(30))
     elseif self.conditionalData.moveCount == 2 then
-        self.HitVFX.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(-30))
+        HitVFX.CFrame *= CFrame.fromEulerAnglesXYZ(0, 0, math.rad(-30))
     end
 
     local weld = Instance.new("WeldConstraint")
-    weld.Part0 = self.HitVFX
+    weld.Part0 = HitVFX
     weld.Part1 = targetRoot
     weld.Parent = weld.Part0
 
@@ -145,13 +145,13 @@ function AngelKnightM1:Hit(target)
     local info = TweenInfo.new(timing, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
     local info2 = TweenInfo.new(timing, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out, 0, false, .25)
 
-    TweenService:Create(self.HitVFX.A0, info, {Position = Vector3.new(4, 0, 0)}):Play()
-    TweenService:Create(self.HitVFX.A1, info, {Position = Vector3.new(-4, 0, 0)}):Play()
-    TweenService:Create(self.HitVFX.Beam, info2, {Width0 = 0, Width1 = 0}):Play()
+    TweenService:Create(HitVFX.A0, info, {Position = Vector3.new(4, 0, 0)}):Play()
+    TweenService:Create(HitVFX.A1, info, {Position = Vector3.new(-4, 0, 0)}):Play()
+    TweenService:Create(HitVFX.Beam, info2, {Width0 = 0, Width1 = 0}):Play()
 
-    self.HitVFX.Attachment.Particle1.Enabled = true
+    HitVFX.Attachment.Particle1.Enabled = true
     task.delay(.15, function()
-        self.HitVFX.Attachment.Particle1.Enabled = false
+        HitVFX.Attachment.Particle1.Enabled = false
     end)
 end
 

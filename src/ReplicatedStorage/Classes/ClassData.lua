@@ -345,7 +345,7 @@ ClassData["Samurai"] = {
         },
     },
     VisualEffects = {
-        ["LMBMove"] = "",
+        ["LMBMove"] = "SamuraiM1",
         ["QMove"] = "ShadowStep",
         ["EMove"] = "RapidSlashes",
         ["FMove"] = "WindTornado",
