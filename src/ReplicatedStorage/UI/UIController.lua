@@ -657,11 +657,26 @@ function UIController:Update(deltaTime)
             continue
         end
 
+        local targetUI2 = character:FindFirstChild("StatusUI")
+        if not targetUI2 then
+            continue
+        end
+
         if character == self.character then
             continue
         end
 
+        local Stats = character:FindFirstChild("Stats")
+        if not Stats then
+            continue
+        end
+
+        if Stats:GetAttribute("HideUI") then
+            continue
+        end
+
         targetUI.Enabled = true
+        targetUI2.Enabled = true
     end
 
     for moveType, UIData in pairs(self.UICooldowns) do

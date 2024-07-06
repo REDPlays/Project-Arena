@@ -84,6 +84,8 @@ function CharacterSelectServer:DummyJoined(dummy)
     Stats:SetAttribute("Slowed", false)
     Stats:SetAttribute("Invulnerable", false)
 
+    Stats:SetAttribute("HideUI", false)
+
     Stats:SetAttribute("Color1", Color3.fromRGB(255, 255, 255))
     Stats:SetAttribute("Color2", Color3.fromRGB(255, 255, 255))
     Stats:SetAttribute("Color3", Color3.fromRGB(255, 255, 255))
@@ -168,10 +170,12 @@ function CharacterSelectServer:GiveUI(character, Stats)
     local Overhead: BillboardGui = UI.Overhead:Clone()
     Overhead.Adornee = newAttach
     Overhead.PlayerName.Text = character.Name
+    Overhead.Enabled = false
     Overhead.Parent = character
 
     local StatusUI: BillboardGui = UI.StatusUI:Clone()
     StatusUI.Adornee = newAttach
+    StatusUI.Enabled = false
     StatusUI.Parent = character
 
     if CharacterSelectServer.uiConnections[character] then

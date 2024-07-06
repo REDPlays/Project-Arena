@@ -284,7 +284,7 @@ ClassData["Samurai"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 5,
+        ["QMove"] = 1, --5,
         ["EMove"] = 10,
         ["FMove"] = 15,
     },
