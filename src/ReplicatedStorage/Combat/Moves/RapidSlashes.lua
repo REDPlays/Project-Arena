@@ -54,6 +54,17 @@ function RapidSlashes:Activate(player, character, rootPart, placementCFrame, cla
     weld.Part1 = rootPart
     weld.Parent = weld.Part0
 
+    local VFX_ID = "RapidSlashes"..HttpService:GenerateGUID(false)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "RapidSlashes",
+        nil,
+        character,
+        {hitbox = Hitbox},
+        1000,
+        VFX_ID
+    )
+
     local alreadyHit = {}
 
     local thread = coroutine.create(function()
@@ -136,6 +147,16 @@ function RapidSlashes:Activate(player, character, rootPart, placementCFrame, cla
 
                 HealthManager:Damage(parent, damage, character)
 
+                VisualEffectServer:SpawnEffectsInRange(
+                    "RapidSlashes",
+                    parent,
+                    character,
+                    {isHit = true},
+                    1000,
+                    VFX_ID,
+                    true
+                )
+
                 task.delay(damageTick, function()
                     if alreadyHit[parent.Name] then
                         alreadyHit[parent.Name] = nil
@@ -151,6 +172,14 @@ function RapidSlashes:Activate(player, character, rootPart, placementCFrame, cla
 
     task.delay(duration, function()
         Stats:SetAttribute("AbilityLocked", false)
+
+        VisualEffectServer:TerminateVFX(
+            "RapidSlashes",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
     end)
 
     coroutine.resume(thread)

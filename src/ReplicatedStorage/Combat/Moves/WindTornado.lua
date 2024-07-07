@@ -33,9 +33,9 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
         return
     end
    
-    local duration = 1
+    local duration = 2
     local _delay = .5
-    local speed = 100
+    local speed = 50
 
     Stats:SetAttribute("AbilityLocked", true)
     task.delay(_delay, function()
@@ -57,6 +57,17 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
+
+    local VFX_ID = "RapidSlashes"..HttpService:GenerateGUID(false)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "WindTornado",
+        nil,
+        character,
+        {hitbox = Hitbox, duration = duration},
+        1000,
+        VFX_ID
+    )
 
     local alreadyHit = {}
     local function hitDetection()
@@ -177,6 +188,14 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
         if thread then
             task.cancel(thread)
         end
+
+        VisualEffectServer:TerminateVFX(
+            "WindTornado",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
     end)
 
     coroutine.resume(thread)

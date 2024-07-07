@@ -279,13 +279,13 @@ ClassData["Samurai"] = {
     DamageList = {
         ["LMBMove"] = {6, 6, 6},
         ["QMove"] = 15,
-        ["EMove"] = 2,
+        ["EMove"] = 1,
         ["FMove"] = 25,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 1, --5,
-        ["EMove"] = 10,
+        ["QMove"] = 5,
+        ["EMove"] = 7,
         ["FMove"] = 15,
     },
     Hitboxes = {
@@ -339,7 +339,7 @@ ClassData["Samurai"] = {
             noMovement = false,
             Stunned = false,
             Burn = false,
-            Slow = false,
+            Slow = true,
             CameraLock = false,
             Knockup = true,
         },

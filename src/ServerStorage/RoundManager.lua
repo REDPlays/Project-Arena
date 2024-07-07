@@ -368,7 +368,7 @@ function RoundManager:Update(deltaTime)
                 
                 self.countDown = 15
                 if TestState then
-                    --self.countDown = 1000
+                    self.countDown = 1000
                 end
 
                 --map selection

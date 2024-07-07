@@ -20,6 +20,8 @@ VisualEffectData["Colosseum"] = require(Visuals:WaitForChild("ShieldWarrior"):Wa
 
 VisualEffectData["SamuraiM1"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("SamuraiM1"))
 VisualEffectData["ShadowStep"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("ShadowStepVFX"))
+VisualEffectData["RapidSlashes"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("RapidSlashesVFX"))
+VisualEffectData["WindTornado"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("WindTornadoVFX"))
 
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))
 
