@@ -30,13 +30,13 @@ ClassData["AngelKnight"] = {
     Description = "Agressive Healer",
     DamageList = {
         ["LMBMove"] = {10, 10, 10},
-        ["QMove"] = 25,
+        ["QMove"] = 15,
         ["EMove"] = 10,
         ["FMove"] = 3,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 6,
+        ["QMove"] = 10,
         ["EMove"] = 5,
         ["FMove"] = 10,
     },
