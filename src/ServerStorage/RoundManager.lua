@@ -103,7 +103,7 @@ function RoundManager:ConfigurePickups(pickupFolder)
         self.healthPads[pad].isActive = true
         self.healthPads[pad].hitbox = pickup.Hitbox
         self.healthPads[pad].Cube = pickup.Cube
-        self.healthPads[pad].cooldown = 10
+        self.healthPads[pad].cooldown = 20
         self.healthPads[pad].currTime = 0
         self.healthPads[pad].UI = pickup.PrimaryPart.Cooldown
         self.healthPads[pad].Timer = pickup.PrimaryPart.Cooldown.Timer
@@ -283,7 +283,7 @@ function RoundManager:UpdatePickups(deltaTime)
                 padData.Cube.Burst.Health:Emit(8)
                 padData.Cube.Burst.Ring:Emit(3)
 
-                HealthManager:Heal(parent, 25)
+                HealthManager:Heal(parent, 15)
             end
         end
     end
