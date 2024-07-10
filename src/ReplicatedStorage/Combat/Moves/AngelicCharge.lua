@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -49,12 +50,15 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
 
     Stats:SetAttribute("AbilityLocked", true)
     
+    local VFX_ID = "AngelicCharge"..HttpService:GenerateGUID(false)
+
     VisualEffectServer:SpawnEffectsInRange(
         "AngelicCharge",
         nil,
         character,
         {},
-        1000
+        1000,
+        VFX_ID
     )
 
     local duration = .25
@@ -135,6 +139,16 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage, character)
+
+                VisualEffectServer:SpawnEffectsInRange(
+                    "AngelicCharge",
+                    parent,
+                    character,
+                    {isHit = true},
+                    1000,
+                    VFX_ID,
+                    true
+                )
             end
             
             task.wait()
@@ -148,6 +162,14 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
             task.cancel(thread)
         end
         Stats:SetAttribute("AbilityLocked", false)
+
+        VisualEffectServer:TerminateVFX(
+            "AngelicCharge",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
     end)
 
     coroutine.resume(thread)

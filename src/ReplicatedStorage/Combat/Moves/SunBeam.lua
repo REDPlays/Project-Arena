@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -70,12 +71,15 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
 
     StateManager:AddTarget(character, "Slow", duration)
 
+    local VFX_ID = "SunBeam"..HttpService:GenerateGUID(false)
+
     VisualEffectServer:SpawnEffectsInRange(
         "SunBeam",
         nil,
         character,
         {},
-        1000
+        1000,
+        VFX_ID
     )
 
     local alreadyHit = {}
@@ -160,6 +164,16 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
 
                 HealthManager:Damage(parent, damage, character)
 
+                VisualEffectServer:SpawnEffectsInRange(
+                    "SunBeam",
+                    parent,
+                    character,
+                    {isHit = true},
+                    1000,
+                    VFX_ID,
+                    true
+                )
+
                 task.delay(damageTick, function()
                     if alreadyHit[parent.Name] then
                         alreadyHit[parent.Name] = nil
@@ -180,6 +194,14 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
         end
         
         Stats:SetAttribute("AbilityLocked", false)
+
+        VisualEffectServer:TerminateVFX(
+            "SunBeam",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
     end)
 
     coroutine.resume(thread)

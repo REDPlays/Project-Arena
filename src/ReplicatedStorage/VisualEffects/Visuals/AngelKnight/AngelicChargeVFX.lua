@@ -36,14 +36,18 @@ function AngelicCharge:DisplayVFX()
     self.Folder = Instance.new("Folder")
     self.Folder.Name = "AngelicChargeVFX"
     self.Folder.Parent = workspace.VFX
-    
-    Debris:AddItem(self.Folder, 1)
 
     self:Dash()
 end
 
+function AngelicCharge:RunFunction(target, sourceUnit, conditionalData)
+    if conditionalData.isHit then
+        self:Hit(target)
+    end
+end
+
 function AngelicCharge:Terminate()
-    
+    Debris:AddItem(self.Folder, 2)
 end
 
 function AngelicCharge:Update(deltaTime)
@@ -79,6 +83,36 @@ function AngelicCharge:Dash()
             end
         end
     end)
+end
+
+function AngelicCharge:Hit(target)
+    local targetRoot = target:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then
+        return
+    end
+
+    local HitVFX = AngelKnightVFX.AngelicCharge.Hit:Clone()
+    HitVFX.Transparency = 1
+    HitVFX.CFrame = targetRoot.CFrame
+    HitVFX.Parent = self.Folder
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = HitVFX
+    weld.Part1 = targetRoot
+    weld.Parent = weld.Part0
+
+    local sfx2: Sound = Sounds.AngelKnight.Impact:Clone()
+    sfx2.Volume = .25
+    sfx2._Pitch.Octave = math.random(95,  105) / 100
+    sfx2.PlaybackSpeed = 2
+    sfx2.Parent = HitVFX
+    sfx2:Play()
+
+    for _, particle in pairs(HitVFX:GetDescendants()) do
+        if particle:IsA("ParticleEmitter") then
+            particle:Emit(particle:GetAttribute("EmitCount"))
+        end
+    end
 end
 
 return AngelicCharge
