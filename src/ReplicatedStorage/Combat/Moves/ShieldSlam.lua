@@ -101,7 +101,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
                 "ShieldSlam",
                 nil,
                 character,
-                {spawnPosition = newPosition},
+                {spawnPosition = newPosition, isSlam = true},
                 1000,
                 VFX_ID,
                 true
@@ -193,6 +193,16 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
                         StateManager:AddTarget(parent, "Attacked", 1)
             
                         HealthManager:Damage(parent, damage, character)
+
+                        VisualEffectServer:SpawnEffectsInRange(
+                            "ShieldSlam",
+                            parent,
+                            character,
+                            {isHit = true},
+                            1000,
+                            VFX_ID,
+                            true
+                        )
                     end
                     
                     task.wait()

@@ -52,17 +52,18 @@ function ShieldJumpVFX:DisplayVFX()
     self.Folder = Instance.new("Folder")
     self.Folder.Name = "ShieldJumpVFX"
     self.Folder.Parent = workspace.VFX
-    Debris:AddItem(self.Folder, 3)
 
     self:Burst(self.conditionalData.spawnCFrame)
 end
 
 function ShieldJumpVFX:RunFunction(target, sourceUnit, conditionalData)
-    
+    if conditionalData.isHit then
+        self:Hit(target)
+    end
 end
 
 function ShieldJumpVFX:Terminate()
-    
+    Debris:AddItem(self.Folder, 3)
 end
 
 function ShieldJumpVFX:Update(deltaTime)
@@ -106,6 +107,35 @@ function ShieldJumpVFX:Burst(spawnCFrame)
                 end
             end
         end
+end
+
+function ShieldJumpVFX:Hit(target)
+    local targetRoot = target:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then
+        return
+    end
+
+    local HitVFX = ShieldWarriorVFX.ShieldJump.Hit:Clone()
+    HitVFX.Transparency = 1
+    HitVFX.CFrame = targetRoot.CFrame
+    HitVFX.Parent = self.Folder
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = HitVFX
+    weld.Part1 = targetRoot
+    weld.Parent = weld.Part0
+
+    local sfx2: Sound = Sounds.ShieldWarrior.SmallRupture:Clone()
+    sfx2.Volume = .25
+    sfx2._Pitch.Octave = math.random(95,  105) / 100
+    sfx2.Parent = HitVFX
+    sfx2:Play()
+
+    for _, particle in pairs(HitVFX:GetDescendants()) do
+        if particle:IsA("ParticleEmitter") then
+            particle:Emit(particle:GetAttribute("EmitCount"))
+        end
+    end
 end
 
 return ShieldJumpVFX

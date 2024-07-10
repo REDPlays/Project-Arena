@@ -54,7 +54,11 @@ function ShieldSlamVFX:DisplayVFX()
 end
 
 function ShieldSlamVFX:RunFunction(target, sourceUnit, conditionalData)
-    self:Burst(conditionalData.spawnPosition)
+    if conditionalData.isHit then
+        self:Hit(target)
+    elseif conditionalData.isSlam then
+        self:Burst(conditionalData.spawnPosition)
+    end
 end
 
 function ShieldSlamVFX:Terminate()
@@ -88,6 +92,35 @@ function ShieldSlamVFX:Burst(spawnPosition)
 
     TweenService:Create(burstParticles.A1, info1, {Position = Vector3.new(0, 9, 0)}):Play()
     TweenService:Create(burstParticles.Beam, info2, {Width0 = 0, Width1 = 0}):Play()
+end
+
+function ShieldSlamVFX:Hit(target)
+    local targetRoot = target:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then
+        return
+    end
+
+    local HitVFX = ShieldWarriorVFX.ShieldSlam.Hit:Clone()
+    HitVFX.Transparency = 1
+    HitVFX.CFrame = targetRoot.CFrame
+    HitVFX.Parent = self.Folder
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = HitVFX
+    weld.Part1 = targetRoot
+    weld.Parent = weld.Part0
+
+    local sfx2: Sound = Sounds.ShieldWarrior.SmallRupture:Clone()
+    sfx2.Volume = .25
+    sfx2._Pitch.Octave = math.random(95,  105) / 100
+    sfx2.Parent = HitVFX
+    sfx2:Play()
+
+    for _, particle in pairs(HitVFX:GetDescendants()) do
+        if particle:IsA("ParticleEmitter") then
+            particle:Emit(particle:GetAttribute("EmitCount"))
+        end
+    end
 end
 
 return ShieldSlamVFX

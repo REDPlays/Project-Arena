@@ -3,6 +3,7 @@ local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -81,12 +82,15 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
         bezierData.middleCFrame = middleCFrame
     
         task.delay(duration, function()
+            local VFX_ID = HttpService:GenerateGUID(false)
+
             VisualEffectServer:SpawnEffectsInRange(
                 "ShieldJump",
                 nil,
                 character,
                 {spawnCFrame = endCFrame},
-                1000
+                1000,
+                VFX_ID
             )
             
             local alreadyHit = {}
@@ -177,6 +181,16 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
                 StateManager:AddTarget(parent, "Attacked", 1)
     
                 HealthManager:Damage(parent, damage, character)
+                
+                VisualEffectServer:SpawnEffectsInRange(
+                    "ShieldJump",
+                    parent,
+                    character,
+                    {isHit = true},
+                    1000,
+                    VFX_ID,
+                    true
+                )
             end
     
             Debris:AddItem(Hitbox, duration)
@@ -184,6 +198,16 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
             if Stats:GetAttribute("AbilityLocked") then
                 Stats:SetAttribute("AbilityLocked", false)
             end
+
+            task.delay(duration, function()
+                VisualEffectServer:TerminateVFX(
+                    "ShieldJump",
+                    nil,
+                    character,
+                    {},
+                    VFX_ID
+                )
+            end)
         end)
     
         Events.Server_Client.Movement:FireAllClients(character, bezierData)
