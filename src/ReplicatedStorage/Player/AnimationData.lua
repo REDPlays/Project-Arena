@@ -78,4 +78,38 @@ AnimationData["Samurai"] = {
     Run = Animations:WaitForChild("Samurai"):WaitForChild("Run"),
 }
 
+AnimationData["Engineer"] = {
+    LMBMove = {
+        Animations:WaitForChild("Engineer"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Engineer"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Engineer"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("Pyromancer"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Pyromancer"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("Pyromancer"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("Engineer"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Engineer"):WaitForChild("Run"),
+}
+
+AnimationData["Ranger"] = {
+    LMBMove = {
+        Animations:WaitForChild("Ranger"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Ranger"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Ranger"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("Pyromancer"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Pyromancer"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("Pyromancer"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("Ranger"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Ranger"):WaitForChild("Run"),
+}
+
 return AnimationData

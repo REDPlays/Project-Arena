@@ -108,6 +108,7 @@ ClassData["Pyromancer"] = {
     Health = 100,
     Defense = 100,
     Speed = 30,
+    ProjectileSpeed = 50,
     Role = "Burst",
     Cost = 200,
     Description = "Fire Connoisseur",
@@ -269,6 +270,7 @@ ClassData["ShieldWarrior"] = {
         ["FMove"] = "SunBeam",
     }
 }
+
 ClassData["Samurai"] = {
     Health = 100,
     Defense = 100,
@@ -352,6 +354,180 @@ ClassData["Samurai"] = {
     }
 }
 
---ClassData["Engineer"] = {}
+ClassData["Engineer"] = {
+    Health = 120,
+    Defense = 100,
+    Speed = 30,
+    ProjectileSpeed = 100,
+    Role = "Summoner",
+    Cost = 200,
+    Description = "Master Mechanic",
+    DamageList = {
+        ["LMBMove"] = {5, 5, 5},
+        ["QMove"] = 4,
+        ["EMove"] = 3,
+        ["FMove"] = 20,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .2,
+        ["QMove"] = 3,
+        ["EMove"] = 7,
+        ["FMove"] = 10,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(2, 2, 4),
+            Offset = {
+                CFrame.new(0, 0, -4),
+                CFrame.new(0, 0, -4),
+                CFrame.new(0, 0, -4),
+            },
+        },
+        ["QMove"] = {
+            Size = Vector3.new(3, 3, 3),
+            Offset = CFrame.new(0, 0, -1),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(6, 6, 20),
+            Offset = CFrame.new(0, 3, -12),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(20, 20, 20),
+            Offset = CFrame.new(0, 0, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+        ["QMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+        ["EMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = true,
+            Knockup = false,
+        },
+        ["FMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "",
+        ["QMove"] = "FireBall",
+        ["EMove"] = "Flamethrower",
+        ["FMove"] = "Eruption",
+    }
+}
+
+ClassData["Ranger"] = {
+    Health = 100,
+    Defense = 100,
+    Speed = 35,
+    ProjectileSpeed = 100,
+    Role = "Marksman",
+    Cost = 200,
+    Description = "Eyes of an Eagle",
+    DamageList = {
+        ["LMBMove"] = {5, 5, 5},
+        ["QMove"] = 4,
+        ["EMove"] = 3,
+        ["FMove"] = 20,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .2,
+        ["QMove"] = 3,
+        ["EMove"] = 7,
+        ["FMove"] = 10,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(2, 2, 4),
+            Offset = {
+                CFrame.new(1, 0, -4),
+                CFrame.new(1, 0, -4),
+                CFrame.new(1, 0, -4),
+            },
+        },
+        ["QMove"] = {
+            Size = Vector3.new(3, 3, 3),
+            Offset = CFrame.new(0, 0, -1),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(6, 6, 20),
+            Offset = CFrame.new(0, 3, -12),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(20, 20, 20),
+            Offset = CFrame.new(0, 0, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+        ["QMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+        ["EMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = true,
+            Knockup = false,
+        },
+        ["FMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = true,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "",
+        ["QMove"] = "FireBall",
+        ["EMove"] = "Flamethrower",
+        ["FMove"] = "Eruption",
+    }
+}
 
 return ClassData

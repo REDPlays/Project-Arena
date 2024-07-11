@@ -35,7 +35,10 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
         damage = projectileData.classData.DamageList[projectileData.moveType][projectileData.moveCount]
     end
 
-    local placementCFrame = projectileData.character:GetPivot() * projectileData.classData.Hitboxes[projectileData.moveType].Offset
+    projectileData.offSet = projectileData.classData.Hitboxes[projectileData.moveType].Offset
+    if typeof(projectileData.offSet) == "table" then
+        projectileData.offSet = projectileData.offSet[projectileData.moveCount]
+    end
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1

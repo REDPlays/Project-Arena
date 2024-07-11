@@ -182,8 +182,13 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
         nil,
         VisualID
     )
+    
+    local Offset = currentClassData.Hitboxes[moveType].Offset
+    if typeof(Offset) == "table" then
+        Offset = Offset[moveCount]
+    end
 
-    local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
+    local placementCFrame = character:GetPivot() * Offset
 
     local hitboxLifeTime = .25
 
@@ -320,7 +325,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
     end)
 end
 
-function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet)
+function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -347,12 +352,11 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
     local projectileData = {
         ID = projectileId,
         character = character,
-        speed = 50,
+        speed = currentClassData.ProjectileSpeed or 50,
         duration = 1,
         classData = currentClassData,
         moveType = moveType,
         moveCount = moveCount,
-        offSet = offSet
     }
 
     HitboxManager.projectiles[projectileId] = projectileData
