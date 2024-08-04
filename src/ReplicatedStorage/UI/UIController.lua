@@ -347,17 +347,15 @@ function UIController:Connect()
             if self.currTime - self.prevTime >= 1.5 then
                 self.LMBs = 1
             end
-            
-            local animInfo = self.animationSystem:animInfo(self.class, "LMBMove", self.LMBs)
-            
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "LMBMove", animInfo, self.LMBs)
+
+            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "LMBMove", self.LMBs)
             if canAttack then
                 self.debounces.LMBMove = true
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["LMBMove"]
 
-                if self.LMBs >= 3 then
+                if self.LMBs >= 3 and not currentClassData.MoveData.LMBMove.ignoreLMBMoveCD then
                     cooldownDuration = 1
                 end
                 
@@ -366,6 +364,7 @@ function UIController:Connect()
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
                     isAttack = true,
+                    weight = 2,
                 }
 
                 local function hitBoxCallBack()
@@ -385,6 +384,9 @@ function UIController:Connect()
                 end
 
                 self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack, true)
+            elseif not canAttack then
+                self.LMBs -= 1
+                self.LMBs = math.clamp(self.LMBs, 0, 3)
             end
         end
 
@@ -393,9 +395,7 @@ function UIController:Connect()
                 return
             end
 
-            local animInfo = self.animationSystem:animInfo(self.class, "QMove")
-
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "QMove", animInfo)
+            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "QMove")
             if canAttack then
                 self.debounces.QMove = true
                 local currentClassData = ClassData[self.class]
@@ -433,9 +433,7 @@ function UIController:Connect()
                 return
             end
 
-            local animInfo = self.animationSystem:animInfo(self.class, "EMove")
-
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "EMove", animInfo)
+            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "EMove")
             if canAttack then
                 self.debounces.EMove = true
                 local currentClassData = ClassData[self.class]
@@ -473,9 +471,7 @@ function UIController:Connect()
                 return
             end
 
-            local animInfo = self.animationSystem:animInfo(self.class, "FMove")
-
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "FMove", animInfo)
+            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "FMove")
             if canAttack then
                 self.debounces.FMove = true
                 local currentClassData = ClassData[self.class]

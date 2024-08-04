@@ -35,9 +35,11 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
         damage = projectileData.classData.DamageList[projectileData.moveType][projectileData.moveCount]
     end
 
-    projectileData.offSet = projectileData.classData.Hitboxes[projectileData.moveType].Offset
-    if typeof(projectileData.offSet) == "table" then
-        projectileData.offSet = projectileData.offSet[projectileData.moveCount]
+    if projectileData.moveType == "LMBMove" then
+        projectileData.offSet = projectileData.classData.Hitboxes[projectileData.moveType].Offset
+        if typeof(projectileData.offSet) == "table" then
+            projectileData.offSet = projectileData.offSet[projectileData.moveCount]
+        end
     end
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()

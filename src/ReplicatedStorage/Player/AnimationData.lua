@@ -81,8 +81,8 @@ AnimationData["Samurai"] = {
 AnimationData["Engineer"] = {
     LMBMove = {
         Animations:WaitForChild("Engineer"):WaitForChild("M1_1"),
-        Animations:WaitForChild("Engineer"):WaitForChild("M1_2"),
-        Animations:WaitForChild("Engineer"):WaitForChild("M1_3"),
+        Animations:WaitForChild("Engineer"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Engineer"):WaitForChild("M1_1"),
     },
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),

@@ -117,7 +117,7 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block angelic charge")
+                    HealthManager:Block(parent, damage, character)
                     continue
                 end
 

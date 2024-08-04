@@ -135,7 +135,7 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block Sun Beam")
+                    HealthManager:Block(parent, damage, character)
                     task.delay(damageTick, function()
                         if alreadyHit[parent.Name] then
                             alreadyHit[parent.Name] = nil

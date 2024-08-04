@@ -1,8 +1,11 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ServerStorage = game:GetService("ServerStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PlayerManager = require(ServerStorage.ServerFiles.Player.PlayerManager)
+
+local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectServer"))
 
 local HealthManager = {}
 
@@ -33,6 +36,14 @@ function HealthManager:Damage(character, damage, attacker)
         return
     end
 
+    VisualEffectServer:SpawnEffectsInRange(
+        "Damage",
+        nil,
+        character,
+        {},
+        50
+    )
+
     humanoid:TakeDamage(damage)
     Stats:SetAttribute("Health", humanoid.Health)
     Stats:SetAttribute("MaxHealth", maxHealth)
@@ -43,6 +54,16 @@ function HealthManager:Damage(character, damage, attacker)
             PlayerManager:AddKill(attackerPlayer)
         end
     end
+end
+
+function HealthManager:Block(character, damage, attacker)
+    VisualEffectServer:SpawnEffectsInRange(
+        "Blocked",
+        nil,
+        character,
+        {},
+        50
+    )
 end
 
 function HealthManager:Heal(character, health)

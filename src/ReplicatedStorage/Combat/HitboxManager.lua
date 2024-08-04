@@ -117,7 +117,7 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
         local isBlocking = StateManager:CheckState(parent, "Blocking")
         if isBlocking then
             --Block Indication
-            warn("block m1s")
+            HealthManager:Block(parent, damage, character)
             continue
         end
 
@@ -273,7 +273,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then
                     --Block Indication
-                    warn("block m1s")
+                    HealthManager:Block(parent, damage, character)
                     continue
                 end
         
@@ -325,7 +325,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
     end)
 end
 
-function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
+function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -357,6 +357,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
         classData = currentClassData,
         moveType = moveType,
         moveCount = moveCount,
+        offSet = offSet,
     }
 
     HitboxManager.projectiles[projectileId] = projectileData
@@ -366,7 +367,22 @@ end
 
 local function HitboxCreateMove(player, class, moveType, moveCount, moveData)
     if moveData.isProjectile then
-        HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
+        if not moveData.isMultiShot then
+            HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
+        elseif moveData.isMultiShot then
+            --default ammo
+            local ammo = 1
+
+            local currentClassData = ClassData[class]
+            if currentClassData then
+                ammo = currentClassData.Ammo
+            end
+
+            for i=1, ammo do
+                HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
+                task.wait(currentClassData.ShotDelay)
+            end
+        end
     elseif moveData.isAOE then
         warn("AOE")
     else
@@ -412,7 +428,7 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     local isBlocking = StateManager:CheckState(target, "Blocking")
     if isBlocking then
         --Block Indication
-        warn("block m1s")
+        HealthManager:Block(target, damage, character)
         return
     end
 

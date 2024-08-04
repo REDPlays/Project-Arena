@@ -118,7 +118,7 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
             local isBlocking = StateManager:CheckState(parent, "Blocking")
             if isBlocking then
                 --Block Indication
-                warn("block WindTornado")
+                HealthManager:Block(parent, damage, character)
                 continue
             end
             

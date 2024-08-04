@@ -67,6 +67,7 @@ ClassData["AngelKnight"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            ignoreLMBMoveCD = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -111,6 +112,8 @@ ClassData["Pyromancer"] = {
     ProjectileSpeed = 50,
     Role = "Burst",
     Cost = 200,
+    Ammo = 1, --number of shots per LMB
+    ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Fire Connoisseur",
     DamageList = {
         ["LMBMove"] = {3, 3, 3},
@@ -151,6 +154,8 @@ ClassData["Pyromancer"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            ignoreLMBMoveCD = false,
+            isMultiShot = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -234,6 +239,7 @@ ClassData["ShieldWarrior"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            ignoreLMBMoveCD = false,
         },
         ["QMove"] = {
             hasEvent = true,
@@ -272,6 +278,7 @@ ClassData["ShieldWarrior"] = {
 }
 
 ClassData["Samurai"] = {
+    ignoreLMBMoveCD = false,
     Health = 100,
     Defense = 100,
     Speed = 35,
@@ -317,6 +324,7 @@ ClassData["Samurai"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            ignoreLMBMoveCD = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -361,9 +369,11 @@ ClassData["Engineer"] = {
     ProjectileSpeed = 100,
     Role = "Summoner",
     Cost = 200,
+    Ammo = 3, --number of shots per LMB
+    ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Master Mechanic",
     DamageList = {
-        ["LMBMove"] = {5, 5, 5},
+        ["LMBMove"] = {2, 2, 2},
         ["QMove"] = 4,
         ["EMove"] = 3,
         ["FMove"] = 20,
@@ -405,6 +415,8 @@ ClassData["Engineer"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            ignoreLMBMoveCD = false,
+            isMultiShot = true,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -435,7 +447,7 @@ ClassData["Engineer"] = {
         },
     },
     VisualEffects = {
-        ["LMBMove"] = "",
+        ["LMBMove"] = "EngineerM1",
         ["QMove"] = "FireBall",
         ["EMove"] = "Flamethrower",
         ["FMove"] = "Eruption",
@@ -449,6 +461,8 @@ ClassData["Ranger"] = {
     ProjectileSpeed = 100,
     Role = "Marksman",
     Cost = 200,
+    Ammo = 1, --number of shots per LMB
+    ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Eyes of an Eagle",
     DamageList = {
         ["LMBMove"] = {5, 5, 5},
@@ -493,6 +507,8 @@ ClassData["Ranger"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            ignoreLMBMoveCD = true,
+            isMultiShot = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -523,7 +539,7 @@ ClassData["Ranger"] = {
         },
     },
     VisualEffects = {
-        ["LMBMove"] = "",
+        ["LMBMove"] = "RangerM1",
         ["QMove"] = "FireBall",
         ["EMove"] = "Flamethrower",
         ["FMove"] = "Eruption",

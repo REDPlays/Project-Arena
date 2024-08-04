@@ -14,7 +14,7 @@ InputManager.ServerQDebounces = {}
 InputManager.ServerEDebounces = {}
 InputManager.ServerFDebounces = {}
 
-function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
+function InputManager:RunInput(player, class, moveType, moveCount)
     if not class then
         return
     end
@@ -70,8 +70,7 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
 
         local cooldown = currentClassData.Cooldowns.LMBMove
 
-        if moveCount and moveCount >= 3 then
-            animInfo = currentClassData.Cooldowns.LMBMove
+        if moveCount and moveCount >= 3 and not currentClassData.MoveData.LMBMove.ignoreLMBMoveCD then
             cooldown = 1
         end
 
@@ -141,8 +140,8 @@ function InputManager:RunInput(player, class, moveType, animInfo, moveCount)
     return true
 end
 
-local function RunInput(player, class, moveType, animInfo, moveCount)
-    return InputManager:RunInput(player, class, moveType, animInfo, moveCount)
+local function RunInput(player, class, moveType, moveCount)
+    return InputManager:RunInput(player, class, moveType, moveCount)
 end
 
 Events.Client_Server.Input.OnServerInvoke = RunInput

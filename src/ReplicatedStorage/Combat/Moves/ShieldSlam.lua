@@ -160,8 +160,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
                         local isBlocking = StateManager:CheckState(parent, "Blocking")
                         if isBlocking then
                             --Block Indication
-                            warn("block Shield Slam")
-            
+                            HealthManager:Block(parent, damage, character)
                             continue
                         end
             
