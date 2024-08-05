@@ -6,7 +6,12 @@ local ServerStorage = game:GetService("ServerStorage")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local PlayerDataManager = require(ServerStorage.ServerFiles.Player.PlayerDataManager)
 
-local OwnerID = 126372777
+local ValidIds = {
+    ["126372777"] = "OwnerID",
+    ["-1"] = "player1",
+    ["-2"] = "player2",
+    ["-3"] = "player3",
+}
 
 local PlayerManager = {}
 PlayerManager.playerDatas = {}
@@ -71,7 +76,7 @@ end
 local function DebuggerTool(player: Player, debugType)
     local userId = player.UserId
 
-    if userId ~= OwnerID then
+    if not ValidIds[userId] then
         return "Not Owner | WARNED!!!"
     end
 

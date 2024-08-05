@@ -631,6 +631,11 @@ function UIController:Update(deltaTime)
         end
     end
 
+    local StatusUI: BillboardGui = self.character:FindFirstChild("StatusUI")
+    if StatusUI then
+        StatusUI.Enabled = true
+    end
+
     if not self.class then
         if self.Gameplay.Visible then
             self.Gameplay.Visible = false
@@ -692,6 +697,21 @@ function UIController:Update(deltaTime)
         local durationText = string.format("%0.2f", UIData.duration)
 
         UIData.CooldownUI.Text = durationText
+    end
+
+    local Stats = self.character:FindFirstChild("Stats")
+    if not Stats then
+        return
+    end
+
+    --Silenced Icon on Moves UI
+    local Silenced = Stats:GetAttribute("Silenced")
+
+    for _, btn in pairs(self.Btns) do
+        local silenceIcon: ImageLabel = btn:FindFirstChild("Silenced")
+        if silenceIcon then
+            silenceIcon.Visible = Silenced
+        end
     end
 end
 

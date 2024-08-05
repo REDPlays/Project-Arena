@@ -136,6 +136,11 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                     StateManager:AddTarget(parent, "Slow", 2)
                 end
 
+                --apply silence
+                if classData.MoveData[moveType].Silenced then
+                    StateManager:AddTarget(parent, "Silenced", 2)
+                end
+
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage, character)

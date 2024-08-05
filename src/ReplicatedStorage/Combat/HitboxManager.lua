@@ -25,7 +25,7 @@ end
 local HitboxManager = {}
 HitboxManager.projectiles = {}
 
-function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnockup)
+function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnockup, isSilenced)
     local currentClassData = ClassData["Base"]
     if not currentClassData then
         return
@@ -135,6 +135,10 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
 
         if isKnockup then
             StateManager:AddTarget(parent, "Knockup", 50)
+        end
+
+        if isSilenced then
+            StateManager:AddTarget(parent, "Silenced", 2)
         end
 
         StateManager:AddTarget(parent, "Attacked", 1)
@@ -296,6 +300,11 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
                 if currentClassData.MoveData[moveType].Knockup then
                     StateManager:AddTarget(parent, "Knockup", 50)
                 end
+
+                --apply silence
+                if currentClassData.MoveData[moveType].Silenced then
+                    StateManager:AddTarget(parent, "Silenced", 2)
+                end
         
                 VisualEffectServer:SpawnEffectsInRange(
                     currentClassData.VisualEffects[moveType],
@@ -450,6 +459,11 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     --apply knockup
     if classData.MoveData[moveType].Knockup then
         StateManager:AddTarget(target, "Knockup", 50)
+    end
+
+    --apply silence
+    if classData.MoveData[moveType].Silenced then
+        StateManager:AddTarget(target, "Silenced", 2)
     end
 
     StateManager:AddTarget(target, "Attacked", 1)

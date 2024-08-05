@@ -178,6 +178,11 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
                         if classData.MoveData[moveType].Slow then
                             StateManager:AddTarget(parent, "Slow", 1)
                         end
+
+                        --apply silence
+                        if classData.MoveData[moveType].Silenced then
+                            StateManager:AddTarget(parent, "Silenced", 2)
+                        end
             
                         --apply knockup
                         if classData.MoveData[moveType].Knockup then

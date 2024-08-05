@@ -161,6 +161,11 @@ function Flamethrower:Activate(player, character, rootPart, placementCFrame, cla
                     StateManager:AddTarget(parent, "Slow", 1)
                 end
 
+                --apply silence
+                if classData.MoveData[moveType].Silenced then
+                    StateManager:AddTarget(parent, "Silenced", 2)
+                end
+
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage, character)

@@ -76,6 +76,12 @@ function ServerGameManager:ConfigureDummies()
         currTime = 0,
         maxTime = .5,
     }
+    
+    ServerGameManager.dummyTimers[Dummies.DummySilenced] = {
+        dummy = Dummies.DummySilenced,
+        currTime = 0,
+        maxTime = .5,
+    }
 
     ServerGameManager.dummyTimers[Dummies.DummyAllForOne] = {
         dummy = Dummies.DummyAllForOne,
@@ -193,11 +199,17 @@ function ServerGameManager:Update(deltaTime)
             isKnockup = true
         end
 
+        local isSilenced = false
+        if data.dummy.Name == "DummySilenced" then
+            isSilenced = true
+        end
+
         if data.dummy.Name == "DummyAllForOne" then
             isStun = true
             isBurn = true
             isSlow = true
             --isKnockup = true
+            isSilenced = true
         end
 
         if data.currTime >= data.maxTime then
@@ -206,7 +218,7 @@ function ServerGameManager:Update(deltaTime)
             local animation = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData.Base.DummyAttack)
             animation:Play()
 
-            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn, isSlow, isKnockup)
+            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn, isSlow, isKnockup, isSilenced)
         end
     end
 end

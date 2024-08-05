@@ -119,6 +119,7 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("AbilityLocked", false)
     Stats:SetAttribute("Slowed", false)
     Stats:SetAttribute("Invulnerable", false)
+    Stats:SetAttribute("Silenced", false)
 
     Stats:SetAttribute("Color1", Color3.fromRGB(255, 255, 255))
     Stats:SetAttribute("Color2", Color3.fromRGB(255, 255, 255))

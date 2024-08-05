@@ -176,6 +176,11 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
                 if classData.MoveData[moveType].Knockup then
                     StateManager:AddTarget(parent, "Knockup", 50)
                 end
+
+                --apply silence
+                if classData.MoveData[moveType].Silenced then
+                    StateManager:AddTarget(parent, "Silenced", 2)
+                end
     
                 StateManager:AddTarget(parent, "Attacked", 1)
     

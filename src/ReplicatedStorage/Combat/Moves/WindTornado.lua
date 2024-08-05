@@ -142,6 +142,11 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
                 StateManager:AddTarget(parent, "Knockup", 50)
             end
 
+            --apply silence
+            if classData.MoveData[moveType].Silenced then
+                StateManager:AddTarget(parent, "Silenced", 2)
+            end
+
             StateManager:AddTarget(parent, "Attacked", 2)
 
             HealthManager:Damage(parent, damage, character)
