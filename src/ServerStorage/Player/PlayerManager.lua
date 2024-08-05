@@ -76,7 +76,7 @@ end
 local function DebuggerTool(player: Player, debugType)
     local userId = player.UserId
 
-    if not ValidIds[userId] then
+    if not ValidIds[tostring(userId)] then
         return "Not Owner | WARNED!!!"
     end
 

@@ -11,6 +11,7 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local TestState = workspace:GetAttribute("TestState")
+local Training = workspace:GetAttribute("Training")
 
 local RoundManager = {}
 RoundManager.__index = RoundManager
@@ -367,7 +368,7 @@ function RoundManager:Update(deltaTime)
                 self.startCountDown = true
                 
                 self.countDown = 15
-                if TestState then
+                if Training then
                     self.countDown = 1000
                 end
 

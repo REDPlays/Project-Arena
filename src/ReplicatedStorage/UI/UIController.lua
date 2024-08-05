@@ -184,12 +184,22 @@ function UIController:StatConnect()
             continue
         end
 
+        local statusUI = dummy:FindFirstChild("StatusUI")
+        if not statusUI then
+            continue
+        end
+
         if targetUI.Enabled == true then
             targetUI.Enabled = false
         end
 
+        if statusUI.Enabled == true then
+            statusUI.Enabled = false
+        end
+
         task.delay(.15, function()
             targetUI.Enabled = true
+            statusUI.Enabled = true
         end)
     end
 end
@@ -653,6 +663,35 @@ function UIController:Update(deltaTime)
             continue
         end
 
+        local targetUI = character:FindFirstChild("Overhead")
+        if not targetUI then
+            continue
+        end
+
+        local targetUI2 = character:FindFirstChild("StatusUI")
+        if not targetUI2 then
+            continue
+        end
+
+        if character == self.character then
+            continue
+        end
+
+        local Stats = character:FindFirstChild("Stats")
+        if not Stats then
+            continue
+        end
+
+        if Stats:GetAttribute("HideUI") then
+            continue
+        end
+
+        targetUI.Enabled = true
+        targetUI2.Enabled = true
+    end
+
+    --toggle dummy Overhead
+    for _, character in pairs(workspace.Dummies:GetChildren()) do
         local targetUI = character:FindFirstChild("Overhead")
         if not targetUI then
             continue

@@ -68,6 +68,7 @@ ClassData["AngelKnight"] = {
             CameraLock = false,
             Knockup = false,
             ignoreLMBMoveCD = false,
+            Silenced = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -77,6 +78,7 @@ ClassData["AngelKnight"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
         ["EMove"] = {
             hasEvent = false,
@@ -86,6 +88,7 @@ ClassData["AngelKnight"] = {
             Slow = true,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
         ["FMove"] = {
             hasEvent = false,
@@ -95,6 +98,7 @@ ClassData["AngelKnight"] = {
             Slow = false,
             CameraLock = true,
             Knockup = false,
+            Silenced = false,
         },
     },
     VisualEffects = {
@@ -156,6 +160,7 @@ ClassData["Pyromancer"] = {
             Knockup = false,
             ignoreLMBMoveCD = false,
             isMultiShot = false,
+            Silenced = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -165,6 +170,7 @@ ClassData["Pyromancer"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
         ["EMove"] = {
             hasEvent = false,
@@ -174,6 +180,7 @@ ClassData["Pyromancer"] = {
             Slow = false,
             CameraLock = true,
             Knockup = false,
+            Silenced = false,
         },
         ["FMove"] = {
             hasEvent = false,
@@ -183,6 +190,7 @@ ClassData["Pyromancer"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
     },
     VisualEffects = {
@@ -240,6 +248,7 @@ ClassData["ShieldWarrior"] = {
             CameraLock = false,
             Knockup = false,
             ignoreLMBMoveCD = false,
+            Silenced = false,
         },
         ["QMove"] = {
             hasEvent = true,
@@ -249,6 +258,7 @@ ClassData["ShieldWarrior"] = {
             Slow = false,
             CameraLock = false,
             Knockup = true,
+            Silenced = false,
         },
         ["EMove"] = {
             hasEvent = true,
@@ -258,6 +268,7 @@ ClassData["ShieldWarrior"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
         ["FMove"] = {
             hasEvent = true,
@@ -267,6 +278,7 @@ ClassData["ShieldWarrior"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
     },
     VisualEffects = {
@@ -325,6 +337,7 @@ ClassData["Samurai"] = {
             CameraLock = false,
             Knockup = false,
             ignoreLMBMoveCD = false,
+            Silenced = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -334,6 +347,7 @@ ClassData["Samurai"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
         ["EMove"] = {
             hasEvent = false,
@@ -343,6 +357,7 @@ ClassData["Samurai"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
         ["FMove"] = {
             hasEvent = true,
@@ -352,6 +367,7 @@ ClassData["Samurai"] = {
             Slow = true,
             CameraLock = false,
             Knockup = true,
+            Silenced = false,
         },
     },
     VisualEffects = {
@@ -380,9 +396,9 @@ ClassData["Engineer"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .2,
-        ["QMove"] = 3,
-        ["EMove"] = 7,
-        ["FMove"] = 10,
+        ["QMove"] = 1,
+        ["EMove"] = 1,
+        ["FMove"] = 1,
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -394,7 +410,8 @@ ClassData["Engineer"] = {
             },
         },
         ["QMove"] = {
-            Size = Vector3.new(3, 3, 3),
+            Size = Vector3.new(2, 2, 2),
+            Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
         ["EMove"] = {
@@ -417,15 +434,17 @@ ClassData["Engineer"] = {
             Knockup = false,
             ignoreLMBMoveCD = false,
             isMultiShot = true,
+            Silenced = false,
         },
         ["QMove"] = {
             hasEvent = false,
             noMovement = false,
             Stunned = false,
-            Burn = true,
+            Burn = false,
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = true,
         },
         ["EMove"] = {
             hasEvent = false,
@@ -435,6 +454,7 @@ ClassData["Engineer"] = {
             Slow = false,
             CameraLock = true,
             Knockup = false,
+            Silenced = false,
         },
         ["FMove"] = {
             hasEvent = false,
@@ -444,6 +464,7 @@ ClassData["Engineer"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
     },
     VisualEffects = {
@@ -509,6 +530,7 @@ ClassData["Ranger"] = {
             Knockup = false,
             ignoreLMBMoveCD = true,
             isMultiShot = false,
+            Silenced = false,
         },
         ["QMove"] = {
             hasEvent = false,
@@ -518,6 +540,7 @@ ClassData["Ranger"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
         ["EMove"] = {
             hasEvent = false,
@@ -527,6 +550,7 @@ ClassData["Ranger"] = {
             Slow = false,
             CameraLock = true,
             Knockup = false,
+            Silenced = false,
         },
         ["FMove"] = {
             hasEvent = false,
@@ -536,6 +560,7 @@ ClassData["Ranger"] = {
             Slow = false,
             CameraLock = false,
             Knockup = false,
+            Silenced = false,
         },
     },
     VisualEffects = {

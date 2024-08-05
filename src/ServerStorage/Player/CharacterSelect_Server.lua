@@ -83,7 +83,8 @@ function CharacterSelectServer:DummyJoined(dummy)
     Stats:SetAttribute("AbilityLocked", false)
     Stats:SetAttribute("Slowed", false)
     Stats:SetAttribute("Invulnerable", false)
-
+    Stats:SetAttribute("Silenced", false)
+    
     Stats:SetAttribute("HideUI", false)
 
     Stats:SetAttribute("Color1", Color3.fromRGB(255, 255, 255))
