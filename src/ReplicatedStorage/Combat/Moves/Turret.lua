@@ -10,6 +10,7 @@ local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
 local CharacterModels = Assets:WaitForChild("CharacterModels")
 local EngineerFolder = CharacterModels:WaitForChild("Engineer")
+local UI = Assets.UI
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
@@ -143,6 +144,34 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
 
             local target = nil
 
+            local function applyUI(victim)
+                local victimRoot = victim:FindFirstChild("HumanoidRootPart")
+                if not victimRoot then
+                    return
+                end
+
+                local UIAttach = victimRoot:FindFirstChild("UI")
+                if not UIAttach then
+                    return
+                end
+
+                local oldtargetUI = victimRoot:FindFirstChild("TargetUI")
+                if oldtargetUI then
+                    oldtargetUI:Destroy()
+                end
+
+                local targetUI = UI.TargetUI:Clone()
+                targetUI.Adornee = UIAttach
+                targetUI.Parent = victim
+            end
+
+            local function removeUI(victim)
+                local oldtargetUI = victim:FindFirstChild("TargetUI")
+                if oldtargetUI then
+                    oldtargetUI:Destroy()
+                end
+            end
+
             local function findTarget()
                 local victim = nil
 
@@ -183,6 +212,10 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
                     end
                 end
 
+                if victim then
+                    applyUI(victim)
+                end
+
                 return victim
             end
 
@@ -197,12 +230,14 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
                     
                     local targetRoot = target:FindFirstChild("HumanoidRootPart")
                     if not targetRoot then
+                        removeUI(target)
                         target = nil
                         continue
                     end
                     
                     local targetHum = target:FindFirstChild("Humanoid")
                     if not targetHum then
+                        removeUI(target)
                         target = nil
                         continue
                     end
@@ -211,11 +246,13 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
                     local targetRootPosition = predictPosition(targetRoot, predictionValue)
                     
                     if (targetRootPosition - currentPosition).Magnitude > MaxDistance then
+                        removeUI(target)
                         target = nil
                         continue
                     end
 
                     if targetHum.Health <= 0 then
+                        removeUI(target)
                         target = nil
                         continue
                     end
@@ -245,6 +282,8 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
                 if thread then
                     task.cancel(thread)
                 end
+
+                removeUI(target)
 
                 Turret.currentPlayers[player].currCount -= 1
                 Turret.currentPlayers[player].Turrets[TurretModel] = nil

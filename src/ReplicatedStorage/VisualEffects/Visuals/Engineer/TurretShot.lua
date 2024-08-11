@@ -99,6 +99,10 @@ function TurretShot:Bullet()
 end
 
 function TurretShot:Hit(target)
+    if not target then
+        return
+    end
+    
     local targetRoot = target:FindFirstChild("HumanoidRootPart")
     if not targetRoot then
         return
