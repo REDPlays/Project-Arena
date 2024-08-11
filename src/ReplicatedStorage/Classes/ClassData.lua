@@ -209,8 +209,8 @@ ClassData["ShieldWarrior"] = {
     Cost = 200,
     Description = "Shield Hero",
     DamageList = {
-        ["LMBMove"] = {6, 6, 6},
-        ["QMove"] = 15,
+        ["LMBMove"] = {8, 8, 8},
+        ["QMove"] = 20,
         ["EMove"] = 25,
         ["FMove"] = 0,
     },
