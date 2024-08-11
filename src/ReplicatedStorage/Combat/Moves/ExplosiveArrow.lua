@@ -2,14 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local HttpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
-local CharacterModels = Assets:WaitForChild("CharacterModels")
-local EngineerFolder = CharacterModels:WaitForChild("Engineer")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
@@ -20,129 +16,55 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 
 local IgnoreFolder = workspace.Ignore
 
-local ElectroBall = {}
+local ExplosiveArrow = {}
 
-function ElectroBall:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local moveDamage = classData.DamageList[moveType][1]
-    local explodeDamage = classData.DamageList[moveType][2]
+    local damage = classData.DamageList[moveType]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
         return
     end
-
+    
     local humanoid = character:FindFirstChild("Humanoid")
     if not humanoid then
         return
     end
-
-    local duration = .5
+   
     local _delay = 1
-    local speed = 50
-    local damageTick = 0.25
+    local duration = 0.5
+    local speed = 100
+    local hasExploded = false
 
     Stats:SetAttribute("AbilityLocked", true)
     task.delay(_delay, function()
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
-    local startCFrame = placementCFrame * CFrame.new(0, 0, -5)
+    local startCFrame = rootPart.CFrame * CFrame.new(0, 2, -3)
 
-    local rayparams = RaycastParams.new()
-    rayparams.FilterType = Enum.RaycastFilterType.Exclude
-
-    local Hitbox: BasePart = Hitboxes.CircleHitbox:Clone()
+    local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
     if ShowHitboxes then
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size.Size1
+    Hitbox.Size = classData.Hitboxes[moveType].Size
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
 
-    local alreadyHit1 = {}
-    local alreadyHit2 = {}
-
-    local function moveHitDetection()
-        local touched = Hitbox.Touched:Connect(function() end)
-        local touchedObjects = Hitbox:GetTouchingParts()
+    local function explodeHitDetection(currentHitbox)
+        local touched = currentHitbox.Touched:Connect(function() end)
+        local touchedObjects = currentHitbox:GetTouchingParts()
 
         if touched then
             touched:Disconnect()
         end
 
-        for i=1, #touchedObjects do
-            local object = touchedObjects[i]
-            local parent = object.Parent
-            
-            if not parent:IsA("Model") then
-                continue
-            end
-            
-            if parent == character then
-                continue
-            end
-            
-            --ignoreTargets
-            if CollectionService:HasTag(parent, "Ignore") then
-                continue
-            end
-            
-            local enemyHum = parent:FindFirstChild("Humanoid")
-            if not enemyHum then
-                continue
-            end
-            
-            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-            if not enemyRoot then
-                continue
-            end
-            
-            if alreadyHit1[parent.Name] then
-                continue
-            end
-            
-            if CollectionService:HasTag(parent, "Invulnerable") then
-                continue
-            end
-
-            alreadyHit1[parent.Name] = true
-            
-            local isBlocking = StateManager:CheckState(parent, "Blocking")
-            if isBlocking then
-                --Block Indication
-                HealthManager:Block(parent, moveDamage, character)
-                continue
-            end
-
-            --apply slow
-            if classData.MoveData[moveType].Slow then
-                StateManager:AddTarget(parent, "Slow", 2)
-            end
-
-            StateManager:AddTarget(parent, "Attacked", 2)
-
-            HealthManager:Damage(parent, moveDamage, character)
-
-            task.delay(damageTick, function()
-                if alreadyHit1[parent.Name] then
-                    alreadyHit1[parent.Name] = nil
-                end
-            end)
-        end
-    end
-
-    local function explodeHitDetection()
-        local touched = Hitbox.Touched:Connect(function() end)
-        local touchedObjects = Hitbox:GetTouchingParts()
-
-        if touched then
-            touched:Disconnect()
-        end
+        local alreadyHit2 = {}
 
         for i=1, #touchedObjects do
             local object = touchedObjects[i]
@@ -184,50 +106,165 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
             local isBlocking = StateManager:CheckState(parent, "Blocking")
             if isBlocking then
                 --Block Indication
-                HealthManager:Block(parent, explodeDamage, character)
+                HealthManager:Block(parent, damage, character)
                 continue
             end
+            
+            --apply burn
+            if classData.MoveData[moveType].Burn then
+                StateManager:AddTarget(parent, "Burn", 3)
+            end
 
-            --apply slow
+            --apply stun
             if classData.MoveData[moveType].Stunned then
                 StateManager:AddTarget(parent, "Stunned", 2)
             end
 
+            --apply slow
+            if classData.MoveData[moveType].Slow then
+                StateManager:AddTarget(parent, "Slow", 2)
+            end
+
+            --apply knockup
+            if classData.MoveData[moveType].Knockup then
+                StateManager:AddTarget(parent, "Knockup", 50)
+            end
+
+            --apply silence
+            if classData.MoveData[moveType].Silenced then
+                StateManager:AddTarget(parent, "Silenced", 2)
+            end
+
             StateManager:AddTarget(parent, "Attacked", 2)
 
-            HealthManager:Damage(parent, explodeDamage, character)
+            HealthManager:Damage(parent, damage, character)
+        end
+    end
+
+    local function TriggerExplosion()
+        if hasExploded then
+            return
+        end
+
+        hasExploded = true
+
+        local Hitbox2: BasePart = Hitboxes.CircleHitbox:Clone()
+        Hitbox2.Transparency = 1
+        if ShowHitboxes then
+            Hitbox2.Transparency = .5
+        end
+
+        Hitbox2.Size = classData.Hitboxes[moveType].Size2 
+        Hitbox2.CFrame = Hitbox.CFrame
+        Hitbox2.Anchored = true
+        Hitbox2.Parent = IgnoreFolder
+
+        explodeHitDetection(Hitbox2)
+
+        Debris:AddItem(Hitbox2, 1)
+    end
+
+    local alreadyHit = {}
+    local function hitDetection()
+        local touched = Hitbox.Touched:Connect(function() end)
+        local touchedObjects = Hitbox:GetTouchingParts()
+
+        if touched then
+            touched:Disconnect()
+        end
+
+        for i=1, #touchedObjects do
+            local object = touchedObjects[i]
+            local parent = object.Parent
+            
+            if not parent:IsA("Model") then
+                continue
+            end
+            
+            if parent == character then
+                continue
+            end
+            
+            --ignoreTargets
+            if CollectionService:HasTag(parent, "Ignore") then
+                continue
+            end
+            
+            local enemyHum = parent:FindFirstChild("Humanoid")
+            if not enemyHum then
+                continue
+            end
+            
+            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+            if not enemyRoot then
+                continue
+            end
+            
+            if alreadyHit[parent.Name] then
+                continue
+            end
+            
+            if CollectionService:HasTag(parent, "Invulnerable") then
+                continue
+            end
+
+            alreadyHit[parent.Name] = true
+            
+            local isBlocking = StateManager:CheckState(parent, "Blocking")
+            if isBlocking then
+                --Block Indication
+                HealthManager:Block(parent, damage, character)
+                continue
+            end
+            
+            --apply burn
+            if classData.MoveData[moveType].Burn then
+                StateManager:AddTarget(parent, "Burn", 3)
+            end
+
+            --apply stun
+            if classData.MoveData[moveType].Stunned then
+                StateManager:AddTarget(parent, "Stunned", 2)
+            end
+
+            --apply slow
+            if classData.MoveData[moveType].Slow then
+                StateManager:AddTarget(parent, "Slow", 2)
+            end
+
+            --apply knockup
+            if classData.MoveData[moveType].Knockup then
+                StateManager:AddTarget(parent, "Knockup", 50)
+            end
+
+            --apply silence
+            if classData.MoveData[moveType].Silenced then
+                StateManager:AddTarget(parent, "Silenced", 2)
+            end
+
+            StateManager:AddTarget(parent, "Attacked", 2)
+
+            HealthManager:Damage(parent, damage, character)
+
+            TriggerExplosion()
+
+            break
         end
     end
 
     local function movement(dt)
         Hitbox.CFrame *= CFrame.new(0, 0, -speed * dt)
-
-        local newCFR = Hitbox.CFrame
-
-        local characterList = {}
-        for _, plr in pairs(Players:GetPlayers()) do
-            local plrChar = plr.Character
-            if not plrChar then
-                continue
-            end
-            table.insert(characterList, plrChar)
-        end
-
-        rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
-
-        local ray = workspace:Raycast(newCFR.Position, newCFR.UpVector * -1000, rayparams)
-        if ray then
-            local rayPosition = ray.Position
-
-            Hitbox.Position = rayPosition + Vector3.new(0, Hitbox.Size.Y/2, 0)
-        end
     end
 
     local thread = coroutine.create(function()
         while true do
             local dt = task.wait()
 
-            moveHitDetection()
+            if hasExploded then
+                break
+            end
+
+            hitDetection()
 
             movement(dt)
         end
@@ -238,9 +275,7 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
             task.cancel(thread)
         end
 
-        Hitbox.Size = classData.Hitboxes[moveType].Size.Size2
-
-        explodeHitDetection()
+        TriggerExplosion()
 
         Debris:AddItem(Hitbox, 1)
     end)
@@ -248,4 +283,4 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
     coroutine.resume(thread)
 end
 
-return ElectroBall
+return ExplosiveArrow

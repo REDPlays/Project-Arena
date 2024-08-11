@@ -398,7 +398,7 @@ ClassData["Engineer"] = {
         ["LMBMove"] = .2,
         ["QMove"] = 4,
         ["EMove"] = 7.5,
-        ["FMove"] = 1,
+        ["FMove"] = 15,
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -421,7 +421,7 @@ ClassData["Engineer"] = {
         ["FMove"] = {
             Size = {
                 Size1 = Vector3.new(8, 8, 8),
-                Size2 = Vector3.new(16, 16, 16),
+                Size2 = Vector3.new(20, 20, 20),
             },
             Offset = CFrame.new(0, 2, 0),
         },
@@ -490,15 +490,15 @@ ClassData["Ranger"] = {
     Description = "Eyes of an Eagle",
     DamageList = {
         ["LMBMove"] = {5, 5, 5},
-        ["QMove"] = 4,
+        ["QMove"] = 10,
         ["EMove"] = 3,
         ["FMove"] = 20,
     },
     Cooldowns = {
         ["LMBMove"] = .2,
-        ["QMove"] = 3,
-        ["EMove"] = 7,
-        ["FMove"] = 10,
+        ["QMove"] = 1,
+        ["EMove"] = 1,
+        ["FMove"] = 1,
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -510,15 +510,17 @@ ClassData["Ranger"] = {
             },
         },
         ["QMove"] = {
-            Size = Vector3.new(3, 3, 3),
+            Size = Vector3.new(3, 3, 6),
             Offset = CFrame.new(0, 0, -1),
         },
         ["EMove"] = {
-            Size = Vector3.new(6, 6, 20),
-            Offset = CFrame.new(0, 3, -12),
+            Size = Vector3.new(2, 2, 2),
+            Size2 = Vector3.new(15, 15, 15),
+            Offset = CFrame.new(0, 0, -1),
         },
         ["FMove"] = {
-            Size = Vector3.new(20, 20, 20),
+            Size = Vector3.new(3, 3, 6),
+            Size2 = Vector3.new(20, 20, 20),
             Offset = CFrame.new(0, 0, 0),
         },
     },
@@ -536,10 +538,10 @@ ClassData["Ranger"] = {
             Silenced = false,
         },
         ["QMove"] = {
-            hasEvent = false,
-            noMovement = false,
+            hasEvent = true,
+            noMovement = true,
             Stunned = false,
-            Burn = true,
+            Burn = false,
             Slow = false,
             CameraLock = false,
             Knockup = false,
@@ -548,16 +550,16 @@ ClassData["Ranger"] = {
         ["EMove"] = {
             hasEvent = false,
             noMovement = false,
-            Stunned = false,
-            Burn = true,
+            Stunned = true,
+            Burn = false,
             Slow = false,
-            CameraLock = true,
+            CameraLock = false,
             Knockup = false,
             Silenced = false,
         },
         ["FMove"] = {
-            hasEvent = false,
-            noMovement = false,
+            hasEvent = true,
+            noMovement = true,
             Stunned = false,
             Burn = true,
             Slow = false,
