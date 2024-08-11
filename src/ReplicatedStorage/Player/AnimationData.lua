@@ -88,8 +88,8 @@ AnimationData["Engineer"] = {
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
     QMove = Animations:WaitForChild("Pyromancer"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Pyromancer"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Pyromancer"):WaitForChild("FMove"),
+    EMove = Animations:WaitForChild("Engineer"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("Engineer"):WaitForChild("FMove"),
 
     Idle = Animations:WaitForChild("Engineer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Engineer"):WaitForChild("Run"),

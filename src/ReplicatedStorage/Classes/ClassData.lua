@@ -390,14 +390,14 @@ ClassData["Engineer"] = {
     Description = "Master Mechanic",
     DamageList = {
         ["LMBMove"] = {2, 2, 2},
-        ["QMove"] = 4,
-        ["EMove"] = 3,
-        ["FMove"] = 20,
+        ["QMove"] = 10,
+        ["EMove"] = 2,
+        ["FMove"] = {5, 20},
     },
     Cooldowns = {
         ["LMBMove"] = .2,
-        ["QMove"] = 1,
-        ["EMove"] = 1,
+        ["QMove"] = 4,
+        ["EMove"] = 7.5,
         ["FMove"] = 1,
     },
     Hitboxes = {
@@ -415,12 +415,15 @@ ClassData["Engineer"] = {
             Offset = CFrame.new(0, 0, -1),
         },
         ["EMove"] = {
-            Size = Vector3.new(6, 6, 20),
-            Offset = CFrame.new(0, 3, -12),
+            Size = Vector3.new(2, 2, 4),
+            Offset = CFrame.new(0, 0, -2),
         },
         ["FMove"] = {
-            Size = Vector3.new(20, 20, 20),
-            Offset = CFrame.new(0, 0, 0),
+            Size = {
+                Size1 = Vector3.new(8, 8, 8),
+                Size2 = Vector3.new(16, 16, 16),
+            },
+            Offset = CFrame.new(0, 2, 0),
         },
     },
     MoveData = {
@@ -448,20 +451,20 @@ ClassData["Engineer"] = {
         },
         ["EMove"] = {
             hasEvent = false,
-            noMovement = false,
+            noMovement = true,
             Stunned = false,
-            Burn = true,
+            Burn = false,
             Slow = false,
             CameraLock = true,
             Knockup = false,
             Silenced = false,
         },
         ["FMove"] = {
-            hasEvent = false,
-            noMovement = false,
-            Stunned = false,
-            Burn = true,
-            Slow = false,
+            hasEvent = true,
+            noMovement = true,
+            Stunned = true,
+            Burn = false,
+            Slow = true,
             CameraLock = false,
             Knockup = false,
             Silenced = false,
@@ -470,7 +473,7 @@ ClassData["Engineer"] = {
     VisualEffects = {
         ["LMBMove"] = "EngineerM1",
         ["QMove"] = "FireBall",
-        ["EMove"] = "Flamethrower",
+        ["EMove"] = "Turret",
         ["FMove"] = "Eruption",
     }
 }

@@ -147,7 +147,7 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
     end
 end
 
-function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
+function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, conditionalData)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -334,7 +334,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
     end)
 end
 
-function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet)
+function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet, conditionalData)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -356,6 +356,8 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
         return
     end
 
+    conditionalData = conditionalData or {}
+
     local projectileId = player.Name..HttpService:GenerateGUID(false)
 
     local projectileData = {
@@ -367,6 +369,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
         moveType = moveType,
         moveCount = moveCount,
         offSet = offSet,
+        conditionalData = conditionalData
     }
 
     HitboxManager.projectiles[projectileId] = projectileData
@@ -374,10 +377,10 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
     Events.Server_Client.Hitbox:FireAllClients(projectileData)
 end
 
-local function HitboxCreateMove(player, class, moveType, moveCount, moveData)
+local function HitboxCreateMove(player, class, moveType, moveCount, moveData, conditionalData)
     if moveData.isProjectile then
         if not moveData.isMultiShot then
-            HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
+            HitboxManager:HitboxProjectile(player, class, moveType, moveCount, conditionalData)
         elseif moveData.isMultiShot then
             --default ammo
             local ammo = 1
@@ -388,14 +391,14 @@ local function HitboxCreateMove(player, class, moveType, moveCount, moveData)
             end
 
             for i=1, ammo do
-                HitboxManager:HitboxProjectile(player, class, moveType, moveCount)
+                HitboxManager:HitboxProjectile(player, class, moveType, moveCount, conditionalData)
                 task.wait(currentClassData.ShotDelay)
             end
         end
     elseif moveData.isAOE then
         warn("AOE")
     else
-        HitboxManager:HitboxCreateMove(player, class, moveType, moveCount)
+        HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, conditionalData)
     end
 end
 
@@ -471,8 +474,8 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     HealthManager:Damage(target, damage, character)
 end
 
-local function HitboxProjectile(player, class, moveType, moveCount, offSet)
-    HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet)
+local function HitboxProjectile(player, class, moveType, moveCount, offSet, conditionalData)
+    HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet, conditionalData)
 end
 
 function HitboxManager:Update(deltaTime)

@@ -25,6 +25,7 @@ VisualEffectData["WindTornado"] = require(Visuals:WaitForChild("Samurai"):WaitFo
 
 
 VisualEffectData["EngineerM1"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("EngineerM1"))
+VisualEffectData["Turret"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("TurretShot"))
 
 VisualEffectData["RangerM1"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("RangerM1"))
 

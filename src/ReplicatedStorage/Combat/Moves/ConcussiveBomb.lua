@@ -69,6 +69,7 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, height, 0)
     end
 
+    local pointsList = {}
     for i=0, 1.05, 0.05 do
         local newPosition = quadratic(i, startCFrame.Position, middleCFrame.Position, endCFrame.Position)
         local lookVector = endCFrame.LookVector
@@ -82,6 +83,8 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         point.CanQuery = false
         point.CanTouch = false
         point.Parent = IgnoreFolder
+
+        table.insert(pointsList, point)
     end
 
     local function checkCollision(hitbox: BasePart)
@@ -112,6 +115,7 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         BombHitbox.Size = classData.Hitboxes[moveType].Size2
         BombHitbox.CFrame = spawnCFrame
         BombHitbox.Parent = IgnoreFolder
+        Debris:AddItem(BombHitbox, 1)
 
         local overlapParams = OverlapParams.new()
         overlapParams.FilterDescendantsInstances = {listOfChars, workspace.Dummies}
@@ -228,6 +232,12 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         local collided = checkCollision(Hitbox)
         if collided then
             Explode(Hitbox.CFrame)
+
+            Debris:AddItem(Hitbox, 1)
+
+            for _, obj in pointsList do
+                Debris:AddItem(obj, 1)
+            end
 
             if RunConnect then
                 RunConnect:Disconnect()

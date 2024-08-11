@@ -22,6 +22,11 @@ end
 
 function ClientHitboxManager:HitboxProjectile(projectileData)
     local rootPart = projectileData.character:FindFirstChild("HumanoidRootPart")
+
+    if projectileData.conditionalData.rootPart then
+        rootPart = projectileData.conditionalData.rootPart
+    end
+
     if not rootPart then
         return
     end
@@ -128,6 +133,7 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
         moveCount = projectileData.moveCount, 
         projectile = Hitbox,
         duration = projectileData.duration,
+        sourceUnit = projectileData.conditionalData.sourceUnit,
     }
 
     VisualEffectClient:SpawnEffects(
