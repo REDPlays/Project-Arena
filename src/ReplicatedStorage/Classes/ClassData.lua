@@ -397,16 +397,16 @@ ClassData["Engineer"] = {
     Cooldowns = {
         ["LMBMove"] = .75,
         ["QMove"] = 4,
-        ["EMove"] = 7.5,
+        ["EMove"] = 16,
         ["FMove"] = 15,
     },
     Hitboxes = {
         ["LMBMove"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = {
-                CFrame.new(0, 0, -4),
-                CFrame.new(0, 0, -4),
-                CFrame.new(0, 0, -4),
+                CFrame.new(0, 1, -3),
+                CFrame.new(0, 1, -3),
+                CFrame.new(0, 1, -3),
             },
         },
         ["QMove"] = {

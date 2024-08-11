@@ -45,7 +45,7 @@ function TurretShot:DisplayVFX()
 end
 
 function TurretShot:Terminate(target, sourceUnit, conditionalData)
-    self:Hit(conditionalData.spawnCFrame)
+    self:Hit(target)
 end
 
 function TurretShot:Update(deltaTime)
@@ -62,6 +62,34 @@ function TurretShot:Bullet()
         return
     end
 
+    self.Spread = EngineerVFX.Turret.FireSpread:Clone()
+    self.Spread.CFrame = self.primaryPart.CFrame
+    self.Spread.Transparency = 1
+    self.Spread.Parent = self.Folder
+
+    self.Bullet = EngineerVFX.Turret.Bullet:Clone()
+    self.Bullet.Transparency = 1
+    self.Bullet.CFrame = self.conditionalData.projectile.CFrame
+    self.Bullet.Parent = self.Folder
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = self.Bullet
+    weld.Part1 = self.conditionalData.projectile
+    weld.Parent = weld.Part0
+
+    local weld2 = Instance.new("WeldConstraint")
+    weld2.Part0 = self.Spread
+    weld2.Part1 = self.primaryPart
+    weld2.Parent = weld.Part0
+
+    for _, particle in pairs(self.Spread:GetDescendants()) do
+        if particle:IsA("ParticleEmitter") then
+            if particle:GetAttribute("EmitCount") then
+                particle:Emit(particle:GetAttribute("EmitCount"))
+            end
+        end
+    end
+
     local shootSound: Sound = Sounds.Engineer.Shot:Clone()
     shootSound.Volume = 0.3
     shootSound._Pitch.Octave = math.random(90,  95) / 100
@@ -70,11 +98,33 @@ function TurretShot:Bullet()
     Debris:AddItem(shootSound, shootSound.TimeLength)
 end
 
-function TurretShot:Hit(spawnCFrame)
-    local HitVFX = EngineerVFX.M1s.Hit:Clone()
-    HitVFX.CFrame = spawnCFrame
+function TurretShot:Hit(target)
+    local targetRoot = target:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then
+        return
+    end
+
+    self.Bullet.Anchored = true
+
+    for _, particle in pairs(self.Bullet:GetDescendants()) do
+        if particle:IsA("ParticleEmitter") or particle:IsA("Beam") or particle:IsA("Trail") then
+            particle.Enabled = false
+        end
+    end
+
+    local HitVFX = EngineerVFX.Turret.Hit:Clone()
+    HitVFX.CFrame = targetRoot.CFrame
     HitVFX.Transparency = 1
     HitVFX.Parent = self.Folder
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = HitVFX
+    weld.Part1 = targetRoot 
+    weld.Parent = weld.Part0
+
+    HitVFX.Attachment.Ring:Emit(3)
+    HitVFX.Attachment.Squares:Emit(24)
+    HitVFX.Attachment.Center:Emit(3)
 
     Debris:AddItem(self.Folder, 2.5)
 end
