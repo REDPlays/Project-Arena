@@ -490,15 +490,15 @@ ClassData["Ranger"] = {
     Description = "Eyes of an Eagle",
     DamageList = {
         ["LMBMove"] = {5, 5, 5},
-        ["QMove"] = 10,
-        ["EMove"] = 3,
-        ["FMove"] = 20,
+        ["QMove"] = 5,
+        ["EMove"] = 5,
+        ["FMove"] = 10,
     },
     Cooldowns = {
         ["LMBMove"] = .2,
-        ["QMove"] = 1,
-        ["EMove"] = 1,
-        ["FMove"] = 1,
+        ["QMove"] = 3,
+        ["EMove"] = 3,
+        ["FMove"] = 10,
     },
     Hitboxes = {
         ["LMBMove"] = {
