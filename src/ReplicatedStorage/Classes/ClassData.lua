@@ -397,7 +397,7 @@ ClassData["Engineer"] = {
     Cooldowns = {
         ["LMBMove"] = .75,
         ["QMove"] = 4,
-        ["EMove"] = 16,
+        ["EMove"] = 20,
         ["FMove"] = 15,
     },
     Hitboxes = {
