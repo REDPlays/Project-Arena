@@ -398,7 +398,7 @@ ClassData["Engineer"] = {
         ["LMBMove"] = .75,
         ["QMove"] = 4,
         ["EMove"] = 20,
-        ["FMove"] = 15,
+        ["FMove"] = 1, --15,
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -410,7 +410,7 @@ ClassData["Engineer"] = {
             },
         },
         ["QMove"] = {
-            Size = Vector3.new(2, 2, 2),
+            Size = Vector3.new(1, 1, 1),
             Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
@@ -460,7 +460,7 @@ ClassData["Engineer"] = {
             Silenced = false,
         },
         ["FMove"] = {
-            hasEvent = true,
+            hasEvent = false,
             noMovement = true,
             Stunned = true,
             Burn = false,

@@ -26,6 +26,9 @@ VisualEffectData["WindTornado"] = require(Visuals:WaitForChild("Samurai"):WaitFo
 
 VisualEffectData["EngineerM1"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("EngineerM1"))
 VisualEffectData["Turret"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("TurretShot"))
+VisualEffectData["TurretSpawn"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("TurretSpawnVFX"))
+VisualEffectData["ConcussiveBomb"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("ConcussiveBombVFX"))
+VisualEffectData["ElectroBall"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("ElectroBallVFX"))
 
 VisualEffectData["RangerM1"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("RangerM1"))
 

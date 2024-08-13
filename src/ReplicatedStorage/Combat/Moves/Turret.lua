@@ -111,6 +111,14 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
 
         local spawnCFrame = CFrame.new(floorPosition, floorPosition + lookVector)
 
+        VisualEffectServer:SpawnEffectsInRange(
+            "TurretSpawn",
+            nil,
+            character,
+            {spawnCFrame = spawnCFrame},
+            1000
+        )
+
         local TurretModel = EngineerFolder.Turret:Clone()
 
         local finalCFrame = spawnCFrame * CFrame.new(0, TurretModel.PrimaryPart.Size.Y/2, 0)
@@ -145,6 +153,10 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
             local target = nil
 
             local function applyUI(victim)
+                if not victim then
+                    return
+                end
+
                 local victimRoot = victim:FindFirstChild("HumanoidRootPart")
                 if not victimRoot then
                     return
@@ -166,6 +178,10 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
             end
 
             local function removeUI(victim)
+                if not victim then
+                    return
+                end
+
                 local oldtargetUI = victim:FindFirstChild("TargetUI")
                 if oldtargetUI then
                     oldtargetUI:Destroy()
@@ -289,6 +305,14 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
                 Turret.currentPlayers[player].Turrets[TurretModel] = nil
 
                 if TurretModel then
+                    VisualEffectServer:SpawnEffectsInRange(
+                        "TurretSpawn",
+                        nil,
+                        character,
+                        {spawnCFrame = spawnCFrame},
+                        1000
+                    )
+                    
                     TweenPivot(TurretModel, finalCFrame, underCFrame, spawnDelay)
 
                     Debris:AddItem(TurretModel, 1)

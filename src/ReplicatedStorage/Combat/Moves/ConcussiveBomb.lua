@@ -46,6 +46,8 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
 
     local startPosition = predictPosition(rootPart, 0.25)
 
+    local VFX_ID = "ConcussiveBomb"..HttpService:GenerateGUID(false)
+
     local startCFrame = CFrame.new(startPosition, rootPart.CFrame.LookVector + startPosition) * CFrame.new(0, 0, -3)
     local endCFrame = startCFrame * CFrame.new(0, 0, -distance)
     local middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, height, 0)
@@ -70,7 +72,7 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
     end
 
     local pointsList = {}
-    for i=0, 1.05, 0.05 do
+    --[==[for i=0, 1.05, 0.05 do
         local newPosition = quadratic(i, startCFrame.Position, middleCFrame.Position, endCFrame.Position)
         local lookVector = endCFrame.LookVector
 
@@ -85,7 +87,7 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         point.Parent = IgnoreFolder
 
         table.insert(pointsList, point)
-    end
+    end]==]
 
     local function checkCollision(hitbox: BasePart)
         local overlapParams = OverlapParams.new()
@@ -116,6 +118,16 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         BombHitbox.CFrame = spawnCFrame
         BombHitbox.Parent = IgnoreFolder
         Debris:AddItem(BombHitbox, 1)
+
+        VisualEffectServer:SpawnEffectsInRange(
+            "ConcussiveBomb",
+            nil,
+            character,
+            {spawnCFrame = spawnCFrame},
+            1000,
+            VFX_ID,
+            true
+        )
 
         local overlapParams = OverlapParams.new()
         overlapParams.FilterDescendantsInstances = {listOfChars, workspace.Dummies}
@@ -207,6 +219,15 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
     Hitbox.Size = classData.Hitboxes[moveType].Size
     Hitbox.CFrame = startCFrame
     Hitbox.Parent = IgnoreFolder
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "ConcussiveBomb",
+        nil,
+        character,
+        {hitbox  = Hitbox},
+        1000,
+        VFX_ID
+    )
 
     local speed = 50
 

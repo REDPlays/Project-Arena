@@ -45,6 +45,16 @@ function VisualEffectClient:Update(deltaTime)
         if visualData.Instance.Update then
             visualData.Instance:Update(deltaTime)
         end
+
+        if visualData.Instance.isTerminate then
+            VisualEffectClient:TerminateVFX(
+                visualData.vfxName,
+                nil,
+                visualData.sourceUnit,
+                {},
+                VFX_ID
+            )
+        end
     end
 end
 

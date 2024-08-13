@@ -45,7 +45,11 @@ function TurretShot:DisplayVFX()
 end
 
 function TurretShot:Terminate(target, sourceUnit, conditionalData)
-    self:Hit(target)
+    if self.Bullet then
+        self.Bullet.Anchored = true
+    end
+
+    self:Hit(conditionalData.spawnCFrame)
 end
 
 function TurretShot:Update(deltaTime)
@@ -98,33 +102,18 @@ function TurretShot:Bullet()
     Debris:AddItem(shootSound, shootSound.TimeLength)
 end
 
-function TurretShot:Hit(target)
-    if not target then
-        return
-    end
-    
-    local targetRoot = target:FindFirstChild("HumanoidRootPart")
-    if not targetRoot then
-        return
-    end
-
-    self.Bullet.Anchored = true
-
+function TurretShot:Hit(spawnCFrame)
     for _, particle in pairs(self.Bullet:GetDescendants()) do
         if particle:IsA("ParticleEmitter") or particle:IsA("Beam") or particle:IsA("Trail") then
             particle.Enabled = false
         end
     end
 
-    local HitVFX = EngineerVFX.Turret.Hit:Clone()
-    HitVFX.CFrame = targetRoot.CFrame
+    local HitVFX = EngineerVFX.M1s.Hit:Clone()
+    HitVFX.CFrame = spawnCFrame
+    HitVFX.Anchored = true
     HitVFX.Transparency = 1
     HitVFX.Parent = self.Folder
-
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = HitVFX
-    weld.Part1 = targetRoot 
-    weld.Parent = weld.Part0
 
     HitVFX.Attachment.Ring:Emit(3)
     HitVFX.Attachment.Squares:Emit(24)

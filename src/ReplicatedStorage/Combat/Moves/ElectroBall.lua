@@ -38,6 +38,7 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
         return
     end
 
+    local shotDelay = 0.4
     local duration = .5
     local _delay = 1
     local speed = 50
@@ -48,7 +49,9 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
-    local startCFrame = placementCFrame * CFrame.new(0, 0, -5)
+    local startCFrame = placementCFrame * CFrame.new(0, 2, -5)
+
+    local VFX_ID = "ElectroBall"..HttpService:GenerateGUID(false)
 
     local rayparams = RaycastParams.new()
     rayparams.FilterType = Enum.RaycastFilterType.Exclude
@@ -61,191 +64,221 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
 
     Hitbox.Size = classData.Hitboxes[moveType].Size.Size1
     Hitbox.CFrame = startCFrame
-    Hitbox.Anchored = true
+    Hitbox.Anchored = false
+    Hitbox.Massless = true
     Hitbox.Parent = IgnoreFolder
 
-    local alreadyHit1 = {}
-    local alreadyHit2 = {}
+    VisualEffectServer:SpawnEffectsInRange(
+        "ElectroBall",
+        nil,
+        character,
+        {hitbox  = Hitbox},
+        1000,
+        VFX_ID
+    )
 
-    local function moveHitDetection()
-        local touched = Hitbox.Touched:Connect(function() end)
-        local touchedObjects = Hitbox:GetTouchingParts()
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = Hitbox
+    weld.Part1 = rootPart
+    weld.Parent = weld.Part0
 
-        if touched then
-            touched:Disconnect()
-        end
+    task.delay(shotDelay, function()
+        weld.Enabled = false
+        Hitbox.Anchored = true
 
-        for i=1, #touchedObjects do
-            local object = touchedObjects[i]
-            local parent = object.Parent
-            
-            if not parent:IsA("Model") then
-                continue
-            end
-            
-            if parent == character then
-                continue
-            end
-            
-            --ignoreTargets
-            if CollectionService:HasTag(parent, "Ignore") then
-                continue
-            end
-            
-            local enemyHum = parent:FindFirstChild("Humanoid")
-            if not enemyHum then
-                continue
-            end
-            
-            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-            if not enemyRoot then
-                continue
-            end
-            
-            if alreadyHit1[parent.Name] then
-                continue
-            end
-            
-            if CollectionService:HasTag(parent, "Invulnerable") then
-                continue
+        local alreadyHit1 = {}
+        local alreadyHit2 = {}
+
+        local function moveHitDetection()
+            local touched = Hitbox.Touched:Connect(function() end)
+            local touchedObjects = Hitbox:GetTouchingParts()
+
+            if touched then
+                touched:Disconnect()
             end
 
-            alreadyHit1[parent.Name] = true
-            
-            local isBlocking = StateManager:CheckState(parent, "Blocking")
-            if isBlocking then
-                --Block Indication
-                HealthManager:Block(parent, moveDamage, character)
-                continue
-            end
-
-            --apply slow
-            if classData.MoveData[moveType].Slow then
-                StateManager:AddTarget(parent, "Slow", 2)
-            end
-
-            StateManager:AddTarget(parent, "Attacked", 2)
-
-            HealthManager:Damage(parent, moveDamage, character)
-
-            task.delay(damageTick, function()
-                if alreadyHit1[parent.Name] then
-                    alreadyHit1[parent.Name] = nil
+            for i=1, #touchedObjects do
+                local object = touchedObjects[i]
+                local parent = object.Parent
+                
+                if not parent:IsA("Model") then
+                    continue
                 end
-            end)
-        end
-    end
+                
+                if parent == character then
+                    continue
+                end
+                
+                --ignoreTargets
+                if CollectionService:HasTag(parent, "Ignore") then
+                    continue
+                end
+                
+                local enemyHum = parent:FindFirstChild("Humanoid")
+                if not enemyHum then
+                    continue
+                end
+                
+                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+                if not enemyRoot then
+                    continue
+                end
+                
+                if alreadyHit1[parent.Name] then
+                    continue
+                end
+                
+                if CollectionService:HasTag(parent, "Invulnerable") then
+                    continue
+                end
 
-    local function explodeHitDetection()
-        local touched = Hitbox.Touched:Connect(function() end)
-        local touchedObjects = Hitbox:GetTouchingParts()
+                alreadyHit1[parent.Name] = true
+                
+                local isBlocking = StateManager:CheckState(parent, "Blocking")
+                if isBlocking then
+                    --Block Indication
+                    HealthManager:Block(parent, moveDamage, character)
+                    continue
+                end
 
-        if touched then
-            touched:Disconnect()
-        end
+                --apply slow
+                if classData.MoveData[moveType].Slow then
+                    StateManager:AddTarget(parent, "Slow", 2)
+                end
 
-        for i=1, #touchedObjects do
-            local object = touchedObjects[i]
-            local parent = object.Parent
-            
-            if not parent:IsA("Model") then
-                continue
-            end
-            
-            if parent == character then
-                continue
-            end
-            
-            --ignoreTargets
-            if CollectionService:HasTag(parent, "Ignore") then
-                continue
-            end
-            
-            local enemyHum = parent:FindFirstChild("Humanoid")
-            if not enemyHum then
-                continue
-            end
-            
-            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-            if not enemyRoot then
-                continue
-            end
-            
-            if alreadyHit2[parent.Name] then
-                continue
-            end
-            
-            if CollectionService:HasTag(parent, "Invulnerable") then
-                continue
-            end
+                StateManager:AddTarget(parent, "Attacked", 2)
 
-            alreadyHit2[parent.Name] = true
-            
-            local isBlocking = StateManager:CheckState(parent, "Blocking")
-            if isBlocking then
-                --Block Indication
-                HealthManager:Block(parent, explodeDamage, character)
-                continue
+                HealthManager:Damage(parent, moveDamage, character)
+
+                task.delay(damageTick, function()
+                    if alreadyHit1[parent.Name] then
+                        alreadyHit1[parent.Name] = nil
+                    end
+                end)
             end
-
-            --apply slow
-            if classData.MoveData[moveType].Stunned then
-                StateManager:AddTarget(parent, "Stunned", 2)
-            end
-
-            StateManager:AddTarget(parent, "Attacked", 2)
-
-            HealthManager:Damage(parent, explodeDamage, character)
-        end
-    end
-
-    local function movement(dt)
-        Hitbox.CFrame *= CFrame.new(0, 0, -speed * dt)
-
-        local newCFR = Hitbox.CFrame
-
-        local characterList = {}
-        for _, plr in pairs(Players:GetPlayers()) do
-            local plrChar = plr.Character
-            if not plrChar then
-                continue
-            end
-            table.insert(characterList, plrChar)
         end
 
-        rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
+        local function explodeHitDetection()
+            local touched = Hitbox.Touched:Connect(function() end)
+            local touchedObjects = Hitbox:GetTouchingParts()
 
-        local ray = workspace:Raycast(newCFR.Position, newCFR.UpVector * -1000, rayparams)
-        if ray then
-            local rayPosition = ray.Position
+            if touched then
+                touched:Disconnect()
+            end
 
-            Hitbox.Position = rayPosition + Vector3.new(0, Hitbox.Size.Y/2, 0)
+            for i=1, #touchedObjects do
+                local object = touchedObjects[i]
+                local parent = object.Parent
+                
+                if not parent:IsA("Model") then
+                    continue
+                end
+                
+                if parent == character then
+                    continue
+                end
+                
+                --ignoreTargets
+                if CollectionService:HasTag(parent, "Ignore") then
+                    continue
+                end
+                
+                local enemyHum = parent:FindFirstChild("Humanoid")
+                if not enemyHum then
+                    continue
+                end
+                
+                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+                if not enemyRoot then
+                    continue
+                end
+                
+                if alreadyHit2[parent.Name] then
+                    continue
+                end
+                
+                if CollectionService:HasTag(parent, "Invulnerable") then
+                    continue
+                end
+
+                alreadyHit2[parent.Name] = true
+                
+                local isBlocking = StateManager:CheckState(parent, "Blocking")
+                if isBlocking then
+                    --Block Indication
+                    HealthManager:Block(parent, explodeDamage, character)
+                    continue
+                end
+
+                --apply slow
+                if classData.MoveData[moveType].Stunned then
+                    StateManager:AddTarget(parent, "Stunned", 2)
+                end
+
+                StateManager:AddTarget(parent, "Attacked", 2)
+
+                HealthManager:Damage(parent, explodeDamage, character)
+            end
         end
-    end
 
-    local thread = coroutine.create(function()
-        while true do
-            local dt = task.wait()
+        local function movement(dt)
+            Hitbox.CFrame *= CFrame.new(0, 0, -speed * dt)
 
-            moveHitDetection()
+            local newCFR = Hitbox.CFrame
 
-            movement(dt)
+            local characterList = {}
+            for _, plr in pairs(Players:GetPlayers()) do
+                local plrChar = plr.Character
+                if not plrChar then
+                    continue
+                end
+                table.insert(characterList, plrChar)
+            end
+
+            rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
+
+            local ray = workspace:Raycast(newCFR.Position, newCFR.UpVector * -1000, rayparams)
+            if ray then
+                local rayPosition = ray.Position
+
+                Hitbox.Position = rayPosition + Vector3.new(0, Hitbox.Size.Y/2, 0)
+            end
         end
+
+        local thread = coroutine.create(function()
+            while true do
+                local dt = task.wait()
+
+                moveHitDetection()
+
+                movement(dt)
+            end
+        end)
+
+        task.delay(duration, function()
+            if thread then
+                task.cancel(thread)
+            end
+
+            Hitbox.Size = classData.Hitboxes[moveType].Size.Size2
+
+            VisualEffectServer:SpawnEffectsInRange(
+                "ElectroBall",
+                nil,
+                character,
+                {spawnCFrame = Hitbox.CFrame},
+                1000,
+                VFX_ID,
+                true
+            )
+
+            explodeHitDetection()
+
+            Debris:AddItem(Hitbox, 1)
+        end)
+
+        coroutine.resume(thread)
     end)
-
-    task.delay(duration, function()
-        if thread then
-            task.cancel(thread)
-        end
-
-        Hitbox.Size = classData.Hitboxes[moveType].Size.Size2
-
-        explodeHitDetection()
-
-        Debris:AddItem(Hitbox, 1)
-    end)
-
-    coroutine.resume(thread)
 end
 
 return ElectroBall
