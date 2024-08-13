@@ -68,6 +68,13 @@ function TurretSpawn:Pulse(spawnCFrame)
     pulse.Transparency = 1
     pulse.Parent = self.Folder
 
+    local buildSound: Sound = Sounds.Engineer.Turret:Clone()
+    buildSound.Volume = 1
+    buildSound._Pitch.Octave = math.random(90,  95) / 100
+    buildSound.Parent = pulse
+    buildSound:Play()
+    Debris:AddItem(buildSound, buildSound.TimeLength)
+
     for _, particle in pairs(pulse:GetDescendants()) do
         if particle:IsA("ParticleEmitter") then
             if particle:GetAttribute("EmitCount") then

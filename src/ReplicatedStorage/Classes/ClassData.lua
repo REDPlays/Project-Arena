@@ -392,12 +392,12 @@ ClassData["Engineer"] = {
         ["LMBMove"] = {1, 1, 1},
         ["QMove"] = 10,
         ["EMove"] = 1,
-        ["FMove"] = {5, 20},
+        ["FMove"] = {5, 15},
     },
     Cooldowns = {
         ["LMBMove"] = .75,
-        ["QMove"] = 4,
-        ["EMove"] = 20,
+        ["QMove"] = 1, --4,
+        ["EMove"] = 1, --20,
         ["FMove"] = 1, --15,
     },
     Hitboxes = {
@@ -440,7 +440,7 @@ ClassData["Engineer"] = {
             Silenced = false,
         },
         ["QMove"] = {
-            hasEvent = false,
+            hasEvent = true,
             noMovement = false,
             Stunned = false,
             Burn = false,

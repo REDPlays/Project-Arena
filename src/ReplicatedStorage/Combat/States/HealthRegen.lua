@@ -114,7 +114,7 @@ function HealthRegen:Update(deltaTime)
             continue
         end
 
-        HealthManager:Heal(dummy, HealthRegen.rateRegen * deltaTime)
+        HealthManager:Heal(dummy, HealthRegen.rateRegen * 10 * deltaTime)
     end
 
     for targetId, data in pairs(HealthRegen.InState) do

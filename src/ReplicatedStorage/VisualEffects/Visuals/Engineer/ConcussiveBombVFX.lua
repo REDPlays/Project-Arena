@@ -83,6 +83,13 @@ function ConcussiveBomb:Bomb()
     self.Bomb = EngineerVFX.ConcussiveBomb.Bomb:Clone()
     self.Bomb.PrimaryPart.CFrame = self.hitbox.CFrame
     self.Bomb.Parent = self.Folder
+
+    local throwSound: Sound = Sounds.Engineer.GrenadeThrow:Clone()
+    throwSound.Volume = 0.75
+    throwSound._Pitch.Octave = math.random(90,  95) / 100
+    throwSound.Parent = self.Bomb
+    throwSound:Play()
+    Debris:AddItem(throwSound, throwSound.TimeLength)
 end
 
 function ConcussiveBomb:Explosion(spawnCFrame)
@@ -113,6 +120,13 @@ function ConcussiveBomb:Explosion(spawnCFrame)
             end
         end
     end
+
+    local explodeSound: Sound = Sounds.Engineer.Grenade:Clone()
+    explodeSound.Volume = .5
+    explodeSound._Pitch.Octave = math.random(90,  95) / 100
+    explodeSound.Parent = self.BombExplosion
+    explodeSound:Play()
+    Debris:AddItem(explodeSound, explodeSound.TimeLength)
 end
 
 return ConcussiveBomb
