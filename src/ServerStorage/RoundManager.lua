@@ -60,7 +60,7 @@ function RoundManager:Init(ServerGameManager)
     self.playersInRound = {}
     
     --setting round duration based on gamemode?
-    self.roundMaxDuration = 10 --180
+    self.roundMaxDuration = 180
 
     --map selection will be needed later on
     self.availableMaps = {
