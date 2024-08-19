@@ -9,6 +9,7 @@ local Maps = ServerStorage:WaitForChild("Maps")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
+local MapData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Maps"):WaitForChild("MapData"))
 
 local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
@@ -61,15 +62,20 @@ function RoundManager:Init(ServerGameManager)
 
     --map selection will be needed later on
     self.availableMaps = {
-        Maps:WaitForChild("GreatSkyPlatform")
+        --Maps:WaitForChild("GreatSkyPlatform"),
+        Maps:WaitForChild("ShanghaiShowdown"),
     }
 
-    self.mapCount = 1
+    self.mapCount = #self.availableMaps
 
     self.MapSelected = false
     self.Map = workspace.Map
 
     self.healthPads = {}
+end
+
+function RoundManager:ChangeLighting()
+    
 end
 
 function RoundManager:SelectMap()
