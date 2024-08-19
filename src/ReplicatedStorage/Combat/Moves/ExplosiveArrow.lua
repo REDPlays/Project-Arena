@@ -45,6 +45,8 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
 
     local startCFrame = rootPart.CFrame * CFrame.new(0, 2, -3)
 
+    local VFX_ID = "PiercingArrow"..HttpService:GenerateGUID(false)
+
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
     if ShowHitboxes then
@@ -55,6 +57,15 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "ExplosiveArrow",
+        nil,
+        character,
+        {hitbox  = Hitbox},
+        1000,
+        VFX_ID
+    )
 
     local function explodeHitDetection(currentHitbox)
         local touched = currentHitbox.Touched:Connect(function() end)
@@ -159,6 +170,14 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
         Hitbox2.Anchored = true
         Hitbox2.Parent = IgnoreFolder
 
+        VisualEffectServer:TerminateVFX(
+            "ExplosiveArrow",
+            nil,
+            character,
+            {spawnCFrame = Hitbox.CFrame},
+            VFX_ID
+        )
+
         explodeHitDetection(Hitbox2)
 
         Debris:AddItem(Hitbox2, 1)
@@ -214,6 +233,9 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
             if isBlocking then
                 --Block Indication
                 HealthManager:Block(parent, damage, character)
+
+                TriggerExplosion()
+                
                 continue
             end
             

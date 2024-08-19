@@ -31,6 +31,9 @@ VisualEffectData["ConcussiveBomb"] = require(Visuals:WaitForChild("Engineer"):Wa
 VisualEffectData["ElectroBall"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("ElectroBallVFX"))
 
 VisualEffectData["RangerM1"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("RangerM1"))
+VisualEffectData["PiercingArrow"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("PiercingArrowVFX"))
+VisualEffectData["NetTrap"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("NetTrapVFX"))
+VisualEffectData["ExplosiveArrow"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("ExplosiveArrowVFX"))
 
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))

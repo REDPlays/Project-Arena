@@ -46,6 +46,8 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
 
     local startPosition = predictPosition(rootPart, 0.25)
 
+    local VFX_ID = "NetTrap"..HttpService:GenerateGUID(false)
+
     local startCFrame = CFrame.new(startPosition, rootPart.CFrame.LookVector + startPosition) * CFrame.new(0, 0, -3)
     local endCFrame = startCFrame * CFrame.new(0, 0, -distance)
     local middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, height, 0)
@@ -70,7 +72,7 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
     end
 
     local pointsList = {}
-    for i=0, 1.05, 0.05 do
+    --[==[for i=0, 1.05, 0.05 do
         local newPosition = quadratic(i, startCFrame.Position, middleCFrame.Position, endCFrame.Position)
         local lookVector = endCFrame.LookVector
 
@@ -85,7 +87,7 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
         point.Parent = IgnoreFolder
 
         table.insert(pointsList, point)
-    end
+    end]==]
 
     local function checkCollision(hitbox: BasePart)
         local overlapParams = OverlapParams.new()
@@ -116,6 +118,16 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
         BombHitbox.CFrame = spawnCFrame
         BombHitbox.Parent = IgnoreFolder
         Debris:AddItem(BombHitbox, 1)
+
+        VisualEffectServer:SpawnEffectsInRange(
+            "NetTrap",
+            nil,
+            character,
+            {spawnCFrame = spawnCFrame, action = "Explosion"},
+            1000,
+            VFX_ID,
+            true
+        )
 
         local overlapParams = OverlapParams.new()
         overlapParams.FilterDescendantsInstances = {listOfChars, workspace.Dummies}
@@ -195,6 +207,16 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
             StateManager:AddTarget(parent, "Attacked", 1)
 
             HealthManager:Damage(parent, damage, character)
+
+            VisualEffectServer:SpawnEffectsInRange(
+                "NetTrap",
+                parent,
+                character,
+                {action = "Trap", duration = 2},
+                1000,
+                VFX_ID,
+                true
+            )
         end
     end
 
@@ -207,6 +229,15 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
     Hitbox.Size = classData.Hitboxes[moveType].Size
     Hitbox.CFrame = startCFrame
     Hitbox.Parent = IgnoreFolder
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "NetTrap",
+        nil,
+        character,
+        {hitbox  = Hitbox},
+        1000,
+        VFX_ID
+    )
 
     local speed = 50
 

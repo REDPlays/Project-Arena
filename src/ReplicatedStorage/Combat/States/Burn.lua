@@ -3,6 +3,7 @@ local CollectionService = game:GetService("CollectionService")
 local HttpService = game:GetService("HttpService")
 
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local Assets = ReplicatedStorage.Assets
 local CharacterModels = Assets.CharacterModels
@@ -156,18 +157,7 @@ function Burn:Update(deltaTime)
 
         local humanoid = data.target:FindFirstChild("Humanoid")
         if humanoid and humanoid.Health > 0 then
-            local isDummy = CollectionService:HasTag(data.target, "Dummies")
-            if isDummy and humanoid.Health <= burnDamage * data.burnCount then
-                continue
-            end
-            
-            humanoid:TakeDamage(burnDamage * data.burnCount)
-
-            local health = humanoid.Health 
-            local maxHealth = humanoid.MaxHealth
-
-            Stats:SetAttribute("Health", health)
-            Stats:SetAttribute("MaxHealth", maxHealth)
+            HealthManager:Damage(data.target, burnDamage * data.burnCount, nil)
         end
     end
 end

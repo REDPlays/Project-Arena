@@ -472,9 +472,9 @@ ClassData["Engineer"] = {
     },
     VisualEffects = {
         ["LMBMove"] = "EngineerM1",
-        ["QMove"] = "FireBall",
+        ["QMove"] = "ConcussiveBomb",
         ["EMove"] = "Turret",
-        ["FMove"] = "Eruption",
+        ["FMove"] = "ElectroBall",
     }
 }
 
@@ -489,29 +489,29 @@ ClassData["Ranger"] = {
     ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Eyes of an Eagle",
     DamageList = {
-        ["LMBMove"] = {2, 2, 2},
-        ["QMove"] = 5,
+        ["LMBMove"] = {4, 4, 4},
+        ["QMove"] = 15,
         ["EMove"] = 5,
         ["FMove"] = 10,
     },
     Cooldowns = {
         ["LMBMove"] = .75,
-        ["QMove"] = 3,
-        ["EMove"] = 3,
-        ["FMove"] = 10,
+        ["QMove"] = 1, --3,
+        ["EMove"] = 1, --3,
+        ["FMove"] = 1, --10,
     },
     Hitboxes = {
         ["LMBMove"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = {
-                CFrame.new(1, 0, -4),
-                CFrame.new(1, 0, -4),
-                CFrame.new(1, 0, -4),
+                CFrame.new(1, 1, 0.5),
+                CFrame.new(1, 1, 0.5),
+                CFrame.new(1, 1, 0.5),
             },
         },
         ["QMove"] = {
             Size = Vector3.new(3, 3, 6),
-            Offset = CFrame.new(0, 0, -1),
+            Offset = CFrame.new(1, 1, 0.5),
         },
         ["EMove"] = {
             Size = Vector3.new(2, 2, 2),
@@ -548,7 +548,7 @@ ClassData["Ranger"] = {
             Silenced = false,
         },
         ["EMove"] = {
-            hasEvent = false,
+            hasEvent = true,
             noMovement = false,
             Stunned = true,
             Burn = false,
@@ -570,9 +570,9 @@ ClassData["Ranger"] = {
     },
     VisualEffects = {
         ["LMBMove"] = "RangerM1",
-        ["QMove"] = "FireBall",
-        ["EMove"] = "Flamethrower",
-        ["FMove"] = "Eruption",
+        ["QMove"] = "PiercingArrow",
+        ["EMove"] = "NetTrap",
+        ["FMove"] = "ExplosiveArrow",
     }
 }
 

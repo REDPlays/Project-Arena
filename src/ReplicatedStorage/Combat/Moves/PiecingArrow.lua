@@ -42,7 +42,9 @@ function PiecingArrow:Activate(player, character, rootPart, placementCFrame, cla
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
-    local startCFrame = rootPart.CFrame * CFrame.new(0, 2, -3)
+    local startCFrame = rootPart.CFrame * CFrame.new(1, 1, -3)
+
+    local VFX_ID = "PiercingArrow"..HttpService:GenerateGUID(false)
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
@@ -54,6 +56,15 @@ function PiecingArrow:Activate(player, character, rootPart, placementCFrame, cla
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "PiercingArrow",
+        nil,
+        character,
+        {hitbox  = Hitbox},
+        1000,
+        VFX_ID
+    )
 
     local alreadyHit = {}
     local function hitDetection()
@@ -153,14 +164,20 @@ function PiecingArrow:Activate(player, character, rootPart, placementCFrame, cla
         end
     end)
 
-    Debris:AddItem(Hitbox, duration)
+    Debris:AddItem(Hitbox, duration + 0.25)
 
     task.delay(duration, function()
         if thread then
             task.cancel(thread)
         end
 
-
+        VisualEffectServer:TerminateVFX(
+            "PiercingArrow",
+            nil,
+            character,
+            {spawnCFrame = Hitbox.CFrame},
+            VFX_ID
+        )
     end)
 
     coroutine.resume(thread)

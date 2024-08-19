@@ -8,12 +8,12 @@ local Sounds = Assets:WaitForChild("Sounds")
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 
-local Ranger = {}
-Ranger.__index = Ranger
+local PiercingArrow = {}
+PiercingArrow.__index = PiercingArrow
 
-function Ranger.new(target, sourceUnit, conditionalData)
+function PiercingArrow.new(target, sourceUnit, conditionalData)
     local newVFX = {}
-    setmetatable(newVFX, Ranger)
+    setmetatable(newVFX, PiercingArrow)
 
     newVFX.target = target
     newVFX.sourceUnit = sourceUnit
@@ -25,14 +25,14 @@ function Ranger.new(target, sourceUnit, conditionalData)
     return newVFX
 end
 
-function Ranger:Activate(target, sourceUnit, conditionalData)
-    local vfx = Ranger.new(target, sourceUnit, conditionalData)
+function PiercingArrow:Activate(target, sourceUnit, conditionalData)
+    local vfx = PiercingArrow.new(target, sourceUnit, conditionalData)
     vfx:DisplayVFX()
 
     return vfx
 end
 
-function Ranger:DisplayVFX()
+function PiercingArrow:DisplayVFX()
     self.gear = self.sourceUnit:FindFirstChild("Gear")
     if not self.gear then
         return
@@ -48,6 +48,11 @@ function Ranger:DisplayVFX()
         return
     end
 
+    self.hitbox = self.conditionalData.hitbox
+    if not self.hitbox then
+        return
+    end
+
     self.Folder = Instance.new("Folder")
     self.Folder.Name = "RangerVFX"
     self.Folder.Parent = workspace.VFX
@@ -55,7 +60,11 @@ function Ranger:DisplayVFX()
     self:Arrow()
 end
 
-function Ranger:Terminate(target, sourceUnit, conditionalData)
+function PiercingArrow:RunFunction(target, sourceUnit, conditionalData)
+    
+end
+
+function PiercingArrow:Terminate(target, sourceUnit, conditionalData)
     if self.Arrow then
         self.Arrow.Anchored = true
     end
@@ -63,38 +72,34 @@ function Ranger:Terminate(target, sourceUnit, conditionalData)
     self:Hit(conditionalData.spawnCFrame)
 end
 
-function Ranger:Update(deltaTime)
+function PiercingArrow:Update(deltaTime)
     if self.Arrow then
         local trail2 = self.Arrow:FindFirstChild("Trail2")
         if trail2 then
-            trail2.CFrame *= CFrame.Angles(0, 0, math.rad(-10))
+            trail2.CFrame *= CFrame.Angles(0, 0, math.rad(-5))
         end
     end
 end
 
-function Ranger:Arrow()
+function PiercingArrow:Arrow()
     self.rootPart = self.sourceUnit:FindFirstChild("HumanoidRootPart")
     if not self.rootPart then
         return
     end
 
-    if not self.conditionalData.projectile then
-        return
-    end
-
-    self.Spread = RangerVFX.M1s.FireSpread:Clone()
+    self.Spread = RangerVFX.PiercingArrow.FireSpread:Clone()
     self.Spread.CFrame = self.Barrel.CFrame
     self.Spread.Transparency = 1
     self.Spread.Parent = self.Folder
 
-    self.Arrow = RangerVFX.M1s.Arrow:Clone()
+    self.Arrow = RangerVFX.PiercingArrow.Arrow:Clone()
     self.Arrow.Transparency = 1
-    self.Arrow.CFrame = self.conditionalData.projectile.CFrame
+    self.Arrow.CFrame = self.hitbox.CFrame
     self.Arrow.Parent = self.Folder
 
     local weld = Instance.new("WeldConstraint")
     weld.Part0 = self.Arrow
-    weld.Part1 = self.conditionalData.projectile
+    weld.Part1 = self.hitbox
     weld.Parent = weld.Part0
 
     local weld2 = Instance.new("WeldConstraint")
@@ -111,21 +116,21 @@ function Ranger:Arrow()
     end
 
     local shootSound = Sounds.Ranger.Shot:Clone()
-    shootSound.Volume = 0.3
+    shootSound.Volume = 0.65
     shootSound._Pitch.Octave = math.random(90,  95) / 100
     shootSound.Parent = self.rootPart
     shootSound:Play()
     Debris:AddItem(shootSound, shootSound.TimeLength)
 end
 
-function Ranger:Hit(spawnCFrame)
+function PiercingArrow:Hit(spawnCFrame)
     for _, particle in pairs(self.Arrow:GetDescendants()) do
         if particle:IsA("ParticleEmitter") or particle:IsA("Beam") or particle:IsA("Trail") then
             particle.Enabled = false
         end
     end
 
-    local HitVFX = RangerVFX.M1s.Hit:Clone()
+    local HitVFX = RangerVFX.PiercingArrow.Hit:Clone()
     HitVFX.CFrame = spawnCFrame
     HitVFX.Anchored = true
     HitVFX.Transparency = 1
@@ -144,4 +149,4 @@ function Ranger:Hit(spawnCFrame)
     Debris:AddItem(self.Folder, 2.5)
 end
 
-return Ranger
+return PiercingArrow

@@ -104,9 +104,9 @@ AnimationData["Ranger"] = {
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Engineer"):WaitForChild("FMove"),
-    EMove = Animations:WaitForChild("Pyromancer"):WaitForChild("QMove"),
-    FMove = Animations:WaitForChild("Engineer"):WaitForChild("FMove"),
+    QMove = Animations:WaitForChild("Ranger"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Ranger"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("Ranger"):WaitForChild("FMove"),
 
     Idle = Animations:WaitForChild("Ranger"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Ranger"):WaitForChild("Run"),
