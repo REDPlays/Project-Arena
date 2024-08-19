@@ -2,6 +2,8 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local MapAssets = Assets:WaitForChild("Map")
@@ -58,15 +60,17 @@ function RoundManager:Init(ServerGameManager)
     self.playersInRound = {}
     
     --setting round duration based on gamemode?
-    self.roundMaxDuration = 120
+    self.roundMaxDuration = 10 --180
 
     --map selection will be needed later on
     self.availableMaps = {
-        --Maps:WaitForChild("GreatSkyPlatform"),
+        Maps:WaitForChild("GreatSkyPlatform"),
         Maps:WaitForChild("ShanghaiShowdown"),
     }
 
-    self.mapCount = #self.availableMaps
+    self.mapPool = table.clone(self.availableMaps)
+
+    self.mapCount = #self.mapPool
 
     self.MapSelected = false
     self.Map = workspace.Map
@@ -74,8 +78,18 @@ function RoundManager:Init(ServerGameManager)
     self.healthPads = {}
 end
 
-function RoundManager:ChangeLighting()
-    
+function RoundManager:ChangeLighting(lightingType)
+    local lightingData = MapData[lightingType]
+    if not lightingData then
+        warn("invalid lighting data")
+        return
+    end
+
+    local info = TweenInfo.new(5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+    for propertyName, propertyValue in pairs(lightingData) do
+        TweenService:Create(Lighting, info, {[propertyName] = propertyValue}):Play()
+    end
 end
 
 function RoundManager:SelectMap()
@@ -84,8 +98,20 @@ function RoundManager:SelectMap()
 
     local choice = math.random(1, self.mapCount)
     
-    self.Map = self.availableMaps[choice]:Clone()
+    self.Map = self.mapPool[choice]:Clone()
     self.Map.Parent = workspace
+
+    table.remove(self.mapPool, choice)
+    self.mapCount = #self.mapPool
+
+    if self.mapCount == 0 then
+        self.mapPool = table.clone(self.availableMaps)
+        self.mapCount = #self.mapPool
+    end
+
+    task.delay(1, function()
+        self:ChangeLighting(self.Map.Name)
+    end)
 
     warn(self.Map.Name, "selected!!!")
 end
@@ -94,6 +120,8 @@ function RoundManager:CleanupMap()
     if self.Map then
         self.Map:Destroy()
     end
+
+    self:ChangeLighting("Default")
 
     self.Map = nil
     self.MapSelected = false
@@ -379,9 +407,9 @@ function RoundManager:Update(deltaTime)
                 end
 
                 --map selection
-            if not self.MapSelected then
-                self:SelectMap()
-            end
+                if not self.MapSelected then
+                    self:SelectMap()
+                end
 
                 Events.Server_Client.CountDown:FireAllClients("CountDown", self.countDown)
             end
