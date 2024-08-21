@@ -396,9 +396,9 @@ ClassData["Engineer"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .75,
-        ["QMove"] = 1, --4,
-        ["EMove"] = 1, --20,
-        ["FMove"] = 1, --15,
+        ["QMove"] = 4,
+        ["EMove"] = 20,
+        ["FMove"] = 15,
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -489,16 +489,16 @@ ClassData["Ranger"] = {
     ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Eyes of an Eagle",
     DamageList = {
-        ["LMBMove"] = {4, 4, 4},
+        ["LMBMove"] = {7, 7, 7},
         ["QMove"] = 15,
-        ["EMove"] = 5,
+        ["EMove"] = 10,
         ["FMove"] = 10,
     },
     Cooldowns = {
-        ["LMBMove"] = .75,
-        ["QMove"] = 1, --3,
-        ["EMove"] = 1, --3,
-        ["FMove"] = 1, --10,
+        ["LMBMove"] = .5,
+        ["QMove"] = 3,
+        ["EMove"] = 3,
+        ["FMove"] = 10,
     },
     Hitboxes = {
         ["LMBMove"] = {

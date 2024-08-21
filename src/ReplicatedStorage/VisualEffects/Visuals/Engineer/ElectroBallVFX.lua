@@ -76,6 +76,13 @@ function ElectroBall:DisplayVFX()
     self:Projectile()
 end
 
+function ElectroBall:RunFunction(target, sourceUnit, conditionalData)
+    self.canFollow = false
+
+    self.isTerminate = true
+
+    self:Explosion(conditionalData.spawnCFrame)
+end
  
 function ElectroBall:Terminate(target, sourceUnit, conditionalData)
     Debris:AddItem(self.Folder, 2)
