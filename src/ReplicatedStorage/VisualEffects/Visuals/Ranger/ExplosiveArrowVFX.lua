@@ -130,7 +130,24 @@ function ExplosiveArrow:Explode(spawnCFrame)
         end
     end
 
-    
+    self.Explode = RangerVFX.ExplosiveArrow.Explosion:Clone()
+    self.Explode.Transparency = 1
+    self.Explode.CFrame = spawnCFrame
+    self.Explode.Parent = self.Folder
+
+    self.sfx2 = Sounds.Pyromancer.Eruption:Clone()
+    self.sfx2.Volume = .25
+    self.sfx2._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx2.Parent = self.Explode
+    self.sfx2:Play()
+
+    for _, particle in pairs(self.Explode:GetDescendants()) do
+        if particle:IsA("ParticleEmitter") then
+            if particle:GetAttribute("EmitCount") then
+                particle:Emit(particle:GetAttribute("EmitCount"))
+            end
+        end
+    end
 end
 
 return ExplosiveArrow

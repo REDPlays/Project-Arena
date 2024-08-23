@@ -174,7 +174,7 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
             "ExplosiveArrow",
             nil,
             character,
-            {spawnCFrame = Hitbox.CFrame},
+            {spawnCFrame = Hitbox2.CFrame},
             VFX_ID
         )
 
@@ -296,6 +296,8 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
         if thread then
             task.cancel(thread)
         end
+
+
 
         TriggerExplosion()
 
