@@ -43,6 +43,8 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
 
     local placementCFrame = character:GetPivot() * currentClassData.Hitboxes["LMBMove"].Offset
 
+    local hitboxLifeTime = .5
+
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
     if ShowHitboxes then
@@ -59,92 +61,111 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
     weld.Part1 = rootPart
     weld.Parent = weld.Part0
 
-    local touched = Hitbox.Touched:Connect(function() end)
-    local touchedObjects = Hitbox:GetTouchingParts()
-
-    if touched then
-        touched:Disconnect()
-    end
-
     local alreadyHit = {}
-    for i=1, #touchedObjects do
-        local object = touchedObjects[i]
-        local parent = object.Parent
 
-        if not parent:IsA("Model") then
-            continue
+    local hitDetect = coroutine.create(function()
+        while true do
+            if not Hitbox then
+                break
+            end
+
+            local touched = Hitbox.Touched:Connect(function() end)
+            local touchedObjects = Hitbox:GetTouchingParts()
+
+            if touched then
+                touched:Disconnect()
+            end
+
+            for i=1, #touchedObjects do
+                local object = touchedObjects[i]
+                local parent = object.Parent
+
+                if not parent:IsA("Model") then
+                    continue
+                end
+
+                if parent == character then
+                    continue
+                end
+
+                --ignoreTargets
+                if CollectionService:HasTag(parent, "Ignore") or CollectionService:HasTag(parent, "Dummies") then
+                    continue
+                end
+
+                if CollectionService:HasTag(parent, "Invulnerable") then
+                    continue
+                end
+
+                local enemyHum = parent:FindFirstChild("Humanoid")
+                if not enemyHum then
+                    continue
+                end
+
+                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+                if not enemyRoot then
+                    continue
+                end
+
+                if alreadyHit[parent.Name] then
+                    continue
+                end
+
+                local Stats = parent:FindFirstChild("Stats")
+                if not Stats then
+                    continue
+                end
+
+                local isUserStun = StateManager:CheckState(character, "Stunned")
+                if isUserStun then
+                    return
+                end
+
+                alreadyHit[parent.Name] = true
+
+                local isBlocking = StateManager:CheckState(parent, "Blocking")
+                if isBlocking then
+                    --Block Indication
+                    HealthManager:Block(parent, damage, character)
+                    continue
+                end
+
+                if isStun then
+                    StateManager:AddTarget(parent, "Stunned", 1)
+                end
+
+                if isBurn then
+                    StateManager:AddTarget(parent, "Burn", 3)
+                end
+
+                if isSlow then
+                    StateManager:AddTarget(parent, "Slow", 2)
+                end
+
+                if isKnockup then
+                    StateManager:AddTarget(parent, "Knockup", 50)
+                end
+
+                if isSilenced then
+                    StateManager:AddTarget(parent, "Silenced", 2)
+                end
+
+                StateManager:AddTarget(parent, "Attacked", 1)
+
+                HealthManager:Damage(parent, damage, character)
+            end
+
+            task.wait()
         end
+    end)
 
-        if parent == character then
-            continue
+    coroutine.resume(hitDetect)
+
+    task.delay(hitboxLifeTime, function()
+        if hitDetect then
+            coroutine.close(hitDetect)
         end
-
-        --ignoreTargets
-        if CollectionService:HasTag(parent, "Ignore") or CollectionService:HasTag(parent, "Dummies") then
-            continue
-        end
-
-        if CollectionService:HasTag(parent, "Invulnerable") then
-            continue
-        end
-
-        local enemyHum = parent:FindFirstChild("Humanoid")
-        if not enemyHum then
-            continue
-        end
-
-        local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-        if not enemyRoot then
-            continue
-        end
-
-        if alreadyHit[parent.Name] then
-            continue
-        end
-
-        local Stats = parent:FindFirstChild("Stats")
-        if not Stats then
-            continue
-        end
-
-        local isUserStun = StateManager:CheckState(character, "Stunned")
-        if isUserStun then
-            return
-        end
-
-        alreadyHit[parent.Name] = true
-
-        local isBlocking = StateManager:CheckState(parent, "Blocking")
-        if isBlocking then
-            --Block Indication
-            HealthManager:Block(parent, damage, character)
-            continue
-        end
-
-        if isStun then
-            StateManager:AddTarget(parent, "Stunned", 1)
-        end
-
-        if isBurn then
-            StateManager:AddTarget(parent, "Burn", 3)
-        end
-
-        if isSlow then
-            StateManager:AddTarget(parent, "Slow", 2)
-        end
-
-        if isKnockup then
-            StateManager:AddTarget(parent, "Knockup", 50)
-        end
-
-        if isSilenced then
-            StateManager:AddTarget(parent, "Silenced", 2)
-        end
-
-        StateManager:AddTarget(parent, "Attacked", 1)
-
-        HealthManager:Damage(parent, damage, character)
-    end
+    end)
 end
 
 function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, conditionalData)
@@ -194,7 +215,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
 
     local placementCFrame = character:GetPivot() * Offset
 
-    local hitboxLifeTime = .25
+    local hitboxLifeTime = .5
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
