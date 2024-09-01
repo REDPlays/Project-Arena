@@ -496,9 +496,9 @@ ClassData["Ranger"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 1, --3,
-        ["EMove"] = 1, --3,
-        ["FMove"] = 1, --10,
+        ["QMove"] = 3,
+        ["EMove"] = 3,
+        ["FMove"] = 10,
     },
     Hitboxes = {
         ["LMBMove"] = {
