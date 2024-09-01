@@ -41,8 +41,8 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         return
     end
 
-    local distance = 15
-    local height = 10
+    local distance = 20
+    local height = 15
 
     local startPosition = predictPosition(rootPart, 0.25)
 
@@ -229,7 +229,7 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         VFX_ID
     )
 
-    local speed = 50
+    local speed = 75
 
     local totalDistance = (startCFrame.Position - middleCFrame.Position).Magnitude + (middleCFrame.Position - endCFrame.Position).Magnitude
 

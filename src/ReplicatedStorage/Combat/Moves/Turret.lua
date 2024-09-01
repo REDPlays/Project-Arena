@@ -24,7 +24,7 @@ local IgnoreFolder = workspace.Ignore
 local Turret = {}
 
 Turret.currentPlayers = {}
-local maxTurrets = 3
+local maxTurrets = 1
 
 local function predictPosition(part: BasePart, timeInterval)
     return part.Position + part.AssemblyLinearVelocity * timeInterval
@@ -135,10 +135,10 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
         task.delay(spawnDelay, function()
             local lifeTime = 15
             local MaxDistance = 50
-            local fireRate = 1
+            local fireRate = 1.5
             local currentRate = 0
             local burstDelay = 0.15
-            local numShots = 3
+            local numShots = 2
             local predictionValue = 0.25
 
             local Turret_Head = TurretModel.Head
@@ -206,6 +206,10 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
                 end
 
                 for _, ene in pairs(workspace.Dummies:GetChildren()) do
+                    if ene == character then
+                        continue
+                    end
+
                     table.insert(potentialList, ene)
                 end
 

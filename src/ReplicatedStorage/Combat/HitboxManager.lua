@@ -367,7 +367,12 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
         return
     end
 
-    local character = player.Character
+    local character = nil
+    if player:IsA("Model") then
+        character = player
+    else
+        character = player.Character
+    end
     if not character then
         return
     end

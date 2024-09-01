@@ -379,9 +379,9 @@ ClassData["Samurai"] = {
 }
 
 ClassData["Engineer"] = {
-    Health = 120,
+    Health = 90,
     Defense = 100,
-    Speed = 27,
+    Speed = 24,
     ProjectileSpeed = 100,
     Role = "Summoner",
     Cost = 200,
@@ -389,7 +389,7 @@ ClassData["Engineer"] = {
     ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Master Mechanic",
     DamageList = {
-        ["LMBMove"] = {1, 1, 1},
+        ["LMBMove"] = {3, 3, 3},
         ["QMove"] = 10,
         ["EMove"] = 1,
         ["FMove"] = {5, 15},
@@ -479,9 +479,9 @@ ClassData["Engineer"] = {
 }
 
 ClassData["Ranger"] = {
-    Health = 100,
+    Health = 90,
     Defense = 100,
-    Speed = 27,
+    Speed = 24,
     ProjectileSpeed = 100,
     Role = "Marksman",
     Cost = 200,
@@ -496,9 +496,9 @@ ClassData["Ranger"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 3,
-        ["EMove"] = 3,
-        ["FMove"] = 10,
+        ["QMove"] = 1, --3,
+        ["EMove"] = 1, --3,
+        ["FMove"] = 1, --10,
     },
     Hitboxes = {
         ["LMBMove"] = {

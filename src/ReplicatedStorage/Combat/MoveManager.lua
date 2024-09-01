@@ -39,6 +39,26 @@ function MoveManager:Ability(player, class, moveType, moveData)
     MoveData[class][moveType]:Activate(player, character, rootPart, placementCFrame, class, currentClassData, moveType)
 end
 
+function MoveManager:AbilityNonPlayer(character, class, moveType, moveData)
+    local currentClassData = ClassData[class]
+    if not currentClassData then
+        return
+    end
+
+    local currentMoveData = MoveData[class][moveType]
+    if not currentMoveData then
+        return
+    end
+
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
+    MoveData[class][moveType]:Activate(character, character, rootPart, placementCFrame, class, currentClassData, moveType)
+end
+
 function MoveManager:ProjectileAbility(player, class, moveType, moveData)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then

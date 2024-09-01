@@ -15,6 +15,7 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 local RoundManager = require(ServerStorage.ServerFiles.RoundManager)
 local PlayerManager = require(ServerStorage.ServerFiles.Player.PlayerManager)
 local LeaderboardManager = require(ServerStorage.ServerFiles.Player.LeaderboardManager)
+local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
 local Lobby = workspace.Lobby
 local Dummies = workspace.Dummies
@@ -51,43 +52,61 @@ function ServerGameManager:ConfigureDummies()
         dummy = Dummies.DummyAttacker,
         currTime = 0,
         maxTime = .5,
+        type = "Attack"
     }
 
     ServerGameManager.dummyTimers[Dummies.DummyStunner] = {
         dummy = Dummies.DummyStunner,
         currTime = 0,
         maxTime = 1.5,
+        type = "Attack"
     }
 
     ServerGameManager.dummyTimers[Dummies.DummyBurn] = {
         dummy = Dummies.DummyBurn,
         currTime = 0,
         maxTime = .5,
+        type = "Attack"
     }
 
     ServerGameManager.dummyTimers[Dummies.DummySlow] = {
         dummy = Dummies.DummySlow,
         currTime = 0,
         maxTime = .5,
+        type = "Attack"
     }
 
     ServerGameManager.dummyTimers[Dummies.DummyKnockup] = {
         dummy = Dummies.DummyKnockup,
         currTime = 0,
         maxTime = .5,
+        type = "Attack"
     }
     
     ServerGameManager.dummyTimers[Dummies.DummySilenced] = {
         dummy = Dummies.DummySilenced,
         currTime = 0,
         maxTime = .5,
+        type = "Attack"
     }
 
     ServerGameManager.dummyTimers[Dummies.DummyAllForOne] = {
         dummy = Dummies.DummyAllForOne,
         currTime = 0,
         maxTime = 1.5,
+        type = "Attack"
     }
+
+    ServerGameManager.dummyTimers[Dummies.DummyAbilities] = {
+        dummy = Dummies.DummyAbilities,
+        currTime = 0,
+        maxTime = 5,
+        type = "Abilities",
+        Class = "Engineer",
+        Ability = "EMove",
+    }
+
+    Dummies.DummyAbilities:SetAttribute("CurrentClass", "Engineer")
 end
 
 function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
@@ -212,13 +231,32 @@ function ServerGameManager:Update(deltaTime)
             isSilenced = true
         end
 
-        if data.currTime >= data.maxTime then
+        if data.currTime >= data.maxTime and data.type == "Attack" then
             data.currTime = 0
 
-            local animation = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData.Base.DummyAttack)
+            local animation: AnimationTrack = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData.Base.DummyAttack)
             animation:Play()
 
             HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn, isSlow, isKnockup, isSilenced)
+        elseif data.currTime >= data.maxTime and data.type == "Abilities" then
+            data.currTime = 0
+
+            local animation: AnimationTrack = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData[data.Class][data.Ability])
+            animation:Play()
+
+            local hasEvent = ClassData[data.Class].MoveData[data.Ability].hasEvent
+            if hasEvent then
+                local event
+                event = animation:GetMarkerReachedSignal("Attack"):Connect(function()
+                    if event then
+                        event:Disconnect()
+                    end
+
+                    MoveManager:AbilityNonPlayer(data.dummy, data.Class, data.Ability)
+                end)
+            else
+                MoveManager:AbilityNonPlayer(data.dummy, data.Class, data.Ability)
+            end
         end
     end
 end
