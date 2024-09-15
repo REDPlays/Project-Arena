@@ -424,7 +424,10 @@ function CharacterSelectServer:ResetCharacter(character)
         return
     end
 
-    player:LoadCharacter()
+    local humanoid: Humanoid = character:FindFirstChild("Humanoid")
+    if humanoid then
+        humanoid:TakeDamage(humanoid.MaxHealth * 2)
+    end
 end
 
 function CharacterSelectServer:UpdateStatues()
