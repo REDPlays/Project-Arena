@@ -16,6 +16,8 @@ local CharacterSelectServer = {}
 CharacterSelectServer.uiConnections = {}
 
 CharacterSelectServer.hasClass = {}
+CharacterSelectServer.boundTeleport = {}
+CharacterSelectServer.resetTeleport = {}
 
 function CharacterSelectServer:Init(lobby, roundManager, playerManager)
     CharacterSelectServer.Lobby = lobby
@@ -24,8 +26,9 @@ function CharacterSelectServer:Init(lobby, roundManager, playerManager)
     CharacterSelectServer.roundManager = roundManager
     CharacterSelectServer.playerManager = playerManager
 
-    --Temporary(Make a map manager)
     CharacterSelectServer.Teleporter = workspace.Teleporter
+    CharacterSelectServer.Bound = workspace.Bound
+    CharacterSelectServer.LobbyTeleporter = workspace.LobbyTeleporter.Door
 
     CharacterSelectServer:Setup()
 end
@@ -415,6 +418,15 @@ function CharacterSelectServer:SelectCharacter(player, className, ID)
     end
 end
 
+function CharacterSelectServer:ResetCharacter(character)
+    local player = Players:GetPlayerFromCharacter(character)
+    if not player then
+        return
+    end
+
+    player:LoadCharacter()
+end
+
 function CharacterSelectServer:UpdateStatues()
     for _, player in pairs(Players:GetChildren()) do
         local playerData = CharacterSelectServer.playerManager:GetData(player)
@@ -436,7 +448,107 @@ function CharacterSelectServer:UpdateStatues()
     end
 end
 
+function CharacterSelectServer:TeleportFromBounds()
+    local overlap = OverlapParams.new()
+    overlap.FilterType = Enum.RaycastFilterType.Include
+
+    local listOfChars = {}
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        local _chr = plr.Character
+        if _chr then
+            table.insert(listOfChars, _chr)
+        end
+    end
+
+    overlap.FilterDescendantsInstances = {listOfChars}
+
+    local partList = workspace:GetPartsInPart(CharacterSelectServer.Bound, overlap)
+
+    for _, object in pairs(partList) do
+        if object:IsA("BasePart") then
+            local objectParent = object:FindFirstAncestorOfClass("Model")
+            if not objectParent then
+                continue
+            end
+
+            local humanoid = objectParent:FindFirstChild("Humanoid")
+            if not humanoid then
+                continue
+            end
+
+            local rootPart = objectParent:FindFirstChild("HumanoidRootPart")
+            if not rootPart then
+                continue
+            end
+
+            if CharacterSelectServer.boundTeleport[objectParent] then
+                continue
+            end
+
+            CharacterSelectServer.boundTeleport[objectParent] = true
+
+            objectParent:PivotTo(CharacterSelectServer.Teleporter.CFrame * CFrame.new(0, 1, 0))
+
+            task.delay(1, function()
+                CharacterSelectServer.boundTeleport[objectParent] = nil
+            end)
+
+        end
+    end
+end
+
+function CharacterSelectServer:TeleportToLobby()
+    local overlap = OverlapParams.new()
+    overlap.FilterType = Enum.RaycastFilterType.Include
+
+    local listOfChars = {}
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        local _chr = plr.Character
+        if _chr then
+            table.insert(listOfChars, _chr)
+        end
+    end
+
+    overlap.FilterDescendantsInstances = {listOfChars}
+
+    local partList = workspace:GetPartsInPart(CharacterSelectServer.LobbyTeleporter, overlap)
+
+    for _, object in pairs(partList) do
+        if object:IsA("BasePart") then
+            local objectParent = object:FindFirstAncestorOfClass("Model")
+            if not objectParent then
+                continue
+            end
+
+            local humanoid = objectParent:FindFirstChild("Humanoid")
+            if not humanoid then
+                continue
+            end
+
+            local rootPart = objectParent:FindFirstChild("HumanoidRootPart")
+            if not rootPart then
+                continue
+            end
+
+            if CharacterSelectServer.resetTeleport[objectParent] then
+                continue
+            end
+
+            CharacterSelectServer.resetTeleport[objectParent] = true
+
+            CharacterSelectServer:ResetCharacter(objectParent)
+
+            task.delay(2, function()
+                CharacterSelectServer.resetTeleport[objectParent] = nil
+            end)
+        end
+    end
+end
+
 function CharacterSelectServer:Update(deltaTime)
+    CharacterSelectServer:TeleportFromBounds()
+    CharacterSelectServer:TeleportToLobby()
+
     tick += deltaTime
 
     if tick < maxTick then

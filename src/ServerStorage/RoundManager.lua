@@ -7,7 +7,7 @@ local TweenService = game:GetService("TweenService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local MapAssets = Assets:WaitForChild("Map")
-local Maps = ServerStorage:WaitForChild("Maps")
+local Maps = ReplicatedStorage:WaitForChild("Maps")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
@@ -73,7 +73,8 @@ function RoundManager:Init(ServerGameManager)
     self.mapCount = #self.mapPool
 
     self.MapSelected = false
-    self.Map = workspace.Map
+    self.Map = ""
+    self.MapPivot = CFrame.new(Vector3.new(-44505.016, 500, 29.022))
 
     self.healthPads = {}
 end
@@ -99,6 +100,7 @@ function RoundManager:SelectMap()
     local choice = math.random(1, self.mapCount)
     
     self.Map = self.mapPool[choice]:Clone()
+    self.Map:PivotTo(self.MapPivot)
     self.Map.Parent = workspace
 
     table.remove(self.mapPool, choice)
