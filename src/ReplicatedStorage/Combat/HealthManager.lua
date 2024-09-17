@@ -44,16 +44,16 @@ function HealthManager:Damage(character, damage, attacker)
         50
     )
 
-    humanoid:TakeDamage(damage)
-    Stats:SetAttribute("Health", humanoid.Health)
-    Stats:SetAttribute("MaxHealth", maxHealth)
-
     if currentHealth - damage <= 0 then
         local attackerPlayer = Players:GetPlayerFromCharacter(attacker)
         if attackerPlayer then
             PlayerManager:AddKill(attackerPlayer)
         end
     end
+
+    humanoid:TakeDamage(damage)
+    Stats:SetAttribute("Health", humanoid.Health)
+    Stats:SetAttribute("MaxHealth", maxHealth)
 end
 
 function HealthManager:Block(character, damage, attacker)
