@@ -16,6 +16,11 @@ local MapData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild(
 local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
 
+local GamemodesList = {
+    ["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
+    --["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
+}
+
 local RoundManager = {}
 RoundManager.__index = RoundManager
 
@@ -48,8 +53,11 @@ function RoundManager:Init(ServerGameManager)
     self.maxTick = 1
     self.currTick = 0
 
-    self.intermission = false
-    self.intermissionDuration = 0
+    self.intermission = true
+    self.inermissionTime = 10--30
+    self.intermissionDuration = self.inermissionTime
+    
+    self.currentGameMode = nil
 
     self.startCountDown = false
     self.countDown = 0
@@ -367,24 +375,13 @@ function RoundManager:Update(deltaTime)
 
     self:UpdatePickups(deltaTime)
 
+    --every second update tick
     if self.currTick >= self.maxTick then
         self.currTick = 0
 
         --not enough players
         if self.serverGameManager.playerCount <= self.belowLimit then
             Events.Server_Client.CountDown:FireAllClients("not enough players", 0)
-            return
-        end
-
-        if self.intermission then
-            self.intermissionDuration -= self.maxTick
-            Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
-
-            if self.intermissionDuration <= 0 then
-                self.intermission = false
-                self.intermissionDuration = 0
-            end
-
             return
         end
         
@@ -397,6 +394,37 @@ function RoundManager:Update(deltaTime)
         if playerHasClass <= self.belowLimit and not self.roundStart then
             Events.Server_Client.CountDown:FireAllClients("not enough players ready", 0)
             return
+        end
+
+        --count down for intermission
+        if self.intermission then
+            self.intermissionDuration -= self.maxTick
+            Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
+
+            --allow players to vote for current gamemode
+
+            if self.intermissionDuration <= 0 then
+                self.intermission = false
+                self.intermissionDuration = 0
+            end
+
+            return
+        end
+
+        if not self.currentGameMode then
+            warn("No current gamemode selected, choose at random")
+            local sudoModeList = {}
+            for gamemode, _ in pairs(GamemodesList) do
+                table.insert(sudoModeList, gamemode)
+            end
+
+            local selection = sudoModeList[math.random(1, #sudoModeList)]
+            if not selection then
+                selection = "FreeForAll"
+            end
+            warn("CurrentGameMode:", selection)
+
+            self.currentGameMode = GamemodesList[selection].new()
         end
 
         if not self.roundStart then
@@ -422,14 +450,15 @@ function RoundManager:Update(deltaTime)
     
                 if self.countDown <= 0 then
                     self.roundStart = true
-                    self.roundDuration = self.roundMaxDuration
+
+                    self.currentGameMode:Init(self.serverGameManager.characterSelect.hasClass)
 
                     self.startCountDown = false
                     self.countDown = 0
 
                     self:ConfigurePickups(self.Map.HealthPads)
 
-                    Events.Server_Client.CountDown:FireAllClients("Round", self.roundDuration)
+                    Events.Server_Client.CountDown:FireAllClients(self.currentGameMode.Name, self.roundDuration)
 
                     self:TeleportAllPlayers()
 
@@ -437,12 +466,14 @@ function RoundManager:Update(deltaTime)
                 end
             end
         elseif self.roundStart then
-            self.roundDuration -= self.maxTick
-            Events.Server_Client.CountDown:FireAllClients("Round", self.roundDuration)
+            self.currentGameMode:Update(self.maxTick, deltaTime)
 
-            if self.roundDuration <= 0 then
+            if self.currentGameMode.roundEnded then
                 self.roundStart = false
-                self.roundDuration = 0
+
+                self.currentGameMode:EndRound()
+
+                self.currentGameMode = nil
 
                 local newList = SortTable(self.playersInRound)
                 self:RewardPlayers(newList)
@@ -456,7 +487,7 @@ function RoundManager:Update(deltaTime)
                 self:CleanupMap()
 
                 self.intermission = true
-                self.intermissionDuration = 20
+                self.intermissionDuration = self.inermissionTime
 
                 Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
 
