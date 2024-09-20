@@ -64,8 +64,6 @@ function RoundManager:Init(ServerGameManager)
 
     self.roundStart = false
     self.roundDuration = 0
-
-    self.playersInRound = {}
     
     --setting round duration based on gamemode?
     self.roundMaxDuration = 180
@@ -190,20 +188,10 @@ function RoundManager:TeleportAllPlayers()
             CollectionService:RemoveTag(data.character, "Invulnerable")
         end
 
-        local currentTag = nil
-        for i, tag in pairs(self.playersInRound) do
-            if tag[1] == player.Name then
-                currentTag = tag
-            end
-        end
-
-        if not currentTag then
-            local tag = {player.Name, 0}
-            table.insert(self.playersInRound, tag)
-        end
-
         data.character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
     end
+
+    return self.serverGameManager.characterSelect.hasClass
 end
 
 function RoundManager:ResetAllPlayers()
@@ -217,7 +205,7 @@ function RoundManager:ResetAllPlayers()
             continue
         end
 
-        humanoid.Health = -100
+        humanoid.Health = -humanoid.MaxHealth * 2
     end
 end
 
@@ -242,16 +230,8 @@ function RoundManager:TeleportPlayer(player: Player)
         CollectionService:RemoveTag(character, "Invulnerable")
     end
 
-    local currentTag = nil
-    for i, tag in pairs(self.playersInRound) do
-        if tag[1] == player.Name then
-            currentTag = tag
-        end
-    end
-
-    if not currentTag then
-        local tag = {player.Name, 0}
-        table.insert(self.playersInRound, tag)
+    if self.currentGameMode then
+        self.currentGameMode:Setup(player, false)
     end
 
     character:PivotTo(teleporter.CFrame * CFrame.new(xOffset, 0, zOffset))
@@ -261,12 +241,12 @@ function RoundManager:AddKill(player: Player)
     if not player then
         return
     end
-    
-    for i, tag in pairs(self.playersInRound) do
-        if tag[1] == player.Name then
-            tag[2] += 1
-        end
+
+    if not self.currentGameMode then
+        return
     end
+
+    self.currentGameMode:AddKill(player)
 end
 
 function RoundManager:UpdatePickups(deltaTime)
@@ -332,42 +312,6 @@ function RoundManager:UpdatePickups(deltaTime)
             end
         end
     end
-end
-
-function RoundManager:RewardPlayers(newList)
-    local rewardData = {}
-    local rewardCount = 0
-
-    for placement, tag in pairs(newList) do
-        local player = Players:FindFirstChild(tag[1])
-        if player then
-            local tokens
-            if placement == 1 then
-                tokens = 100 + (tag[2] * 10)
-            elseif placement == 2 then
-                tokens = 75 + (tag[2] * 10)
-            elseif placement == 3 then
-                tokens = 50 + (tag[2] * 10)
-            else
-                tokens = 25 + (tag[2] * 10)
-            end
-
-            if placement < 4 then
-                rewardCount += 1
-                player.Character.Archivable = true
-                rewardData[placement] = {
-                    playerName = player.Name,
-                    character = player.Character,
-                    kills = tag[2],
-                    tokens = tokens,
-                }
-            end
-
-            Events.Server_Server.RewardPlayers:Fire(player, tokens, placement)
-        end
-    end
-
-    Events.Server_Client.Rewards:FireAllClients(rewardData, rewardCount)
 end
 
 function RoundManager:Update(deltaTime)
@@ -474,11 +418,6 @@ function RoundManager:Update(deltaTime)
                 self.currentGameMode:EndRound()
 
                 self.currentGameMode = nil
-
-                local newList = SortTable(self.playersInRound)
-                self:RewardPlayers(newList)
-
-                self.playersInRound = {}
 
                 self:CleanupPickups()
 

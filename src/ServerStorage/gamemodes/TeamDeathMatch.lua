@@ -10,7 +10,7 @@ function TeamDeathMatch.new()
     return newRound
 end
 
-function TeamDeathMatch:Init()
+function TeamDeathMatch:Init(playerList)
     
 end
 

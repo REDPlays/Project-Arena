@@ -6,7 +6,7 @@ local ProfileService = require(ServerStorage.ServerFiles.Player.ProfileService)
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
 local DataTemplate = {
-    Tokens = 200,
+    Tokens = 600,
     Kills = 0,
     Wins = 0,
 
@@ -20,7 +20,7 @@ local DataTemplate = {
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test12", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test13", DataTemplate)
 
 local Profiles = {}
 
