@@ -7,6 +7,8 @@ local Debris = game:GetService("Debris")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
+local ColorSelectionSystem = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("ColorSelectionSystem"))
+
 local TestState = workspace:GetAttribute("TestState")
 
 local UIController = {}
@@ -55,6 +57,16 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.TokenBtn = self.Debugger:WaitForChild("Tokens")
     self.KillBtn = self.Debugger:WaitForChild("Kills")
     self.WinBtn = self.Debugger:WaitForChild("Wins")
+
+    self.ColorBoard = workspace:WaitForChild("ColorBoard")
+    self.ColorBound = self.ColorBoard:WaitForChild("Bound")
+    self.CameraPivot = self.ColorBoard:WaitForChild("CameraPivot")
+
+    self.ColorUI = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI")
+    self.colorSystem = ColorSelectionSystem.new(self.ColorUI)
+
+
+    self.SelectingColor = false
 
     self.placementUI = {
         [1] = self.Winnerboard:WaitForChild("First"),
@@ -302,6 +314,10 @@ end
 
 function UIController:Connect()
     self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+        if self.SelectingColor then
+            return
+        end
+
         if gameProcessedEvent then
             return
         end
@@ -516,6 +532,10 @@ function UIController:Connect()
     end)
 
     self.input2 = UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
+        if self.SelectingColor then
+            return
+        end
+
         if not self.class then
             return
         end
@@ -586,6 +606,53 @@ function UIController:Connect()
     end)
 end
 
+function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
+    if toggle then
+        self.Gameplay.Visible = false
+    elseif not toggle then
+        self.Gameplay.Visible = true
+    end
+    
+    self.cameraSystem:ToggleColorCamera(toggle, cameraPivot)
+end
+
+function UIController:InColorBound()
+    local overlap = OverlapParams.new()
+    overlap.FilterDescendantsInstances = {self.character}
+    overlap.FilterType = Enum.RaycastFilterType.Include
+
+    local partList = workspace:GetPartsInPart(self.ColorBound)
+
+    for _, object in partList do
+        if object:IsA("BasePart") then
+            local objectParent = object:FindFirstAncestorOfClass("Model")
+            if not objectParent then
+                continue
+            end
+
+            local humanoid = objectParent:FindFirstChild("Humanoid")
+            if not humanoid then
+                continue
+            end
+
+            local rootPart = objectParent:FindFirstChild("HumanoidRootPart")
+            if not rootPart then
+                continue
+            end
+
+            if self.SelectingColor then
+                continue
+            end
+
+            self.SelectingColor = true
+
+            self:ToggleColorCamera(true, self.CameraPivot)
+
+            break
+        end
+    end
+end
+
 function UIController:LoadCharacter(class)
     self.class = class
 
@@ -634,6 +701,8 @@ function UIController:Disconnect()
 end
 
 function UIController:Update(deltaTime)
+    self:InColorBound()
+
     local Overhead: BillboardGui = self.character:FindFirstChild("Overhead")
     if Overhead then
         if Overhead.Enabled then
@@ -647,10 +716,18 @@ function UIController:Update(deltaTime)
     end
 
     if not self.class then
+        if self.SelectingColor then
+            return
+        end
+
         if self.Gameplay.Visible then
             self.Gameplay.Visible = false
         end
     elseif self.class then
+        if self.SelectingColor then
+            return
+        end
+        
         if not self.Gameplay.Visible then
             self.Gameplay.Visible = true
         end

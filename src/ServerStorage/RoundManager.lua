@@ -54,7 +54,7 @@ function RoundManager:Init(ServerGameManager)
     self.currTick = 0
 
     self.intermission = true
-    self.inermissionTime = 10--30
+    self.inermissionTime = 30
     self.intermissionDuration = self.inermissionTime
     
     self.currentGameMode = nil

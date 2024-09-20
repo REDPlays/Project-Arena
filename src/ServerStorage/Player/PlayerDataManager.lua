@@ -10,6 +10,10 @@ local DataTemplate = {
     Kills = 0,
     Wins = 0,
 
+    PrimaryColor = {255, 0, 0},
+    SecondaryColor = {255, 0, 0},
+    EnergyColor = {255, 0, 0},
+
 	["Classes"] = {
 		["AngelKnight"] = false,
         ["Pyromancer"] = false,

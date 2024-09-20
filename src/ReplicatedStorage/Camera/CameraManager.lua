@@ -23,6 +23,8 @@ function CameraManager:Init(player: Player, character: Model)
     self.isActive = false
     self.lockCamera = false
 
+    self.Camera = workspace.CurrentCamera
+
     self:Connections()
 end
 
@@ -47,6 +49,19 @@ function CameraManager:OutsideToggle(bool)
                 Enum.KeyCode.LeftControl
             )
         end
+    end
+end
+
+function CameraManager:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
+    if toggle then
+        self.Camera.CameraType = Enum.CameraType.Scriptable
+
+        self.Camera.CFrame = cameraPivot.CFrame
+        self.Camera.Focus = cameraPivot.CFrame * CFrame.new(0, 0, -1)
+
+    elseif not toggle then
+        self.Camera.CameraType = Enum.CameraType.Custom
+
     end
 end
 
