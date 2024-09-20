@@ -99,15 +99,42 @@ function RoundManager:ChangeLighting(lightingType)
     end
 end
 
+function RoundManager:MapLoader(choice)
+    local sudoParent = Instance.new("Model")
+    sudoParent:PivotTo(self.MapPivot)
+
+    local parentLocation = {}
+
+    self.Map = self.mapPool[choice]:Clone()
+    self.Map:PivotTo(self.MapPivot)
+
+    --local startTime = os.clock()
+    for _, groups in pairs(self.Map:GetChildren()) do
+        for _, subgroups in pairs(groups:GetChildren()) do
+            for _, sub in pairs(subgroups:GetChildren()) do
+                parentLocation[sub] = groups
+                sub.Parent = sudoParent
+            end
+        end
+    end
+
+    self.Map.Parent = workspace
+
+    for _, sub in pairs(sudoParent:GetChildren()) do
+        sub.Parent = parentLocation[sub]
+        task.wait(0.1)
+    end
+
+    --warn("total time to load map:", os.clock() - startTime)
+end
+
 function RoundManager:SelectMap()
     warn("selecting map...")
     self.MapSelected = true
 
     local choice = math.random(1, self.mapCount)
-    
-    self.Map = self.mapPool[choice]:Clone()
-    self.Map:PivotTo(self.MapPivot)
-    self.Map.Parent = workspace
+
+    self:MapLoader(choice)
 
     table.remove(self.mapPool, choice)
     self.mapCount = #self.mapPool
@@ -375,7 +402,7 @@ function RoundManager:Update(deltaTime)
             if not self.startCountDown then
                 self.startCountDown = true
                 
-                self.countDown = 15
+                self.countDown = 20
                 if Training then
                     self.countDown = 1000
                 end
