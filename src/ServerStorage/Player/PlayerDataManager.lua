@@ -10,9 +10,9 @@ local DataTemplate = {
     Kills = 0,
     Wins = 0,
 
-    PrimaryColor = {255, 0, 0},
-    SecondaryColor = {255, 0, 0},
-    EnergyColor = {255, 0, 0},
+    PrimaryColor = {99, 95, 98},
+    SecondaryColor = {163, 162, 165},
+    EnergyColor = {255, 255, 255},
 
 	["Classes"] = {
 		["AngelKnight"] = false,
@@ -145,6 +145,35 @@ function PlayerDataManager:CheckClass(player: Player, class)
     end
 
     return profile.Data.Classes[class]
+end
+
+function PlayerDataManager:GetColor(player: Player, section)
+    local profile = Profiles[player]
+    if not profile then
+        return
+    end
+
+    local colorSection = profile.Data[section]
+    if not colorSection then
+        return
+    end
+
+    return Color3.fromRGB(colorSection[1], colorSection[2], colorSection[3])
+end
+
+function PlayerDataManager:SetColor(player: Player, section, Color)
+    local profile = Profiles[player]
+    if not profile then
+        return
+    end
+
+    local colorSection = profile.Data[section]
+    if not colorSection then
+        return
+    end
+
+    profile.Data[section] = {Color.R, Color.G, Color.B}
+    warn("new color:", profile.Data[section])
 end
 
 return PlayerDataManager

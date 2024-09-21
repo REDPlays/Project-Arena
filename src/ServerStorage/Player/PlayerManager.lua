@@ -61,6 +61,14 @@ function PlayerManager:GetData(player: Player)
     return PlayerDataManager:Get(player)
 end
 
+function PlayerManager:GetColor(player: Player, section)
+    return PlayerDataManager:GetColor(player, section)    
+end
+
+function PlayerManager:SetColor(player: Player, section, Color)
+    PlayerDataManager:SetColor(player, section, Color)
+end
+
 function PlayerManager:Update(deltaTime)
     
 end

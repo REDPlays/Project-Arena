@@ -19,6 +19,7 @@ Events.Client_Server = {
     Moves = Client_Server:WaitForChild("Moves"),
     ProjectileTarget = Client_Server:WaitForChild("ProjectileTarget"),
     Debugger = Client_Server:WaitForChild("Debugger"),
+    SelectColor = Client_Server:WaitForChild("SelectColor"),
 }
 
 Events.Server_Client = {

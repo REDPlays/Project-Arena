@@ -125,9 +125,9 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("Invulnerable", false)
     Stats:SetAttribute("Silenced", false)
 
-    Stats:SetAttribute("Color1", Color3.fromRGB(255, 255, 255))
-    Stats:SetAttribute("Color2", Color3.fromRGB(255, 255, 255))
-    Stats:SetAttribute("Color3", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("PrimaryColor", Color3.fromRGB(99, 95, 98))
+    Stats:SetAttribute("SecondaryColor", Color3.fromRGB(163, 162, 165))
+    Stats:SetAttribute("EnergyColor", Color3.fromRGB(255, 255, 255))
 
     CharacterSelectServer:GiveUI(character, Stats)
 
@@ -268,6 +268,14 @@ function CharacterSelectServer:SetStats(player, className)
     humanoid.MaxHealth = Stats:GetAttribute("MaxHealth")
     humanoid.Health = Stats:GetAttribute("Health")
     humanoid.WalkSpeed = Stats:GetAttribute("Speed")
+
+    local PrimaryColor = CharacterSelectServer.playerManager:GetColor(player, "PrimaryColor") or Color3.fromRGB(99, 95, 98)
+    local SecondaryColor = CharacterSelectServer.playerManager:GetColor(player, "SecondaryColor") or Color3.fromRGB(163, 162, 165)
+    local EnergyColor = CharacterSelectServer.playerManager:GetColor(player, "EnergyColor") or Color3.fromRGB(255, 255, 255)
+
+    Stats:SetAttribute("PrimaryColor", PrimaryColor)
+    Stats:SetAttribute("SecondaryColor", SecondaryColor)
+    Stats:SetAttribute("EnergyColor", EnergyColor)
 end
 
 function CharacterSelectServer:CheckClass(player, className)
@@ -567,6 +575,11 @@ local function SelectCharacter(player, className, ID)
     return CharacterSelectServer:SelectCharacter(player, className, ID)
 end
 
+local function SelectColor(player, section, Color)
+    CharacterSelectServer.playerManager:SetColor(player, section, Color)
+end
+
 Events.Client_Server.CharacterSelect.OnServerInvoke = SelectCharacter
+Events.Client_Server.SelectColor.OnServerEvent:Connect(SelectColor)
 
 return CharacterSelectServer

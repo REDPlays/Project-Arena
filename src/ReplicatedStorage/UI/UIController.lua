@@ -61,10 +61,10 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.ColorBoard = workspace:WaitForChild("ColorBoard")
     self.ColorBound = self.ColorBoard:WaitForChild("Bound")
     self.CameraPivot = self.ColorBoard:WaitForChild("CameraPivot")
+    self.ColorPad = self.ColorBoard:WaitForChild("Pad")
 
     self.ColorUI = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI")
-    self.colorSystem = ColorSelectionSystem.new(self.ColorUI)
-
+    self.colorSystem = ColorSelectionSystem.new(self.ColorUI, self, self.player)
 
     self.SelectingColor = false
 
@@ -609,8 +609,16 @@ end
 function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
     if toggle then
         self.Gameplay.Visible = false
+        self.colorSystem.isActive = true
     elseif not toggle then
         self.Gameplay.Visible = true
+        self.colorSystem.isActive = false
+
+        self.character:PivotTo(self.ColorPad.CFrame * CFrame.new(0, 3, 0))
+
+        task.delay(1, function()
+            self.SelectingColor = false
+        end)
     end
     
     self.cameraSystem:ToggleColorCamera(toggle, cameraPivot)
@@ -702,6 +710,8 @@ end
 
 function UIController:Update(deltaTime)
     self:InColorBound()
+
+    self.colorSystem:Update(deltaTime)
 
     local Overhead: BillboardGui = self.character:FindFirstChild("Overhead")
     if Overhead then
