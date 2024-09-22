@@ -9,7 +9,7 @@ function ColorSelectionSystem.new(ColorUI, UIController, player)
     local newColorSelection = {}
     setmetatable(newColorSelection, ColorSelectionSystem)
     
-    newColorSelection.ColorUI = ColorUI
+    newColorSelection.ColorUI = ColorUI:WaitForChild("Background")
 
     newColorSelection.selectionColor = Color3.fromRGB(255, 203, 80)
     newColorSelection.nonSelectionColor = Color3.fromRGB(255, 255, 255)

@@ -64,6 +64,7 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.ColorPad = self.ColorBoard:WaitForChild("Pad")
 
     self.ColorUI = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI")
+    self.ColorUI3D = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI3D")
     self.colorSystem = ColorSelectionSystem.new(self.ColorUI, self, self.player)
 
     self.SelectingColor = false
@@ -608,10 +609,28 @@ end
 
 function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
     if toggle then
-        self.Gameplay.Visible = false
+        if self.Gameplay.Visible == true then
+            self.Gameplay.Visible = false
+        end
+
+        if self.Leaderboard.Visible == true then
+            self.Leaderboard.Visible = false
+        end
+
+        self.ColorUI.Enabled = true
+        self.ColorUI3D.Enabled = false
         self.colorSystem.isActive = true
     elseif not toggle then
-        self.Gameplay.Visible = true
+        if self.Gameplay.Visible == false then
+            self.Gameplay.Visible = true
+        end
+
+        if self.Leaderboard.Visible == false then
+            self.Leaderboard.Visible = true
+        end
+
+        self.ColorUI.Enabled = false
+        self.ColorUI3D.Enabled = true
         self.colorSystem.isActive = false
 
         self.character:PivotTo(self.ColorPad.CFrame * CFrame.new(0, 3, 0))
