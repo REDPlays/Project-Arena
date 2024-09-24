@@ -109,6 +109,17 @@ function ColorSelectionSystem:Init()
         end
     end
 
+    --Setting Buttons
+    if UserInputService.GamepadEnabled then
+        self.SectionPrev.Text = "LB"
+        self.SectionNext.Text = "RB"
+        self.EscapeUI.Label.Text = "B"
+    else
+        self.SectionPrev.Text = "<"
+        self.SectionNext.Text = ">"
+        self.EscapeUI.Label.Text = "X"
+    end
+
     self:Connections()
     self:SetupPresets()
 end
