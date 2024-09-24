@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local ContextAction = game:GetService("ContextActionService")
+local GuiService = game:GetService("GuiService")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
@@ -87,6 +88,8 @@ function ColorSelectionSystem:Init()
     self.step = 0.01
 
     self.mousePressSlider = false
+    self.controllerPressSlider = false
+    self.Direction = nil
 
     self.Sections = {
         [1] = "Primary",
@@ -96,6 +99,7 @@ function ColorSelectionSystem:Init()
 
     self.currentSection = 1
 
+    --Resize Sliders for Mobile
     if UserInputService.TouchEnabled then
         for _, button: ImageButton in self.rgbSliders do
             local xSize = button.Size.X.Scale
@@ -177,6 +181,8 @@ function ColorSelectionSystem:Connections()
 
             self.currentSlider = self.rgbSliders[btnId]
             self.currentBar = self.rgbBars[btnId]
+
+            GuiService.SelectedObject = nil
         end)
     end
 
@@ -191,6 +197,32 @@ function ColorSelectionSystem:Connections()
     self.letGo = UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             self.mousePressSlider = false
+        end
+    end)
+
+    --Controller Sticks
+    self.trigBegan = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+        if not self.isActive then 
+            return 
+        end
+
+        if input.KeyCode == Enum.KeyCode.ButtonL2  then
+            self.controllerPressSlider = true
+            self.Direction = "Left"
+        elseif input.KeyCode == Enum.KeyCode.ButtonR2 then
+            self.controllerPressSlider = true
+            self.Direction = "Right"
+        end
+    end)
+
+    self.trigEnded = UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
+        if not self.isActive then 
+            return 
+        end
+
+        if input.KeyCode == Enum.KeyCode.ButtonL2 or input.KeyCode == Enum.KeyCode.ButtonR2 then
+            self.controllerPressSlider = false
+            self.Direction = nil
         end
     end)
 end
@@ -268,6 +300,38 @@ function ColorSelectionSystem:Update(deltaTime)
         local newColor = Color3.new(R, G, B)
 
         self:SetColor(newColor)
+   end
+
+   if self.controllerPressSlider and self.currentRGB and self.currentSlider then
+        if self.Direction == "Left" then
+            self.rgbValues[self.currentRGB] -= 1 * deltaTime
+            self.rgbValues[self.currentRGB] = math.clamp(self.rgbValues[self.currentRGB], 0, 1)
+
+            local percentage = self.rgbValues[self.currentRGB]
+
+            self.currentSlider.Position = UDim2.new(percentage, 0, 0.5, 0)
+
+            local R = self.rgbValues[self.RBtn]
+            local G = self.rgbValues[self.GBtn]
+            local B = self.rgbValues[self.BBtn]
+            local newColor = Color3.new(R, G, B)
+
+            self:SetColor(newColor)
+        elseif self.Direction == "Right" then
+            self.rgbValues[self.currentRGB] += 1 * deltaTime
+            self.rgbValues[self.currentRGB] = math.clamp(self.rgbValues[self.currentRGB], 0, 1)
+
+            local percentage = self.rgbValues[self.currentRGB]
+
+            self.currentSlider.Position = UDim2.new(percentage, 0, 0.5, 0)
+
+            local R = self.rgbValues[self.RBtn]
+            local G = self.rgbValues[self.GBtn]
+            local B = self.rgbValues[self.BBtn]
+            local newColor = Color3.new(R, G, B)
+
+            self:SetColor(newColor)
+        end
    end
 end
 

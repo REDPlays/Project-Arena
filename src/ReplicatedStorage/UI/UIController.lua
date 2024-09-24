@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+local GuiService = game:GetService("GuiService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local Debris = game:GetService("Debris")
@@ -636,6 +637,8 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
 
         self.ColorUI.Enabled = false
         self.colorSystem.isActive = false
+
+        GuiService.SelectedObject = nil
 
         self.rootPart.Anchored = false
         self.character:PivotTo(self.ColorPad.CFrame)
