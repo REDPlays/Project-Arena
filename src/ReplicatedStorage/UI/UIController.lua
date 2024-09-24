@@ -31,6 +31,8 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.cameraSystem = cameraSystem
 
     self.HUD = self.player:WaitForChild("PlayerGui"):WaitForChild("HUD")
+    self.HUD.Enabled = true
+
     self.Indicator = self.HUD:WaitForChild("Indicator")
     self.IndicatorMenu = self.Indicator:WaitForChild("Menu")
     self.IndicatorContext = self.IndicatorMenu:WaitForChild("Context")
@@ -61,10 +63,11 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.ColorBoard = workspace:WaitForChild("ColorBoard")
     self.ColorBound = self.ColorBoard:WaitForChild("Bound")
     self.CameraPivot = self.ColorBoard:WaitForChild("CameraPivot")
-    self.ColorPad = self.ColorBoard:WaitForChild("Pad")
+    self.ColorPad = self.ColorBoard:WaitForChild("Pad1")
+    self.ColorPad2 = self.ColorBoard:WaitForChild("Pad2")
 
     self.ColorUI = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI")
-    self.ColorUI3D = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI3D")
+    self.ColorUI.Enabled = false
     self.colorSystem = ColorSelectionSystem.new(self.ColorUI, self, self.player)
 
     self.SelectingColor = false
@@ -618,8 +621,10 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
         end
 
         self.ColorUI.Enabled = true
-        self.ColorUI3D.Enabled = false
         self.colorSystem.isActive = true
+
+        self.rootPart.Anchored = true
+        self.character:PivotTo(self.ColorPad2.CFrame)
     elseif not toggle then
         if self.Gameplay.Visible == false then
             self.Gameplay.Visible = true
@@ -630,10 +635,10 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
         end
 
         self.ColorUI.Enabled = false
-        self.ColorUI3D.Enabled = true
         self.colorSystem.isActive = false
 
-        self.character:PivotTo(self.ColorPad.CFrame * CFrame.new(0, 3, 0))
+        self.rootPart.Anchored = false
+        self.character:PivotTo(self.ColorPad.CFrame)
 
         task.delay(1, function()
             self.SelectingColor = false
