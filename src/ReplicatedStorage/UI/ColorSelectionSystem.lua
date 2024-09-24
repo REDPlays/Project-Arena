@@ -63,6 +63,12 @@ function ColorSelectionSystem:Init()
         [self.BBtn] = self.BBtn,
     }
 
+    self.rgbBars = {
+        [self.RBtn] = self.RBar,
+        [self.GBtn] = self.GBar,
+        [self.BBtn] = self.BBar,
+    }
+
     self.rgbSliders = {
         [self.RBtn] = self.R_BarSlider,
         [self.GBtn] = self.G_BarSlider,
@@ -77,6 +83,10 @@ function ColorSelectionSystem:Init()
 
     self.currentRGB = nil
     self.currentSlider = nil
+    self.currentBar = nil
+    self.step = 0.01
+
+    self.mousePressSlider = false
 
     self.Sections = {
         [1] = "Primary",
@@ -85,6 +95,15 @@ function ColorSelectionSystem:Init()
     }
 
     self.currentSection = 1
+
+    if UserInputService.TouchEnabled then
+        for _, button: ImageButton in self.rgbSliders do
+            local xSize = button.Size.X.Scale
+            local ySize = button.Size.Y.Scale
+
+            button.Size = UDim2.new(xSize * 2, 0, ySize * 1.25, 0)
+        end
+    end
 
     self:Connections()
     self:SetupPresets()
@@ -146,9 +165,9 @@ function ColorSelectionSystem:Connections()
     ContextAction:BindAction("Exit", Exit, false, Enum.KeyCode.ButtonB)
 
     --RGB Buttons
-    local rgbConnects = {}
+    self.rgbConnects = {}
     for btnId, button in self.rgbButtons do
-        rgbConnects[btnId] = button.Activated:Connect(function()
+        self.rgbConnects[btnId] = button.Activated:Connect(function()
             if self.currentRGB then
                 self.currentRGB.TextColor3 = self.nonSelectionColor
             end
@@ -157,8 +176,23 @@ function ColorSelectionSystem:Connections()
             self.currentRGB.TextColor3 = self.selectionColor
 
             self.currentSlider = self.rgbSliders[btnId]
+            self.currentBar = self.rgbBars[btnId]
         end)
     end
+
+    --RGB Sliders
+    self.rgbSliderConnections = {}
+    for btnId, button: ImageButton in self.rgbSliders do
+        self.rgbSliderConnections[btnId] = button.MouseButton1Down:Connect(function()
+            self.mousePressSlider = true
+        end)
+    end
+
+    self.letGo = UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            self.mousePressSlider = false
+        end
+    end)
 end
 
 function ColorSelectionSystem:SetupPresets()
@@ -205,8 +239,36 @@ function ColorSelectionSystem:SetColor(Color: Color3)
     Events.Client_Server.SelectColor:FireServer(section, RGBColor)
 end
 
+function snap(number, factor)
+    if factor == 0 then
+        return number
+    else
+        return math.floor(number/factor + 0.5) * factor
+    end
+end
+
 function ColorSelectionSystem:Update(deltaTime)
-   
+    if not self.isActive then 
+        return 
+    end
+
+   if self.mousePressSlider and self.currentRGB and self.currentSlider then
+        local MousePos = UserInputService:GetMouseLocation().X
+        local FrameSize = self.currentBar.AbsoluteSize.X
+        local FramePos= self.currentBar.AbsolutePosition.X
+        local pos = snap((MousePos - FramePos) / FrameSize, self.step)
+        local percentage = math.clamp(pos, 0, 1)
+
+        self.rgbValues[self.currentRGB] = percentage
+        self.currentSlider.Position = UDim2.new(percentage, 0, 0.5, 0)
+
+        local R = self.rgbValues[self.RBtn]
+        local G = self.rgbValues[self.GBtn]
+        local B = self.rgbValues[self.BBtn]
+        local newColor = Color3.new(R, G, B)
+
+        self:SetColor(newColor)
+   end
 end
 
 return ColorSelectionSystem
