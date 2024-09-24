@@ -125,9 +125,9 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("Invulnerable", false)
     Stats:SetAttribute("Silenced", false)
 
-    Stats:SetAttribute("PrimaryColor", Color3.fromRGB(99, 95, 98))
-    Stats:SetAttribute("SecondaryColor", Color3.fromRGB(163, 162, 165))
-    Stats:SetAttribute("EnergyColor", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("Primary", Color3.fromRGB(99, 95, 98))
+    Stats:SetAttribute("Secondary", Color3.fromRGB(163, 162, 165))
+    Stats:SetAttribute("Energy", Color3.fromRGB(255, 255, 255))
 
     CharacterSelectServer:GiveUI(character, Stats)
 
@@ -236,6 +236,30 @@ function CharacterSelectServer:GiveUI(character, Stats)
     Overhead.Background.DefenseBar.Bar.Size = UDim2.new((defense / maxDefense) * 1, 0, 1, 0)
 end
 
+local function SelectColor(player, section, Color, applyOnly)
+    if not applyOnly then
+        CharacterSelectServer.playerManager:SetColor(player, section, Color)
+    end
+
+    local Groups = {
+        ["Primary"] = "Group1",
+        ["Secondary"] = "Group2",
+        ["Energy"] = "Group3",
+    }
+
+    local character = player.Character
+    if character then
+        --Setting Colors on Character
+        for _, obj in pairs(character:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                if obj.Name == Groups[section] then
+                    obj.Color = Color
+                end
+            end
+        end
+    end
+end
+
 function CharacterSelectServer:SetStats(player, className)
     local character = player.Character
     if not character then
@@ -269,13 +293,17 @@ function CharacterSelectServer:SetStats(player, className)
     humanoid.Health = Stats:GetAttribute("Health")
     humanoid.WalkSpeed = Stats:GetAttribute("Speed")
 
-    local PrimaryColor = CharacterSelectServer.playerManager:GetColor(player, "PrimaryColor") or Color3.fromRGB(99, 95, 98)
-    local SecondaryColor = CharacterSelectServer.playerManager:GetColor(player, "SecondaryColor") or Color3.fromRGB(163, 162, 165)
-    local EnergyColor = CharacterSelectServer.playerManager:GetColor(player, "EnergyColor") or Color3.fromRGB(255, 255, 255)
+    local PrimaryColor = CharacterSelectServer.playerManager:GetColor(player, "Primary") or Color3.fromRGB(99, 95, 98)
+    local SecondaryColor = CharacterSelectServer.playerManager:GetColor(player, "Secondary") or Color3.fromRGB(163, 162, 165)
+    local EnergyColor = CharacterSelectServer.playerManager:GetColor(player, "Energy") or Color3.fromRGB(255, 255, 255)
 
-    Stats:SetAttribute("PrimaryColor", PrimaryColor)
-    Stats:SetAttribute("SecondaryColor", SecondaryColor)
-    Stats:SetAttribute("EnergyColor", EnergyColor)
+    Stats:SetAttribute("Primary", PrimaryColor)
+    Stats:SetAttribute("Secondary", SecondaryColor)
+    Stats:SetAttribute("Energy", EnergyColor)
+
+    SelectColor(player, "Primary", PrimaryColor, true)
+    SelectColor(player, "Secondary", SecondaryColor, true)
+    SelectColor(player, "Energy", EnergyColor, true)
 end
 
 function CharacterSelectServer:CheckClass(player, className)
@@ -573,10 +601,6 @@ end
 
 local function SelectCharacter(player, className, ID)
     return CharacterSelectServer:SelectCharacter(player, className, ID)
-end
-
-local function SelectColor(player, section, Color)
-    CharacterSelectServer.playerManager:SetColor(player, section, Color)
 end
 
 Events.Client_Server.CharacterSelect.OnServerInvoke = SelectCharacter

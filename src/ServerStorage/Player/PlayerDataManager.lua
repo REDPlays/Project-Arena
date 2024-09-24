@@ -10,9 +10,9 @@ local DataTemplate = {
     Kills = 0,
     Wins = 0,
 
-    PrimaryColor = {99, 95, 98},
-    SecondaryColor = {163, 162, 165},
-    EnergyColor = {255, 255, 255},
+    ["Primary"] = {99, 95, 98},
+    ["Secondary"] = {163, 162, 165},
+    ["Energy"] = {255, 255, 255},
 
 	["Classes"] = {
 		["AngelKnight"] = false,
@@ -24,7 +24,7 @@ local DataTemplate = {
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test13", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test14", DataTemplate)
 
 local Profiles = {}
 
@@ -53,6 +53,18 @@ function PlayerDataManager:onPlayerAdded(player: Player)
 
 		if player:IsDescendantOf(Players) then
 			Profiles[player] = profile
+
+            if not Profiles[player].Data["Primary"] then
+                Profiles[player].Data["Primary"] = DataTemplate["Primary"]
+            end
+
+            if not Profiles[player].Data["Secondary"] then
+                Profiles[player].Data["Secondary"] = DataTemplate["Secondary"]
+            end
+
+            if not Profiles[player].Data["Energy"] then
+                Profiles[player].Data["Energy"] = DataTemplate["Energy"]
+            end
 		else
 			profile:Release()
 		end
@@ -158,7 +170,7 @@ function PlayerDataManager:GetColor(player: Player, section)
         return
     end
 
-    return Color3.fromRGB(colorSection[1], colorSection[2], colorSection[3])
+    return Color3.new(colorSection[1], colorSection[2], colorSection[3])
 end
 
 function PlayerDataManager:SetColor(player: Player, section, Color)
@@ -173,7 +185,6 @@ function PlayerDataManager:SetColor(player: Player, section, Color)
     end
 
     profile.Data[section] = {Color.R, Color.G, Color.B}
-    warn("new color:", profile.Data[section])
 end
 
 return PlayerDataManager

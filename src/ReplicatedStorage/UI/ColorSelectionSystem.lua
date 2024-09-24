@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local ContextAction = game:GetService("ContextActionService")
 
+local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
+
 local ColorSelectionSystem = {}
 ColorSelectionSystem.__index = ColorSelectionSystem
 
@@ -176,7 +178,7 @@ function ColorSelectionSystem:SetupPresets()
             newUI.Parent = self.PresetColorHolder
 
             local connection = newUI.Activated:Connect(function(inputObject, clickCount)
-                print("Color:", newColor)
+                self:SetColor(newColor.Color)
             end)
 
             self.PresetColors[tostring(newColor)] = {
@@ -188,12 +190,19 @@ function ColorSelectionSystem:SetupPresets()
     end
 end
 
-function ColorSelectionSystem:SetColor(Color)
-    self.ColorIcon.BackgroundColor3 = Color
+function ColorSelectionSystem:SetColor(Color: Color3)
+    local RGBColor = Color3.fromRGB(
+        Color.R * 255, 
+        Color.G * 255,
+        Color.B * 255
+    )
 
-    warn("Set Color for Section:", self.currentSection, Color)
+    self.ColorIcon.BackgroundColor3 = RGBColor
+
+    local section =  self.Sections[self.currentSection]
 
     --Event to fire to server to change color value
+    Events.Client_Server.SelectColor:FireServer(section, RGBColor)
 end
 
 function ColorSelectionSystem:Update(deltaTime)
