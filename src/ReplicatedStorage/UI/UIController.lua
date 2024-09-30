@@ -624,6 +624,24 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
         self.ColorUI.Enabled = true
         self.colorSystem.isActive = true
 
+        local blackList = {
+            ["Main"] = true,
+            ["Handle1"] = true,
+            ["Handle2"] = true,
+        }
+        for _, plr in pairs(Players:GetPlayers()) do
+            local character = plr.Character
+            if character ~= self.character then
+                for _, object in pairs(character:GetDescendants()) do
+                    if object:IsA("BasePart") and object ~= character.PrimaryPart and not blackList[object.Name] then
+                        object.Transparency = 1
+                    elseif object:IsA("BillboardGui") then
+                        object.Enabled = false
+                    end
+                end
+            end
+        end
+
         self.rootPart.Anchored = true
         self.character:PivotTo(self.ColorPad2.CFrame)
     elseif not toggle then
@@ -639,6 +657,24 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
         self.colorSystem.isActive = false
 
         GuiService.SelectedObject = nil
+
+        local blackList = {
+            ["Main"] = true,
+            ["Handle1"] = true,
+            ["Handle2"] = true,
+        }
+        for _, plr in pairs(Players:GetPlayers()) do
+            local character = plr.Character
+            if character ~= self.character then
+                for _, object in pairs(character:GetDescendants()) do
+                    if object:IsA("BasePart") and object ~= character.PrimaryPart and not blackList[object.Name] then
+                        object.Transparency = 0
+                    elseif object:IsA("BillboardGui") then
+                        object.Enabled = true
+                    end
+                end
+            end
+        end
 
         self.rootPart.Anchored = false
         self.character:PivotTo(self.ColorPad.CFrame)
@@ -736,9 +772,30 @@ function UIController:Disconnect()
 end
 
 function UIController:Update(deltaTime)
-    self:InColorBound()
+    --self:InColorBound()
 
     self.colorSystem:Update(deltaTime)
+
+    --constant check for new players
+    if self.colorSystem.isActive then
+        local blackList = {
+            ["Main"] = true,
+            ["Handle1"] = true,
+            ["Handle2"] = true,
+        }
+        for _, plr in pairs(Players:GetPlayers()) do
+            local character = plr.Character
+            if character ~= self.character then
+                for _, object in pairs(character:GetDescendants()) do
+                    if object:IsA("BasePart") and object ~= character.PrimaryPart and not blackList[object.Name] then
+                        object.Transparency = 1
+                    elseif object:IsA("BillboardGui") then
+                        object.Enabled = false
+                    end
+                end
+            end
+        end
+    end
 
     local Overhead: BillboardGui = self.character:FindFirstChild("Overhead")
     if Overhead then

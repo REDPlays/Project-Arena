@@ -26,7 +26,7 @@ function FreeForAll.new()
 end
 
 function FreeForAll:Init(playerList)
-    self.roundMaxDuration = 30 --180
+    self.roundMaxDuration = 180
     self.roundDuration = self.roundMaxDuration
     
     self.playersInRound = {}

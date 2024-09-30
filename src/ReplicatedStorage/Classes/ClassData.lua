@@ -291,7 +291,7 @@ ClassData["ShieldWarrior"] = {
 
 ClassData["Samurai"] = {
     ignoreLMBMoveCD = false,
-    Health = 100,
+    Health = 175,
     Defense = 100,
     Speed = 35,
     Role = "Brawler",
@@ -300,7 +300,7 @@ ClassData["Samurai"] = {
     DamageList = {
         ["LMBMove"] = {8, 8, 8},
         ["QMove"] = 15,
-        ["EMove"] = 1,
+        ["EMove"] = 3,
         ["FMove"] = 25,
     },
     Cooldowns = {
@@ -354,7 +354,7 @@ ClassData["Samurai"] = {
             noMovement = true,
             Stunned = false,
             Burn = false,
-            Slow = false,
+            Slow = true,
             CameraLock = false,
             Knockup = false,
             Silenced = false,
