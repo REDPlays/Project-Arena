@@ -4,6 +4,7 @@ local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -35,7 +36,25 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
 
     local WallSize = Vector3.new(17, 17, 3)
 
-    local startCFrame = placementCFrame
+    local startCFrame = placementCFrame * CFrame.new(0, 5, 0)
+
+    local characterList = {}
+    for _, plr in pairs(Players:GetPlayers()) do
+        local plrChar = plr.Character
+        if not plrChar then
+            continue
+        end
+        table.insert(characterList, plrChar)
+    end
+
+    local rayparams = RaycastParams.new()
+    rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
+    rayparams.FilterType = Enum.RaycastFilterType.Exclude
+
+local ray = workspace:Raycast(startCFrame.Position, startCFrame.UpVector *  -100, rayparams)
+if ray then
+    startCFrame = CFrame.new(ray.Position)
+end
 
     local wallObjects = {}
 
@@ -52,6 +71,7 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
 
     for i=1, numOfWalls do
         local newCFrame = startCFrame * CFrame.Angles(0, math.rad(angle), 0) * CFrame.new(0, -WallSize.Y/2, -distance)
+
         local LastCFrame = newCFrame * CFrame.new(0, WallSize.Y, 0)
 
         local Wall = Hitboxes.Hitbox:Clone()
