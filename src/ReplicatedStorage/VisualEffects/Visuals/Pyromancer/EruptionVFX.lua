@@ -37,7 +37,11 @@ function Eruption:DisplayVFX()
     self.Folder.Name = "EruptionVFX"
     self.Folder.Parent = workspace.VFX
     
-    Debris:AddItem(self.Folder, 2)
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 
     self:Explosion()
 end

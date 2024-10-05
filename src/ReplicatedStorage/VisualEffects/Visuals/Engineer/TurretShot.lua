@@ -119,7 +119,11 @@ function TurretShot:Hit(spawnCFrame)
     HitVFX.Attachment.Squares:Emit(24)
     HitVFX.Attachment.Center:Emit(3)
 
-    Debris:AddItem(self.Folder, 2.5)
+    task.delay(2.5, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 return TurretShot

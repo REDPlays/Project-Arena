@@ -17,7 +17,7 @@ function VisualEffectClient:SpawnEffects(vfxName, target, sourceUnit, conditiona
     end
 
     local VFX_Instance
-    if VisualEffectData[vfxName] then
+    if VisualEffectData[vfxName] and not runFunction then
         VFX_Instance = VisualEffectData[vfxName]:Activate(target, sourceUnit, conditionalData)
 
         if VFX_ID then

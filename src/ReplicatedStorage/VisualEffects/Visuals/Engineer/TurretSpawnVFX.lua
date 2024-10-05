@@ -46,7 +46,11 @@ function TurretSpawn:DisplayVFX()
     self.Folder = Instance.new("Folder")
     self.Folder.Name = "TurretSpawnVFX"
     self.Folder.Parent = workspace.VFX
-    Debris:AddItem(self.Folder, 2)
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 
     self:Pulse(self.spawnCFrame)
 end

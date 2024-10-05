@@ -63,7 +63,11 @@ function ConcussiveBomb:RunFunction(target, sourceUnit, conditionalData)
 end
 
 function ConcussiveBomb:Terminate(target, sourceUnit, conditionalData)
-    Debris:AddItem(self.Folder, 2)
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 function ConcussiveBomb:Update(deltaTime)

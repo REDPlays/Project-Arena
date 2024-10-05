@@ -124,7 +124,11 @@ function FireBall:Explode(spawnCFrame)
     self.FireHit.Fire:Emit(8)
     self.FireHit.Fire2:Emit(8)
 
-    Debris:AddItem(self.Folder, 1)
+    task.delay(1, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 return FireBall

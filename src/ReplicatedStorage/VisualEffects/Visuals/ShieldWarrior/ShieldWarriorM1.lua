@@ -52,7 +52,11 @@ function ShieldWarriorM1:DisplayVFX()
     self.Folder.Name = "ShieldWarriorM1VFX"
     self.Folder.Parent = workspace.VFX
     
-    Debris:AddItem(self.Folder, 2)
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 
     self:Swing()
 end

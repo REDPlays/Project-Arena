@@ -32,13 +32,13 @@ function ShadowStep:Activate(player, character, rootPart, placementCFrame, class
         return
     end
 
-    local duration = 1
+    local duration = 0.5
 
     StateManager:AddTarget(character, "Invulnerable", duration)
 
     Stats:SetAttribute("AbilityLocked", true)
     Stats:SetAttribute("HideUI", true)
-    humanoid.WalkSpeed = classData.Speed * 2
+    humanoid.WalkSpeed = classData.Speed * 1.25
 
     local VFX_ID = "ShadowStep"..HttpService:GenerateGUID(false)
 

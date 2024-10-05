@@ -146,7 +146,11 @@ function PiercingArrow:Hit(spawnCFrame)
     hitSound.Parent = self.conditionalData.projectile
     hitSound:Play()
 
-    Debris:AddItem(self.Folder, 2.5)
+    task.delay(2.5, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 return PiercingArrow

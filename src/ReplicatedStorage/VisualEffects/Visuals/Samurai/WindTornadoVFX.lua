@@ -58,7 +58,11 @@ function WindTornado:Terminate()
         end
     end
 
-    Debris:AddItem(self.Folder, 1)
+    task.delay(1, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 function WindTornado:Update(deltaTime)

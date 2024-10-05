@@ -37,7 +37,11 @@ function HolyBeam:DisplayVFX()
     self.Folder.Name = "HolyBeamVFX"
     self.Folder.Parent = workspace.VFX
     
-    Debris:AddItem(self.Folder, 1)
+    task.delay(1, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 
     self:Beam()
 end

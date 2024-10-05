@@ -148,6 +148,12 @@ function ExplosiveArrow:Explode(spawnCFrame)
             end
         end
     end
+
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 return ExplosiveArrow

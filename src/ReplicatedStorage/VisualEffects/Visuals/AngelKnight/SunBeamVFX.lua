@@ -47,7 +47,11 @@ function SunBeam:RunFunction(target, sourceUnit, conditionalData)
 end
 
 function SunBeam:Terminate()
-    Debris:AddItem(self.Folder, 2)
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 function SunBeam:Update(deltaTime)

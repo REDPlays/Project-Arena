@@ -715,6 +715,10 @@ function UIController:InColorBound()
                 continue
             end
 
+            if objectParent ~= self.character then
+                continue
+            end
+
             self.SelectingColor = true
 
             self:ToggleColorCamera(true, self.CameraPivot)
@@ -772,7 +776,7 @@ function UIController:Disconnect()
 end
 
 function UIController:Update(deltaTime)
-    --self:InColorBound()
+    self:InColorBound()
 
     self.colorSystem:Update(deltaTime)
 

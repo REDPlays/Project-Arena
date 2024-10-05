@@ -67,7 +67,11 @@ end
 function ColosseumVFX:Terminate(target, sourceUnit, conditionalData)
     local duration = conditionalData.duration
 
-    Debris:AddItem(self.Folder, duration)
+    task.delay(duration, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 
     for _, wall in self.walls do
         local info2 = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)

@@ -33,9 +33,9 @@ function RapidSlashes:Activate(player, character, rootPart, placementCFrame, cla
         return
     end
 
-    local duration = 2
+    local duration = 1
     local currTime = 0
-    local damageTick = .075
+    local damageTick = .1
 
     Stats:SetAttribute("AbilityLocked", true)
 

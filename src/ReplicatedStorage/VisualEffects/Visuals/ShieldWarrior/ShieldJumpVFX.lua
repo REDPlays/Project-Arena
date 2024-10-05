@@ -63,7 +63,11 @@ function ShieldJumpVFX:RunFunction(target, sourceUnit, conditionalData)
 end
 
 function ShieldJumpVFX:Terminate()
-    Debris:AddItem(self.Folder, 3)
+    task.delay(3, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 function ShieldJumpVFX:Update(deltaTime)

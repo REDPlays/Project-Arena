@@ -37,7 +37,11 @@ function Flamethrower:DisplayVFX()
     self.Folder.Name = "FlamethrowerVFX"
     self.Folder.Parent = workspace.VFX
     
-    Debris:AddItem(self.Folder, 4)
+    task.delay(4, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 
     self:Fire()
 end

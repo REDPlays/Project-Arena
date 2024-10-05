@@ -62,7 +62,11 @@ function ShieldSlamVFX:RunFunction(target, sourceUnit, conditionalData)
 end
 
 function ShieldSlamVFX:Terminate()
-    Debris:AddItem(self.Folder, 3)
+    task.delay(3, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 function ShieldSlamVFX:Update(deltaTime)

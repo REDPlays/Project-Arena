@@ -22,7 +22,7 @@ ClassData["Base"] = {
 }
 
 ClassData["AngelKnight"] = {
-    Health = 100,
+    Health = 125,
     Defense = 100,
     Speed = 35,
     Role = "Support",
@@ -30,9 +30,9 @@ ClassData["AngelKnight"] = {
     Description = "Agressive Healer",
     DamageList = {
         ["LMBMove"] = {8, 8, 8},
-        ["QMove"] = 15,
+        ["QMove"] = 20,
         ["EMove"] = 10,
-        ["FMove"] = 3,
+        ["FMove"] = 5,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
@@ -113,7 +113,7 @@ ClassData["Pyromancer"] = {
     Health = 100,
     Defense = 100,
     Speed = 30,
-    ProjectileSpeed = 50,
+    ProjectileSpeed = 75,
     Role = "Burst",
     Cost = 200,
     Ammo = 1, --number of shots per LMB
@@ -291,21 +291,21 @@ ClassData["ShieldWarrior"] = {
 
 ClassData["Samurai"] = {
     ignoreLMBMoveCD = false,
-    Health = 175,
+    Health = 150,
     Defense = 100,
-    Speed = 35,
+    Speed = 30,
     Role = "Brawler",
     Cost = 200,
     Description = "The way of the blade",
     DamageList = {
-        ["LMBMove"] = {8, 8, 8},
+        ["LMBMove"] = {4, 4, 4},
         ["QMove"] = 15,
-        ["EMove"] = 3,
+        ["EMove"] = 1,
         ["FMove"] = 25,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 5,
+        ["QMove"] = 8,
         ["EMove"] = 7,
         ["FMove"] = 15,
     },
@@ -379,10 +379,10 @@ ClassData["Samurai"] = {
 }
 
 ClassData["Engineer"] = {
-    Health = 90,
+    Health = 100,
     Defense = 100,
     Speed = 24,
-    ProjectileSpeed = 100,
+    ProjectileSpeed = 150,
     Role = "Summoner",
     Cost = 200,
     Ammo = 3, --number of shots per LMB
@@ -479,10 +479,10 @@ ClassData["Engineer"] = {
 }
 
 ClassData["Ranger"] = {
-    Health = 90,
+    Health = 100,
     Defense = 100,
     Speed = 24,
-    ProjectileSpeed = 100,
+    ProjectileSpeed = 150,
     Role = "Marksman",
     Cost = 200,
     Ammo = 1, --number of shots per LMB

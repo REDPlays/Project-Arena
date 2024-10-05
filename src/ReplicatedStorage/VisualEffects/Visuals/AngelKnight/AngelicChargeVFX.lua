@@ -47,7 +47,11 @@ function AngelicCharge:RunFunction(target, sourceUnit, conditionalData)
 end
 
 function AngelicCharge:Terminate()
-    Debris:AddItem(self.Folder, 2)
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 function AngelicCharge:Update(deltaTime)

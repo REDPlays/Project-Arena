@@ -38,8 +38,8 @@ function TripleFireBall:Activate(player, character, rootPart, placementCFrame, c
     end)
 
     local angle = -10
-    local angleDiff = 20
-    local numProjectiles = 2
+    local angleDiff = 10
+    local numProjectiles = 3
 
     for i=1, numProjectiles do
         local offSet = CFrame.fromEulerAnglesXYZ(0, math.rad(angle), 0)

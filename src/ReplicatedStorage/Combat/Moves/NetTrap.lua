@@ -41,8 +41,8 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
         return
     end
 
-    local distance = 20
-    local height = 15
+    local distance = 30
+    local height = 20
 
     local startPosition = predictPosition(rootPart, 0.25)
 

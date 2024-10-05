@@ -76,7 +76,11 @@ end
 function ShadowStep:Terminate()
     self:Show()
 
-    Debris:AddItem(self.Folder, 2)
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
 end
 
 function ShadowStep:Update(deltaTime)
