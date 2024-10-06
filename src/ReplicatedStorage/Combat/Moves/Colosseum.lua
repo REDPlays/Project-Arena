@@ -51,10 +51,10 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
     rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
     rayparams.FilterType = Enum.RaycastFilterType.Exclude
 
-local ray = workspace:Raycast(startCFrame.Position, startCFrame.UpVector *  -100, rayparams)
-if ray then
-    startCFrame = CFrame.new(ray.Position)
-end
+    local ray = workspace:Raycast(startCFrame.Position, startCFrame.UpVector *  -100, rayparams)
+    if ray then
+        startCFrame = CFrame.new(ray.Position)
+    end
 
     local wallObjects = {}
 
