@@ -32,9 +32,7 @@ function ShadowStep:Activate(player, character, rootPart, placementCFrame, class
         return
     end
 
-    local duration = 0.5
-
-    StateManager:AddTarget(character, "Invulnerable", duration)
+    local duration = 1
 
     Stats:SetAttribute("AbilityLocked", true)
     Stats:SetAttribute("HideUI", true)

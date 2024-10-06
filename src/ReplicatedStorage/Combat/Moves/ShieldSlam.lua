@@ -37,7 +37,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
     Stats:SetAttribute("AbilityLocked", true)
 
     local duration = 1
-    local hitboxDelay = 0.05
+    local hitboxDelay = 0.025
 
     task.delay(duration / 2, function()
         Stats:SetAttribute("AbilityLocked", false)
@@ -57,7 +57,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
         VFX_ID
     )
 
-    local numHits = 4
+    local numHits = 5
 
     local alreadyHit = {}
 
@@ -220,7 +220,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
             end)
         end
 
-        startCFrame *= CFrame.new(0, 0, -size.Z)
+        startCFrame *= CFrame.new(0, 0, -(size.Z + 2))
 
         task.wait(hitboxDelay)
     end

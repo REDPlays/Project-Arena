@@ -100,8 +100,8 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
             for i=1, #touchedObjects do
                 local object = touchedObjects[i]
                 local parent = object.Parent
-                
-                if not parent:IsA("Model") then
+
+                 if not parent:IsA("Model") then
                     continue
                 end
                 

@@ -74,6 +74,31 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
             local object = touchedObjects[i]
             local parent = object.Parent
 
+            if parent == workspace.Obstacles then
+                target = object
+                --fire to server for wall target
+                Events.Client_Server.ProjectileTarget:FireServer(
+                    target, 
+                    projectileData.classData, 
+                    projectileData.moveType, 
+                    projectileData.moveCount,
+                    projectileData.ID
+                )
+
+                local conditionalData = {}
+                conditionalData.spawnCFrame = Hitbox.CFrame
+
+                VisualEffectClient:TerminateVFX(
+                    projectileData.classData.VisualEffects[projectileData.moveType],
+                    target,
+                    projectileData.character,
+                    conditionalData,
+                    HBprojectileData.VisualID
+                )
+                
+                return true
+            end
+
             if not parent:IsA("Model") then
                 continue
             end

@@ -195,6 +195,11 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
         for i=1, #touchedObjects do
             local object = touchedObjects[i]
             local parent = object.Parent
+
+            if parent == workspace.Obstacles then
+                TriggerExplosion()
+                break
+            end
             
             if not parent:IsA("Model") then
                 continue

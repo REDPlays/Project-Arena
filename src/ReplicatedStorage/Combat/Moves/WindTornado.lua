@@ -154,7 +154,17 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
     end
 
     local function movement(dt)
-        Hitbox.CFrame *= CFrame.new(0, 0, -speed * dt)
+        local overlap = OverlapParams.new()
+        overlap.FilterDescendantsInstances = {workspace.Obstacles}
+        overlap.FilterType = Enum.RaycastFilterType.Include
+
+        local partList = workspace:GetPartsInPart(Hitbox, overlap)
+
+        if #partList > 0 then
+            Hitbox.CFrame = Hitbox.CFrame
+        else
+            Hitbox.CFrame *= CFrame.new(0, 0, -speed * dt)
+        end
 
         local newCFR = Hitbox.CFrame
 

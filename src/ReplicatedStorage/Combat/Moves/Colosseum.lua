@@ -25,7 +25,7 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
 
     local damage = classData.DamageList[moveType]
 
-    local duration = 5
+    local duration = 10
     local collideDelay = .25
 
     local numOfWalls = 12
@@ -78,8 +78,8 @@ function Colosseum:Activate(player, character, rootPart, placementCFrame, class,
         Wall.Size = WallSize
         Wall.Material = Enum.Material.SmoothPlastic
         Wall.CanCollide = false
-        Wall.CanTouch = false
-        Wall.CanQuery = false
+        Wall.CanTouch = true
+        Wall.CanQuery = true
         Wall.CFrame = newCFrame
         Wall.Anchored = true
         Wall.Transparency = 1

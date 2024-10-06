@@ -30,13 +30,13 @@ ClassData["AngelKnight"] = {
     Description = "Agressive Healer",
     DamageList = {
         ["LMBMove"] = {8, 8, 8},
-        ["QMove"] = 20,
+        ["QMove"] = 25,
         ["EMove"] = 10,
         ["FMove"] = 5,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 10,
+        ["QMove"] = 7 ,
         ["EMove"] = 5,
         ["FMove"] = 10,
     },
@@ -217,7 +217,7 @@ ClassData["ShieldWarrior"] = {
     Cooldowns = {
         ["LMBMove"] = .5,
         ["QMove"] = 3.5,
-        ["EMove"] = 10,
+        ["EMove"] = 7,
         ["FMove"] = 15,
     },
     Hitboxes = {
@@ -305,7 +305,7 @@ ClassData["Samurai"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 8,
+        ["QMove"] = 10,
         ["EMove"] = 7,
         ["FMove"] = 15,
     },
