@@ -54,6 +54,8 @@ function TeamDeathMatch:Setup(playerList, isList)
             end
         end
     else
+        local _player = playerList
+
         local teamRed = 0
         local teamBlue = 0
 
@@ -64,11 +66,24 @@ function TeamDeathMatch:Setup(playerList, isList)
         for _, playerData in pairs(self.Teams.Blue) do
             teamBlue += 1
         end
+
+        if teamBlue > teamRed then
+            self.Teams.Red[_player] = {_player, 0}
+        elseif teamRed > teamBlue then
+            self.Teams.Blue[_player] = {_player, 0}
+        else
+            local random = math.random(1, 2)
+            if random == 1 then
+                self.Teams.Blue[_player] = {_player, 0}
+            elseif random == 2 then
+                self.Teams.Red[_player] = {_player, 0}
+            end
+        end
     end
 end
 
 function TeamDeathMatch:AddKill(player)
-
+    
 end
 
 function TeamDeathMatch:EndRound()
