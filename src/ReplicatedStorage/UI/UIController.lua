@@ -39,6 +39,10 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.IndicatorContext = self.IndicatorMenu:WaitForChild("Context")
     self.IndicatorTimer = self.IndicatorMenu:WaitForChild("Timer")
 
+    self.IndicatorTeam = self.Indicator:WaitForChild("TeamDeath")
+    self.IndicatorRedCount = self.IndicatorTeam:WaitForChild("RedCount")
+    self.IndicatorBlueCount = self.IndicatorTeam:WaitForChild("BlueCount")
+
     self.Gameplay = self.HUD:WaitForChild("Gameplay")
     self.MoveList = self.Gameplay:WaitForChild("MoveList")
     self.Stats = self.Gameplay:WaitForChild("Stats")
@@ -598,6 +602,26 @@ function UIController:Connect()
         local formattedTime = string.format("%i:%02i", min, sec)
 
         self.IndicatorTimer.Text = formattedTime
+    end)
+
+    self.scoreCount = Events.Server_Client.ScoreCount.OnClientEvent:Connect(function(context, scoreData)
+        if context == "Team Death Match" then
+            local redTeam = scoreData.Red
+            local blueTeam = scoreData.Blue
+
+            self.IndicatorRedCount.Text = tostring(redTeam)
+            self.IndicatorBlueCount.Text = tostring(blueTeam)
+        else
+            --any other gamemode in the future
+        end
+    end)
+
+    self.toggleUI = Events.Server_Client.ToggleUI.OnClientEvent:Connect(function(context)
+        if context == "Team Death Match" then
+            self.IndicatorTeam.Visible = true
+        elseif context == "Free For All" then
+            self.IndicatorTeam.Visible = false
+        end
     end)
 
     self.rewardsEvent = Events.Server_Client.Rewards.OnClientEvent:Connect(function(rewardData, rewardCount)

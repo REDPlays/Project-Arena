@@ -17,8 +17,8 @@ local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
 
 local GamemodesList = {
-    ["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
-    --["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
+    --["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
+    ["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
 }
 
 local RoundManager = {}
@@ -412,6 +412,7 @@ function RoundManager:Update(deltaTime)
                     self:SelectMap()
                 end
 
+                Events.Server_Client.ToggleUI:FireAllClients(self.currentGameMode.Name)
                 Events.Server_Client.CountDown:FireAllClients("CountDown", self.countDown)
             end
             

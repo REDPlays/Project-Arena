@@ -295,7 +295,7 @@ function CharacterSelectServer:SetStats(player, className)
 
     local PrimaryColor = CharacterSelectServer.playerManager:GetColor(player, "Primary") or Color3.fromRGB(99, 95, 98)
     local SecondaryColor = CharacterSelectServer.playerManager:GetColor(player, "Secondary") or Color3.fromRGB(163, 162, 165)
-    local EnergyColor = CharacterSelectServer.playerManager:GetColor(player, "Energy") or Color3.fromRGB(255, 255, 255)
+    local EnergyColor = CharacterSelectServer.playerManager:GetColor(player, "Energy") or Color3.fromRGB(163, 162, 165)
 
     Stats:SetAttribute("Primary", PrimaryColor)
     Stats:SetAttribute("Secondary", SecondaryColor)

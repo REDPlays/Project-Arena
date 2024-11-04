@@ -10,9 +10,9 @@ local DataTemplate = {
     Kills = 0,
     Wins = 0,
 
-    ["Primary"] = {99, 95, 98},
-    ["Secondary"] = {163, 162, 165},
-    ["Energy"] = {255, 255, 255},
+    ["Primary"] = {0.38, 0.37, 0.38},
+    ["Secondary"] = {0.63, 0.63, 0.64},
+    ["Energy"] = {0.63, 0.63, 0.64},
 
 	["Classes"] = {
 		["AngelKnight"] = false,
@@ -24,7 +24,7 @@ local DataTemplate = {
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test15", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test19", DataTemplate)
 
 local Profiles = {}
 

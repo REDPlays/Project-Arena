@@ -16,11 +16,11 @@ function TeamDeathMatch.new()
 end
 
 function TeamDeathMatch:Init(playerList)
-    self.roundMaxDuration = 60 * 8
+    self.roundMaxDuration = 30--60 * 4
     self.roundDuration = self.roundMaxDuration
     
     self.playersInRound = {}
-    self.Teams ={
+    self.Teams = {
         ["Red"] = {},
         ["Blue"] = {},
     }
@@ -56,6 +56,16 @@ function TeamDeathMatch:Setup(playerList, isList)
     else
         local _player = playerList
 
+        if self.Teams.Red[_player] then
+            warn(_player, "is already in game on team: RED")
+            return
+        end
+
+        if self.Teams.Blue[_player] then
+            warn(_player, "is already in game on team: BLUE")
+            return
+        end
+
         local teamRed = 0
         local teamBlue = 0
 
@@ -83,21 +93,86 @@ function TeamDeathMatch:Setup(playerList, isList)
 end
 
 function TeamDeathMatch:AddKill(player)
-    
+    if self.roundEnded then
+        --can't earn kills when round is over
+        return
+    end
+
+    for team, playerList in pairs(self.Teams) do
+        for playerId, playerData in pairs(playerList) do
+            if player == playerId then
+                playerData[2] += 1
+            end
+        end
+    end
 end
 
 function TeamDeathMatch:EndRound()
     self.roundDuration = 0
 
+    local endScores = {
+        ["Red"] = 0,
+        ["Blue"] = 0,
+    }
+
+    for team, playerList in pairs(self.Teams) do
+        for _, playerData in pairs(playerList) do
+            --adding up the kills
+            endScores[team] += playerData[2]
+        end
+    end
+
+    if endScores.Red > endScores.Blue then
+        --red team wins rewards
+        self:RewardPlayers(self.Teams.Red)
+
+    elseif endScores.Blue > endScores.Red then
+        --blue team wins rewards
+        self:RewardPlayers(self.Teams.Blue)
+
+    elseif endScores.Red == endScores.Blue then
+        --all players will receive rewards but at a reduction since they tied
+        self:RewardPlayers(self.Teams.Red, true)
+        self:RewardPlayers(self.Teams.Blue, true)
+    end
 end
 
-function TeamDeathMatch:RewardPlayers(newList)
+function TeamDeathMatch:RewardPlayers(newList, isTie)
+    local rewardData = {}
+    local rewardCount = 0
 
+    local tokens = 100
+    local placement = 1
+    if isTie then
+        tokens *= 0.5
+        placement = 0
+    end
+
+    for playerId, playerData in pairs(newList) do
+        local player = playerData[1]
+
+        --make ui display victory screen
+
+        Events.Server_Server.RewardPlayers:Fire(player, tokens, placement)
+    end
 end
 
 function TeamDeathMatch:Update(maxTick, deltaTime)
     self.roundDuration -= maxTick
     Events.Server_Client.CountDown:FireAllClients(self.Name, self.roundDuration)
+    
+    local scoreData = {
+        ["Red"] = 0,
+        ["Blue"] = 0,
+    }
+    for team, playerList in pairs(self.Teams) do
+        for _, playerData in pairs(playerList) do
+            --adding up the kills
+            scoreData[team] += playerData[2]
+        end
+    end
+
+    Events.Server_Client.ScoreCount:FireAllClients(self.Name, scoreData)
 
     if self.roundDuration <= 0 then
         self.roundEnded = true
