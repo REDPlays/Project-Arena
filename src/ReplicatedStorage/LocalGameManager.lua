@@ -67,6 +67,8 @@ function LocalGameManager:Update(deltaTime)
     ClientHitboxManager:Update(deltaTime)
 
     VisualEffectClient:Update(deltaTime)
+
+    Lobby.Misc.RunicCircle.CFrame *= CFrame.Angles(0, math.rad(15) * deltaTime, 0)
 end
 
 return LocalGameManager
