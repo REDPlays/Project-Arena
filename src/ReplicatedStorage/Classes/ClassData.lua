@@ -106,7 +106,13 @@ ClassData["AngelKnight"] = {
         ["QMove"] = "HolyBeam",
         ["EMove"] = "AngelicCharge",
         ["FMove"] = "SunBeam",
-    }
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Holy Beam",
+        ["EMove"] = "Angelic Charge",
+        ["FMove"] = "Sun Beam",
+    },
 }
 
 ClassData["Pyromancer"] = {
@@ -198,7 +204,13 @@ ClassData["Pyromancer"] = {
         ["QMove"] = "FireBall",
         ["EMove"] = "Flamethrower",
         ["FMove"] = "Eruption",
-    }
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Triple Fire Ball",
+        ["EMove"] = "Flame thrower",
+        ["FMove"] = "Eruption",
+    },
 }
 
 ClassData["ShieldWarrior"] = {
@@ -285,8 +297,14 @@ ClassData["ShieldWarrior"] = {
         ["LMBMove"] = "ShieldWarriorM1",
         ["QMove"] = "ShieldSlam",
         ["EMove"] = "ShieldJump",
-        ["FMove"] = "SunBeam",
-    }
+        ["FMove"] = "Colosseum",
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Shield Slam",
+        ["EMove"] = "Shield Jump",
+        ["FMove"] = "Colosseum",
+    },
 }
 
 ClassData["Samurai"] = {
@@ -375,7 +393,13 @@ ClassData["Samurai"] = {
         ["QMove"] = "ShadowStep",
         ["EMove"] = "RapidSlashes",
         ["FMove"] = "WindTornado",
-    }
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Shadow Step",
+        ["EMove"] = "Rapid Slashes",
+        ["FMove"] = "Wind Tornado",
+    },
 }
 
 ClassData["Engineer"] = {
@@ -475,7 +499,13 @@ ClassData["Engineer"] = {
         ["QMove"] = "ConcussiveBomb",
         ["EMove"] = "Turret",
         ["FMove"] = "ElectroBall",
-    }
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Concussive Bomb",
+        ["EMove"] = "Turret",
+        ["FMove"] = "Electro Ball",
+    },
 }
 
 ClassData["Ranger"] = {
@@ -573,7 +603,13 @@ ClassData["Ranger"] = {
         ["QMove"] = "PiercingArrow",
         ["EMove"] = "NetTrap",
         ["FMove"] = "ExplosiveArrow",
-    }
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Piercing Arrow",
+        ["EMove"] = "Net Trap",
+        ["FMove"] = "Explosive Arrow",
+    },
 }
 
 return ClassData

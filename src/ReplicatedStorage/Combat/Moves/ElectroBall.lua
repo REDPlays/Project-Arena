@@ -39,9 +39,9 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
     end
 
     local shotDelay = 0.4
-    local duration = .5
+    local duration = 1
     local _delay = 1
-    local speed = 50
+    local speed = 75
     local damageTick = 0.25
 
     Stats:SetAttribute("AbilityLocked", true)

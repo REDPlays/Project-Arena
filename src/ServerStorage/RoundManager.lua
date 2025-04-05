@@ -54,7 +54,7 @@ function RoundManager:Init(ServerGameManager)
     self.currTick = 0
 
     self.intermission = true
-    self.inermissionTime = 30
+    self.inermissionTime = 15
     self.intermissionDuration = self.inermissionTime
     
     self.currentGameMode = nil
@@ -70,7 +70,7 @@ function RoundManager:Init(ServerGameManager)
 
     --map selection will be needed later on
     self.availableMaps = {
-        Maps:WaitForChild("GreatSkyPlatform"),
+        --Maps:WaitForChild("GreatSkyPlatform"),
         Maps:WaitForChild("ShanghaiShowdown"),
     }
 
@@ -402,10 +402,7 @@ function RoundManager:Update(deltaTime)
             if not self.startCountDown then
                 self.startCountDown = true
                 
-                self.countDown = 20
-                if Training then
-                    self.countDown = 1000
-                end
+                self.countDown = 15
 
                 --map selection
                 if not self.MapSelected then

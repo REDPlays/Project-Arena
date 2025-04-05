@@ -152,8 +152,11 @@ function UIController:toggleUICountdown(moveType, duration)
         CooldownUI = self.Btns[moveType]:FindFirstChild("Cooldown"),
         duration = duration,
         maxDuration = duration,
+        MoveName = self.Btns[moveType]:FindFirstChild("MoveName"),
     }
 
+    
+    self.UICooldowns[moveType].MoveName.TextTransparency = 0.5
     self.UICooldowns[moveType].CooldownUI.Text = duration
     self.UICooldowns[moveType].CooldownUI.Visible = true
 end
@@ -165,7 +168,7 @@ function UIController:removeUICountdown(moveType)
     end
 
     self.UICooldowns[moveType].CooldownUI.Visible = false
-
+    self.UICooldowns[moveType].MoveName.TextTransparency = 0
     self.UICooldowns[moveType] = nil
 end
 
@@ -393,6 +396,10 @@ function UIController:Connect()
                 if self.LMBs >= 3 and not currentClassData.MoveData.LMBMove.ignoreLMBMoveCD then
                     cooldownDuration = 1
                 end
+
+                if workspace:GetAttribute("NoCooldowns") then
+                    cooldownDuration = 1
+                end
                 
                 self:toggleUICountdown("LMBMove", cooldownDuration)
 
@@ -436,6 +443,10 @@ function UIController:Connect()
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["QMove"]
+                if workspace:GetAttribute("NoCooldowns") then
+                    cooldownDuration = 1
+                end
+
                 self:toggleUICountdown("QMove", cooldownDuration)
 
                 local conditionalData = {
@@ -474,6 +485,10 @@ function UIController:Connect()
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["EMove"]
+                if workspace:GetAttribute("NoCooldowns") then
+                    cooldownDuration = 1
+                end
+
                 self:toggleUICountdown("EMove", cooldownDuration)
 
                 local conditionalData = {
@@ -512,6 +527,10 @@ function UIController:Connect()
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["FMove"]
+                if workspace:GetAttribute("NoCooldowns") then
+                    cooldownDuration = 1
+                end
+                
                 self:toggleUICountdown("FMove", cooldownDuration)
 
                 local conditionalData = {
@@ -757,6 +776,15 @@ function UIController:LoadCharacter(class)
 
     --set icons for moves
     self.animationSystem:ChangeClass(class)
+
+    local currentClassData = ClassData[self.class]
+
+    for btnName, btn in pairs(self.Btns) do
+        local MoveName = btn:FindFirstChild("MoveName")
+        if MoveName then
+            MoveName.Text = currentClassData.MoveName[btnName]
+        end
+    end
 end
 
 function UIController:Disconnect()

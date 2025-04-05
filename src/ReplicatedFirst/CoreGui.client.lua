@@ -7,7 +7,7 @@ StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
-local Maps = ReplicatedStorage:WaitForChild("Maps")
+local VFXAssets = ReplicatedStorage:WaitForChild("VFXAssets")
 
 warn("PRELOAD ASSETS")
 local assetList = {}
@@ -17,10 +17,10 @@ for _, objects in pairs(Assets:GetDescendants()) do
     end
 end
 
-local mapList = {}
-for _, objects in pairs(Assets:GetDescendants()) do
+local vfxAssetList = {}
+for _, objects in pairs(VFXAssets:GetDescendants()) do
     if not objects:IsA("Folder") then
-        table.insert(mapList, objects)
+        table.insert(vfxAssetList, objects)
     end
 end
 
@@ -31,7 +31,7 @@ end
 
 local startTime = os.clock()
 ContentProvider:PreloadAsync(assetList, assetCallBack)
-ContentProvider:PreloadAsync(mapList, assetCallBack)
+ContentProvider:PreloadAsync(vfxAssetList, assetCallBack)
 
 local preloadingTime = os.clock() - startTime
-warn("FINISHED PRELOADING ASSETS IN :", preloadingTime)
+warn("FINISHED PRELOADING ASSETS IN :", math.floor(preloadingTime))

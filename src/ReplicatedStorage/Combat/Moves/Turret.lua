@@ -240,6 +240,8 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
             end
 
             local thread = task.spawn(function()
+                local currentPosition = Turret_Head:GetPivot().Position
+
                 while true do
                     local deltaTime = task.wait()
 
@@ -262,7 +264,6 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
                         continue
                     end
                     
-                    local currentPosition = Turret_Head:GetPivot().Position
                     local targetRootPosition = predictPosition(targetRoot, predictionValue)
                     
                     if (targetRootPosition - currentPosition).Magnitude > MaxDistance then

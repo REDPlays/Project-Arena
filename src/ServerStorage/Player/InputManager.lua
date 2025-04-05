@@ -74,6 +74,10 @@ function InputManager:RunInput(player, class, moveType, moveCount)
             cooldown = 1
         end
 
+        if workspace:GetAttribute("NoCooldowns") then
+            cooldown = 1
+        end
+
         task.delay(cooldown, function()
             if InputManager.ServerLMBDebounces[player.UserId] then
                 InputManager.ServerLMBDebounces[player.UserId] = nil
@@ -91,6 +95,10 @@ function InputManager:RunInput(player, class, moveType, moveCount)
         InputManager.ServerQDebounces[player.UserId] = true
 
         local cooldown = currentClassData.Cooldowns.QMove
+
+        if workspace:GetAttribute("NoCooldowns") then
+            cooldown = 1
+        end
 
         task.delay(cooldown, function()
             if InputManager.ServerQDebounces[player.UserId] then
@@ -110,6 +118,10 @@ function InputManager:RunInput(player, class, moveType, moveCount)
 
         local cooldown = currentClassData.Cooldowns.EMove
 
+        if workspace:GetAttribute("NoCooldowns") then
+            cooldown = 1
+        end
+
         task.delay(cooldown, function()
             if InputManager.ServerEDebounces[player.UserId] then
                 InputManager.ServerEDebounces[player.UserId] = nil
@@ -127,6 +139,10 @@ function InputManager:RunInput(player, class, moveType, moveCount)
         InputManager.ServerFDebounces[player.UserId] = true
 
         local cooldown = currentClassData.Cooldowns.FMove
+
+        if workspace:GetAttribute("NoCooldowns") then
+            cooldown = 1
+        end
 
         task.delay(cooldown, function()
             if InputManager.ServerFDebounces[player.UserId] then
