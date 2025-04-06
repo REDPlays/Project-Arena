@@ -38,6 +38,8 @@ Events.Server_Client = {
     ScoreCount = Server_Client:WaitForChild("ScoreCount"),
     ToggleUI = Server_Client:WaitForChild("ToggleUI"),
     teleportDisable = Server_Client:WaitForChild("teleportDisable"),
+    Ceremony = Server_Client:WaitForChild("Ceremony"),
+    ReceiveMessage = Server_Client:WaitForChild("ReceiveMessage"),
 }
 
 Events.Server_Server = {

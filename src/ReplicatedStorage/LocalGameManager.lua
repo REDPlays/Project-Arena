@@ -7,6 +7,7 @@ local AnimationSystem = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitF
 local MovementManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("MovementManager"))
 local VisualEffectClient = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectClient"))
 local ClientHitboxManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("ClientHitboxManager"))
+local CeremonyUI = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("CeremonyUI"))
 
 local Lobby = workspace.Lobby
 
@@ -26,8 +27,17 @@ function LocalGameManager:Setup()
     LocalGameManager.animationSystem = AnimationSystem.new()
     LocalGameManager.animationSystem:Init(LocalGameManager.player, LocalGameManager.character)
 
+    LocalGameManager.ceremony = CeremonyUI.new()
+    LocalGameManager.ceremony:Init(LocalGameManager.player, LocalGameManager.character, LocalGameManager.animationSystem, LocalGameManager.cameraSystem)
+
     LocalGameManager.uiController = UIController.new()
-    LocalGameManager.uiController:Init(LocalGameManager.player, LocalGameManager.character, LocalGameManager.animationSystem, LocalGameManager.cameraSystem)
+    LocalGameManager.uiController:Init(
+        LocalGameManager.player,
+        LocalGameManager.character,
+        LocalGameManager.animationSystem, 
+        LocalGameManager.cameraSystem, 
+        LocalGameManager.ceremony
+    )
 
     CharacterSelectClient:Init(LocalGameManager.character, Lobby, LocalGameManager.uiController, LocalGameManager.animationSystem)
 end

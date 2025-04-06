@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
+local Podiums = workspace:WaitForChild("Podiums")
+
 local CameraManager = {}
 CameraManager.__index = CameraManager
 
@@ -98,6 +100,22 @@ end
 function CameraManager:Disconnect()
     if CameraManager.input then
         CameraManager.input:Disconnect()
+    end
+end
+
+function CameraManager:SetCeremony(enable)
+    if enable then
+        self.lockCamera = true
+
+        self.Camera.CameraType = Enum.CameraType.Scriptable
+        self.Camera.CFrame = Podiums.Camera.CFrame
+    else
+        self.lockCamera = false
+
+        self.Camera.CameraType = Enum.CameraType.Custom
+        if self.character and self.character:FindFirstChild("Humanoid") then
+            self.Camera.CameraSubject = self.character.Humanoid
+        end
     end
 end
 

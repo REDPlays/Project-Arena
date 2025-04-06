@@ -23,7 +23,7 @@ function UIController.new()
     return newUI
 end
 
-function UIController:Init(player, character, animationSystem, cameraSystem)
+function UIController:Init(player, character, animationSystem, cameraSystem, ceremonySystem)
     self.player = player
     self.character = character
     self.humanoid = character:WaitForChild("Humanoid")
@@ -31,6 +31,7 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
 
     self.animationSystem = animationSystem
     self.cameraSystem = cameraSystem
+    self.ceremonySystem = ceremonySystem
 
     self.HUD = self.player:WaitForChild("PlayerGui"):WaitForChild("HUD")
     self.HUD.Enabled = true
@@ -677,6 +678,12 @@ function UIController:Connect()
             return
         end
 
+        if context == "Ceremony" then
+            self.Indicator.Visible = false
+        else
+            self.Indicator.Visible = true
+        end
+
         self.IndicatorContext.Text = context
 
         local min = math.floor(countDown / 60)
@@ -714,6 +721,10 @@ function UIController:Connect()
         if data == "Cancel" then
             self.animationSystem:Stop(self.class, moveType)
         end
+    end)
+
+    self.ceremonyEvent = Events.Server_Client.Ceremony.OnClientEvent:Connect(function(ceremonyType, enable, playerList)
+        self.ceremonySystem:ToggleCeremony(ceremonyType, enable, playerList)
     end)
 end
 

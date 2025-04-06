@@ -38,7 +38,7 @@ function FreeForAll:Init(playerList)
     end
 
     if QuickRounds then
-        self.roundDuration = 30
+        self.roundDuration = 15
     end
     
     self.playersInRound = {}
@@ -97,6 +97,9 @@ function FreeForAll:EndRound()
 
     local newList = SortTable(self.playersInRound)
     self:RewardPlayers(newList)
+
+    warn("FFA ceremony")
+    Events.Server_Client.Ceremony:FireAllClients("FFA", true, newList)
 end
 
 function FreeForAll:RewardPlayers(newList)

@@ -13,6 +13,8 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 local MapData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Maps"):WaitForChild("MapData"))
 
+local ServerInfo = require(ServerStorage:WaitForChild("ServerFiles"):WaitForChild("ServerInfo"))
+
 local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
 
@@ -44,7 +46,7 @@ end
 function RoundManager:Init(ServerGameManager)
     self.serverGameManager = ServerGameManager
 
-    self.belowLimit = 1
+    self.belowLimit = 0--1
 
     if TestState then
         self.belowLimit = 0
@@ -56,6 +58,9 @@ function RoundManager:Init(ServerGameManager)
     self.intermission = true
     self.inermissionTime = 15
     self.intermissionDuration = self.inermissionTime
+
+    self.ceremonyTime = 6
+    self.ceremony = false
     
     self.currentGameMode = nil
 
@@ -71,7 +76,7 @@ function RoundManager:Init(ServerGameManager)
     --map selection will be needed later on
     self.availableMaps = {
         Maps:WaitForChild("GreatSkyPlatform"),
-        --Maps:WaitForChild("ShanghaiShowdown"),
+        Maps:WaitForChild("ShanghaiShowdown"),
     }
 
     self.mapPool = table.clone(self.availableMaps)
@@ -129,7 +134,8 @@ function RoundManager:MapLoader(choice)
 end
 
 function RoundManager:SelectMap()
-    warn("selecting map...")
+    ServerInfo:SendMessage("Selecting Map...")
+
     self.MapSelected = true
 
     local choice = math.random(1, self.mapCount)
@@ -148,7 +154,7 @@ function RoundManager:SelectMap()
         self:ChangeLighting(self.Map.Name)
     end)
 
-    warn(self.Map.Name, "selected!!!")
+    ServerInfo:SendMessage(self.Map.Name.." selected.")
 end
 
 function RoundManager:CleanupMap()
@@ -361,6 +367,26 @@ function RoundManager:Update(deltaTime)
             playerHasClass += 1
         end
 
+        --count down for intermission in ceremony
+        if self.intermission and self.ceremony then
+
+            self.intermissionDuration -= self.maxTick
+
+            Events.Server_Client.CountDown:FireAllClients("Ceremony", self.intermissionDuration)
+
+            --allow players to vote for current gamemode
+
+            if self.intermissionDuration <= 0 then
+                self.intermission = false
+                self.ceremony = false
+                self.intermissionDuration = self.inermissionTime
+
+                Events.Server_Client.Ceremony:FireAllClients("RESET", false)
+            end
+
+            return
+        end
+
         --not enough players with a class
         if playerHasClass <= self.belowLimit and not self.roundStart then
             Events.Server_Client.CountDown:FireAllClients("not enough players ready", 0)
@@ -369,7 +395,9 @@ function RoundManager:Update(deltaTime)
 
         --count down for intermission
         if self.intermission then
+
             self.intermissionDuration -= self.maxTick
+
             Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
 
             --allow players to vote for current gamemode
@@ -383,7 +411,8 @@ function RoundManager:Update(deltaTime)
         end
 
         if not self.currentGameMode then
-            warn("No current gamemode selected, choose at random")
+            --ServerInfo:SendMessage("No current gamemode selected, choose at random")
+
             local sudoModeList = {}
             for gamemode, _ in pairs(GamemodesList) do
                 table.insert(sudoModeList, gamemode)
@@ -393,7 +422,8 @@ function RoundManager:Update(deltaTime)
             if not selection then
                 selection = "FreeForAll"
             end
-            warn("CurrentGameMode:", selection)
+
+            ServerInfo:SendMessage("CurrentGameMode: "..selection)
 
             self.currentGameMode = GamemodesList[selection].new()
         end
@@ -435,7 +465,7 @@ function RoundManager:Update(deltaTime)
                         self:TeleportAllPlayers()
                     end)
 
-                    --warn("Start Round!!!")
+                    ServerInfo:SendMessage("Start Match!")
                 end
             end
         elseif self.roundStart then
@@ -443,8 +473,11 @@ function RoundManager:Update(deltaTime)
 
             if self.currentGameMode.roundEnded then
                 self.roundStart = false
+                self.ceremony = true
 
                 self.currentGameMode:EndRound()
+
+                ServerInfo:SendMessage("End Match!")
 
                 self.currentGameMode = nil
 
@@ -455,11 +488,9 @@ function RoundManager:Update(deltaTime)
                 self:CleanupMap()
 
                 self.intermission = true
-                self.intermissionDuration = self.inermissionTime
+                self.intermissionDuration = self.ceremonyTime
 
                 Events.Server_Client.CountDown:FireAllClients("Intermission", self.intermissionDuration)
-
-                --warn("ROUND OVER!!!")
             end
         end
     end
