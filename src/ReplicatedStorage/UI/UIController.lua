@@ -272,7 +272,7 @@ function UIController:DisplayWinners(rewardData, rewardCount)
         end
     end
 
-    self.Winnerboard.Visible = true
+    --[==[self.Winnerboard.Visible = true
     local info =TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     TweenService:Create(self.Winnerboard, info, {GroupTransparency = 0}):Play()
 
@@ -307,7 +307,7 @@ function UIController:DisplayWinners(rewardData, rewardCount)
         task.delay(.25, function()
             self.Winnerboard.Visible = false
         end)
-    end)
+    end)]==]
 end
 
 function UIController:LockInPlace(noMovement, moveType)

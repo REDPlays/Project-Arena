@@ -137,6 +137,10 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("Secondary", Color3.fromRGB(163, 162, 165))
     Stats:SetAttribute("Energy", Color3.fromRGB(255, 255, 255))
 
+    player:SetAttribute("Primary", Color3.fromRGB(99, 95, 98))
+    player:SetAttribute("Secondary", Color3.fromRGB(163, 162, 165))
+    player:SetAttribute("Energy", Color3.fromRGB(255, 255, 255))
+
     CharacterSelectServer:GiveUI(character, Stats)
 
     --Set Stats
@@ -308,6 +312,10 @@ function CharacterSelectServer:SetStats(player, className)
     Stats:SetAttribute("Primary", PrimaryColor)
     Stats:SetAttribute("Secondary", SecondaryColor)
     Stats:SetAttribute("Energy", EnergyColor)
+
+    player:SetAttribute("Primary", PrimaryColor)
+    player:SetAttribute("Secondary", SecondaryColor)
+    player:SetAttribute("Energy", EnergyColor)
 
     SelectColor(player, "Primary", PrimaryColor, true)
     SelectColor(player, "Secondary", SecondaryColor, true)

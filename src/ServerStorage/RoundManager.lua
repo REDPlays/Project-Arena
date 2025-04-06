@@ -59,7 +59,7 @@ function RoundManager:Init(ServerGameManager)
     self.inermissionTime = 15
     self.intermissionDuration = self.inermissionTime
 
-    self.ceremonyTime = 6
+    self.ceremonyTime = 10
     self.ceremony = false
     
     self.currentGameMode = nil

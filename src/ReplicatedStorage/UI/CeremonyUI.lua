@@ -8,6 +8,8 @@ local Debris = game:GetService("Debris")
 
 local Podiums = workspace:WaitForChild("Podiums")
 
+local CeremonyHelper = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("CeremonyHelper"))
+
 local CeremonyUI = {}
 CeremonyUI.__index = CeremonyUI
 
@@ -44,6 +46,42 @@ function CeremonyUI:PodiumVisiblity(Podium: Model, isVisible)
     end
 end
 
+function CeremonyUI:CreateCharacters(playerList)
+    for place, info in pairs(playerList) do
+        local currentPodium = self.PodiumList.FFA[place]
+        if not place then
+            continue
+        end
+
+        local player: Player = Players:FindFirstChild(info[1])
+        if player then
+            local class = player:GetAttribute("CurrentClass")
+
+            local description: HumanoidDescription = Players:GetHumanoidDescriptionFromUserId(player.UserId)
+            local bodyDouble = Players:CreateHumanoidModelFromDescription(description, Enum.HumanoidRigType.R6)
+            bodyDouble.HumanoidRootPart.Anchored = true
+            bodyDouble.PrimaryPart = bodyDouble.HumanoidRootPart
+            bodyDouble.PrimaryPart.PivotOffset = CFrame.new(0, -3, 0)
+            bodyDouble:PivotTo(currentPodium:GetPivot())
+
+            if class then
+                CeremonyHelper:ApplyClass(class, bodyDouble, player)
+            end
+
+            bodyDouble.Parent = workspace.Ignore
+            CollectionService:AddTag(bodyDouble, "Ceremony")
+        end
+    end
+end
+
+function CeremonyUI:RemoveCharacters()
+    local ceremonyObjects = CollectionService:GetTagged("Ceremony")
+
+    for _, obj in pairs(ceremonyObjects) do
+        obj:Destroy()
+    end
+end
+
 function CeremonyUI:ToggleCeremony(ceremonyType, enable, playerList)
     if enable then
         for name, podium in pairs(self.PodiumList) do
@@ -53,10 +91,14 @@ function CeremonyUI:ToggleCeremony(ceremonyType, enable, playerList)
                 self:PodiumVisiblity(podium, false)
             end
         end
+
+        self:CreateCharacters(playerList)
     else
         for name, podium in pairs(self.PodiumList) do
             self:PodiumVisiblity(podium, false)
         end
+
+        self:RemoveCharacters()
     end
 
     self.cameraSystem:SetCeremony(enable)
