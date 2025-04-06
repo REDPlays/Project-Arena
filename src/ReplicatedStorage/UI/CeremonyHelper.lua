@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local CharacterModels = Assets:WaitForChild("CharacterModels")
+local Animations = Assets:WaitForChild("Animations")
+local Emotes = Animations:WaitForChild("Emotes")
 
 local CeremonyHelper = {}
 
@@ -74,6 +76,18 @@ function CeremonyHelper:ApplyClass(className, character: Model, player: Player)
     SelectColor("Primary", player:GetAttribute("Primary"))
     SelectColor("Secondary", player:GetAttribute("Secondary"))
     SelectColor("Energy", player:GetAttribute("Energy"))
+end
+
+function CeremonyHelper:Emote(character: Model, animationName)
+    animationName = animationName or "Emote1"
+
+    local Humanoid = character:FindFirstChild("Humanoid")
+    if not Humanoid then
+        return
+    end
+
+    local anim = Humanoid.Animator:LoadAnimation(Emotes[animationName])
+    anim:Play()
 end
 
 return CeremonyHelper

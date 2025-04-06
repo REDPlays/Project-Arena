@@ -30,9 +30,17 @@ function CeremonyUI:Init(player, character, animationSystem, cameraSystem)
     self.cameraSystem = cameraSystem
 
     self.FFA = Podiums:WaitForChild("FFA")
+    self.TDM = Podiums:WaitForChild("TDM")
+
+    self.HUD = self.player:WaitForChild("PlayerGui"):WaitForChild("HUD")
+    self.BlackFrame = self.HUD:WaitForChild("BlackFrame")
+    self.BlackFrame.Visible = false
+
+    self.Gameplay = self.HUD:WaitForChild("Gameplay")
 
     self.PodiumList = {
         ["FFA"] = self.FFA,
+        ["TDM"] = self.TDM,
     }
 end
 
@@ -46,18 +54,23 @@ function CeremonyUI:PodiumVisiblity(Podium: Model, isVisible)
     end
 end
 
-function CeremonyUI:CreateCharacters(playerList)
+function CeremonyUI:CreateCharacters(podiumType, playerList)
     for place, info in pairs(playerList) do
-        local currentPodium = self.PodiumList.FFA[place]
+        local currentPodium = self.PodiumList[podiumType][place]
         if not place then
             continue
         end
 
         local player: Player = Players:FindFirstChild(info[1])
         if player then
-            local class = player:GetAttribute("CurrentClass")
+            local class = player:GetAttribute("ClassDisplay")
 
-            local description: HumanoidDescription = Players:GetHumanoidDescriptionFromUserId(player.UserId)
+            local userID = player.UserId
+            if userID < 0 then
+                userID = 126372777
+            end
+
+            local description: HumanoidDescription = Players:GetHumanoidDescriptionFromUserId(userID)
             local bodyDouble = Players:CreateHumanoidModelFromDescription(description, Enum.HumanoidRigType.R6)
             bodyDouble.HumanoidRootPart.Anchored = true
             bodyDouble.PrimaryPart = bodyDouble.HumanoidRootPart
@@ -70,6 +83,8 @@ function CeremonyUI:CreateCharacters(playerList)
 
             bodyDouble.Parent = workspace.Ignore
             CollectionService:AddTag(bodyDouble, "Ceremony")
+
+            CeremonyHelper:Emote(bodyDouble, "Emote"..place)
         end
     end
 end
@@ -83,6 +98,38 @@ function CeremonyUI:RemoveCharacters()
 end
 
 function CeremonyUI:ToggleCeremony(ceremonyType, enable, playerList)
+    self.Gameplay.Visible = false
+
+    self.BlackFrame.BackgroundTransparency = 0
+    self.BlackFrame.Visible = true
+
+    local tweenTime = 0.5
+    local info = TweenInfo.new(
+        tweenTime, 
+        Enum.EasingStyle.Linear, 
+        Enum.EasingDirection.Out,
+        0,
+        false,
+        0.5
+    )
+    TweenService:Create(self.BlackFrame, info, {BackgroundTransparency = 1}):Play()
+
+    if ceremonyType == "TDM" then
+        local newList = {}
+        local count = 0
+        for _, data in pairs(playerList) do
+            count += 1
+            data[1] = data[1].Name
+            newList[count] = data
+        end
+        playerList = newList
+    end
+
+    task.delay(tweenTime, function()
+        self.BlackFrame.Visible = false
+        self.BlackFrame.BackgroundTransparency = 0
+    end)
+
     if enable then
         for name, podium in pairs(self.PodiumList) do
             if name == ceremonyType then
@@ -92,7 +139,7 @@ function CeremonyUI:ToggleCeremony(ceremonyType, enable, playerList)
             end
         end
 
-        self:CreateCharacters(playerList)
+        self:CreateCharacters(ceremonyType, playerList)
     else
         for name, podium in pairs(self.PodiumList) do
             self:PodiumVisiblity(podium, false)

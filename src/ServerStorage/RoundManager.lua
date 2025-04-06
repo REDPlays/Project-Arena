@@ -19,8 +19,8 @@ local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
 
 local GamemodesList = {
-    ["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
-    --["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
+    --["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
+    ["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
 }
 
 local RoundManager = {}
@@ -207,6 +207,7 @@ function RoundManager:TeleportAllPlayers()
     end
 
     for player, data in pairs(self.serverGameManager.characterSelect.hasClass) do
+        warn("data.character:", data.character)
         if not data.character then
             continue
         end
@@ -461,7 +462,7 @@ function RoundManager:Update(deltaTime)
 
                     Events.Server_Client.CountDown:FireAllClients(self.currentGameMode.Name, self.roundDuration)
 
-                    task.delay(0.1, function()
+                    task.delay(0.25, function()
                         self:TeleportAllPlayers()
                     end)
 

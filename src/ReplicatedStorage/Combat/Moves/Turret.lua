@@ -215,6 +215,13 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
 
                 local distance = nil
                 for _, potentialVictim in pairs(potentialList) do
+                    local myTeam = character:GetAttribute("Team")
+                    local theirTeam = potentialVictim:GetAttribute("Team")
+
+                    if (myTeam and theirTeam) and myTeam == theirTeam then
+                        continue
+                    end
+
                     local victimRoot = potentialVictim:FindFirstChild("HumanoidRootPart")
                     if not victimRoot then
                         continue

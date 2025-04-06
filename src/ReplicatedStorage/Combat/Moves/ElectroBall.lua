@@ -132,6 +132,13 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
                     continue
                 end
 
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = parent:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
+                    continue
+                end
+
                 alreadyHit1[parent.Name] = true
                 
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
@@ -198,6 +205,13 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
                 end
                 
                 if CollectionService:HasTag(parent, "Invulnerable") then
+                    continue
+                end
+
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = parent:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
                     continue
                 end
 

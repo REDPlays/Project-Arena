@@ -175,6 +175,13 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
                 return
             end
 
+            local myTeam = character:GetAttribute("Team")
+            local theirTeam = parent:GetAttribute("Team")
+
+            if (myTeam and theirTeam) and myTeam == theirTeam then
+                continue
+            end
+
             alreadyHit[parent.Name] = true
 
             enemyRoot.Anchored = true

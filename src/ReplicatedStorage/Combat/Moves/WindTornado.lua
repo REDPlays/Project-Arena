@@ -113,6 +113,13 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
                 continue
             end
 
+            local myTeam = character:GetAttribute("Team")
+            local theirTeam = parent:GetAttribute("Team")
+
+            if (myTeam and theirTeam) and myTeam == theirTeam then
+                continue
+            end
+
             alreadyHit[parent.Name] = true
             
             local isBlocking = StateManager:CheckState(parent, "Blocking")

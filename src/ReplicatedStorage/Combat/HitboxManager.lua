@@ -121,6 +121,13 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
                     return
                 end
 
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = parent:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
+                    continue
+                end
+
                 alreadyHit[parent.Name] = true
 
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
@@ -290,6 +297,13 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
                 end
         
                 if CollectionService:HasTag(parent, "Invulnerable") then
+                    continue
+                end
+
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = parent:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
                     continue
                 end
         
@@ -467,6 +481,13 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     if isBlocking then
         --Block Indication
         HealthManager:Block(target, damage, character)
+        return
+    end
+
+    local myTeam = character:GetAttribute("Team")
+    local theirTeam = target:GetAttribute("Team")
+
+    if (myTeam and theirTeam) and myTeam == theirTeam then
         return
     end
 

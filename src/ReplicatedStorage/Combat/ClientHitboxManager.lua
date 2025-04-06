@@ -126,6 +126,13 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
                 continue
             end
 
+            local myTeam = projectileData.character:GetAttribute("Team")
+            local theirTeam = parent:GetAttribute("Team")
+        
+            if (myTeam and theirTeam) and myTeam == theirTeam then
+                return
+            end
+
             target = parent
 
             --fire to server for target hit

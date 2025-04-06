@@ -270,6 +270,8 @@ local function SelectColor(player, section, Color, applyOnly)
             end
         end
     end
+
+    player:SetAttribute(section, Color)
 end
 
 function CharacterSelectServer:SetStats(player, className)
@@ -415,6 +417,7 @@ function CharacterSelectServer:SetCharacter(player, group, className)
 
         --Set Class
         player:SetAttribute("CurrentClass", className)
+        player:SetAttribute("ClassDisplay", className)
 
         --Set Stats
         CharacterSelectServer:SetStats(player, className)

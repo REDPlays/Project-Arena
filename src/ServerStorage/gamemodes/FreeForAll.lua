@@ -98,7 +98,6 @@ function FreeForAll:EndRound()
     local newList = SortTable(self.playersInRound)
     self:RewardPlayers(newList)
 
-    warn("FFA ceremony")
     Events.Server_Client.Ceremony:FireAllClients("FFA", true, newList)
 end
 

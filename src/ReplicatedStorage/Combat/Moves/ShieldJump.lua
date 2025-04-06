@@ -147,6 +147,13 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
                 if CollectionService:HasTag(parent, "Invulnerable") then
                     continue
                 end
+
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = parent:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
+                    continue
+                end
     
                 alreadyHit[parent.Name] = true
     

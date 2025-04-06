@@ -666,7 +666,7 @@ function UIController:Connect()
 
     self.teleportDisable = Events.Server_Client.teleportDisable.OnClientEvent:Connect(function()
         self.disableColor = true
-        self:ToggleColorCamera(false)
+        self:ToggleColorCamera(false, nil, true)
     end)
 
     self.countDownEvent = Events.Server_Client.CountDown.OnClientEvent:Connect(function(context, countDown)
@@ -728,7 +728,7 @@ function UIController:Connect()
     end)
 end
 
-function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
+function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart, ignoreTeleport: boolean)
     if toggle then
         if self.Gameplay.Visible == true then
             self.Gameplay.Visible = false
@@ -760,7 +760,9 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
         end
 
         self.rootPart.Anchored = true
-        self.character:PivotTo(self.ColorPad2.CFrame)
+        if not ignoreTeleport then
+            self.character:PivotTo(self.ColorPad2.CFrame)
+        end
     elseif not toggle then
         if self.Gameplay.Visible == false then
             self.Gameplay.Visible = true
@@ -794,7 +796,9 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
         end
 
         self.rootPart.Anchored = false
-        self.character:PivotTo(self.ColorPad.CFrame)
+        if not ignoreTeleport then
+            self.character:PivotTo(self.ColorPad.CFrame)
+        end
 
         task.delay(1, function()
             self.SelectingColor = false
