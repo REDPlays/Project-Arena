@@ -17,8 +17,8 @@ local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
 
 local GamemodesList = {
-    --["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
-    ["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
+    ["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
+    --["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
 }
 
 local RoundManager = {}
@@ -70,8 +70,8 @@ function RoundManager:Init(ServerGameManager)
 
     --map selection will be needed later on
     self.availableMaps = {
-        --Maps:WaitForChild("GreatSkyPlatform"),
-        Maps:WaitForChild("ShanghaiShowdown"),
+        Maps:WaitForChild("GreatSkyPlatform"),
+        --Maps:WaitForChild("ShanghaiShowdown"),
     }
 
     self.mapPool = table.clone(self.availableMaps)
@@ -435,7 +435,7 @@ function RoundManager:Update(deltaTime)
                         self:TeleportAllPlayers()
                     end)
 
-                    warn("Start Round!!!")
+                    --warn("Start Round!!!")
                 end
             end
         elseif self.roundStart then

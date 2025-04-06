@@ -34,11 +34,19 @@ function CharacterSelectServer:Init(lobby, roundManager, playerManager)
 end
 
 function CharacterSelectServer:Setup()
+    local notAvailable = {
+        ["Shinobi"] = true,
+    }
+
     CharacterSelectServer.ClassList = {}
     for _, group in pairs(CharacterSelectServer.Classes:GetChildren()) do
         CharacterSelectServer.ClassList[group.Name] = {}
 
         for _, class in pairs(group:GetChildren()) do
+            if notAvailable[class.Name] then
+                continue
+            end
+
             CharacterSelectServer.ClassList[group.Name][class.Name] = class
             class:SetAttribute("ClassID", class.Name)
 

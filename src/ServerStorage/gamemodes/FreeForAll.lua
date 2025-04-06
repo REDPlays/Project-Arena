@@ -5,6 +5,7 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
+local QuickRounds = workspace:GetAttribute("QuickRounds")
 
 local FreeForAll = {}
 FreeForAll.__index = FreeForAll
@@ -34,6 +35,10 @@ function FreeForAll:Init(playerList)
 
     if TestState then
         self.roundDuration = 60*100
+    end
+
+    if QuickRounds then
+        self.roundDuration = 30
     end
     
     self.playersInRound = {}

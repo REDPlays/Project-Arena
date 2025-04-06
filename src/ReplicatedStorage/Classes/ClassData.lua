@@ -612,4 +612,99 @@ ClassData["Ranger"] = {
     },
 }
 
+ClassData["Shinobi"] = {
+    ignoreLMBMoveCD = false,
+    Health = 100,
+    Defense = 100,
+    Speed = 30,
+    Role = "Assassin",
+    Cost = 400,
+    Description = "Master of the Shadow Arts",
+    DamageList = {
+        ["LMBMove"] = {4, 4, 4},
+        ["QMove"] = 15,
+        ["EMove"] = 1,
+        ["FMove"] = 25,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .5,
+        ["QMove"] = 10,
+        ["EMove"] = 7,
+        ["FMove"] = 15,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(8, 6, 6),
+            Offset = CFrame.new(0, 4, -4),
+        },
+        ["QMove"] = {
+            Size = Vector3.new(6, 6, 6),
+            Offset = CFrame.new(0, 3, -6),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(12, 8, 12),
+            Offset = CFrame.new(0, 4, -6),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(10, 15, 10),
+            Offset = CFrame.new(0, 7.5, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            ignoreLMBMoveCD = false,
+            Silenced = false,
+        },
+        ["QMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+        ["EMove"] = {
+            hasEvent = false,
+            noMovement = true,
+            Stunned = false,
+            Burn = false,
+            Slow = true,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+        ["FMove"] = {
+            hasEvent = true,
+            noMovement = false,
+            Stunned = false,
+            Burn = false,
+            Slow = true,
+            CameraLock = false,
+            Knockup = true,
+            Silenced = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "SamuraiM1",
+        ["QMove"] = "ShadowStep",
+        ["EMove"] = "RapidSlashes",
+        ["FMove"] = "WindTornado",
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Shadow Step",
+        ["EMove"] = "Rapid Slashes",
+        ["FMove"] = "Wind Tornado",
+    },
+}
+
 return ClassData

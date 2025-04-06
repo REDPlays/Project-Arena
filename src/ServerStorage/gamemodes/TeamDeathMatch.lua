@@ -5,6 +5,7 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
+local QuickRounds = workspace:GetAttribute("QuickRounds")
 
 local TeamDeathMatch = {}
 TeamDeathMatch.__index = TeamDeathMatch
@@ -19,11 +20,15 @@ function TeamDeathMatch.new()
 end
 
 function TeamDeathMatch:Init(playerList)
-    self.roundMaxDuration = 30 --60 * 4
+    self.roundMaxDuration = 60 * 4
     self.roundDuration = self.roundMaxDuration
 
     if TestState then
         self.roundDuration = 60*100
+    end
+
+    if QuickRounds then
+        self.roundDuration = 30
     end
     
     self.playersInRound = {}

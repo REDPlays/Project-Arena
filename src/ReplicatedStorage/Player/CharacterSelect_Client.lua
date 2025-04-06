@@ -17,6 +17,10 @@ function CharacterSelectClient:Init(character, lobby, uiController, animationSys
 end
 
 function CharacterSelectClient:Setup()
+    local notAvailable = {
+        ["Shinobi"] = true,
+    }
+
     CharacterSelectClient.ClassList = {}
     CharacterSelectClient.Bounds = {}
 
@@ -24,6 +28,10 @@ function CharacterSelectClient:Setup()
         CharacterSelectClient.ClassList[group.Name] = {}
 
         for _, class in pairs(group:GetChildren()) do
+            if notAvailable[class.Name] then
+                continue
+            end
+            
             CharacterSelectClient.ClassList[group.Name][class.Name] = class
 
             local bounds:BasePart = class:WaitForChild("Bounds")
