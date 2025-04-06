@@ -3,6 +3,7 @@ local UserInputService = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
+local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
@@ -75,6 +76,7 @@ function UIController:Init(player, character, animationSystem, cameraSystem)
     self.ColorUI.Enabled = false
     self.colorSystem = ColorSelectionSystem.new(self.ColorUI, self, self.player)
 
+    self.disableColor = false
     self.SelectingColor = false
 
     self.placementUI = {
@@ -324,7 +326,63 @@ function UIController:LockInPlace(noMovement, moveType)
     end
 end
 
+function UIController:ShowInputButtons(inputType: string)
+    local keyboardUI = CollectionService:GetTagged("PC")
+    local controllerUI = CollectionService:GetTagged("Controller")
+
+    if inputType == "Keyboard" then
+        for _, obj in pairs(keyboardUI) do
+            obj.Visible = true
+        end
+
+        for _, obj in pairs(controllerUI) do
+            obj.Visible = false
+        end
+    elseif inputType == "Controller" then
+        for _, obj in pairs(keyboardUI) do
+            obj.Visible = false
+        end
+
+        for _, obj in pairs(controllerUI) do
+            obj.Visible = true
+        end
+    elseif inputType == "Mobile" then
+        for _, obj in pairs(keyboardUI) do
+            obj.Visible = false
+        end
+
+        for _, obj in pairs(controllerUI) do
+            obj.Visible = false
+        end
+    end
+end
+
+local keyboardOptions = {
+    [Enum.UserInputType.Keyboard] = true,
+    [Enum.UserInputType.MouseMovement] = true,
+}
+
+local controllerOptions = {
+    [Enum.UserInputType.Gamepad1] = true,
+    [Enum.KeyCode.Thumbstick1] = true,
+    [Enum.KeyCode.Thumbstick2] = true,
+}
+
+local mobileOptions = {
+    [Enum.UserInputType.Touch] = true,
+}
+
 function UIController:Connect()
+    self.inputChange = UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
+        if keyboardOptions[input.UserInputType] then
+            self:ShowInputButtons("Keyboard")
+        elseif controllerOptions[input.UserInputType] or controllerOptions[input.KeyCode] then
+            self:ShowInputButtons("Controller")
+        elseif mobileOptions[input.UserInputType] then
+            self:ShowInputButtons("Mobile")
+        end
+    end)
+
     self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         if self.SelectingColor then
             return
@@ -350,7 +408,7 @@ function UIController:Connect()
             return
         end
 
-        if input.KeyCode == Enum.KeyCode.C then
+        if input.KeyCode == Enum.KeyCode.C or input.KeyCode == Enum.KeyCode.ButtonL1 then
             if self.debounces.Block then
                 return
             end
@@ -370,7 +428,7 @@ function UIController:Connect()
             end
         end
 
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.KeyCode == Enum.KeyCode.ButtonR1 then
             if self.debounces.LMBMove then
                 return
             end
@@ -432,7 +490,7 @@ function UIController:Connect()
             end
         end
 
-        if input.KeyCode == Enum.KeyCode.Q then
+        if input.KeyCode == Enum.KeyCode.Q or input.KeyCode == Enum.KeyCode.ButtonX then
             if self.debounces.QMove then
                 return
             end
@@ -474,7 +532,7 @@ function UIController:Connect()
             end
         end
 
-        if input.KeyCode == Enum.KeyCode.E then
+        if input.KeyCode == Enum.KeyCode.E or input.KeyCode == Enum.KeyCode.ButtonY then
             if self.debounces.EMove then
                 return
             end
@@ -516,7 +574,7 @@ function UIController:Connect()
             end
         end
 
-        if input.KeyCode == Enum.KeyCode.F then
+        if input.KeyCode == Enum.KeyCode.F or input.KeyCode == Enum.KeyCode.ButtonB then
             if self.debounces.FMove then
                 return
             end
@@ -568,7 +626,7 @@ function UIController:Connect()
             return
         end
 
-        if input.KeyCode == Enum.KeyCode.C then
+        if input.KeyCode == Enum.KeyCode.C or input.KeyCode == Enum.KeyCode.ButtonL1 then
             if not self.debounces.Block then
                 return
             end
@@ -603,6 +661,11 @@ function UIController:Connect()
         if moveType == "FMove" then
             self.debounces.FMove = false
         end
+    end)
+
+    self.teleportDisable = Events.Server_Client.teleportDisable.OnClientEvent:Connect(function()
+        self.disableColor = true
+        self:ToggleColorCamera(false)
     end)
 
     self.countDownEvent = Events.Server_Client.CountDown.OnClientEvent:Connect(function(context, countDown)
@@ -731,6 +794,10 @@ function UIController:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
 end
 
 function UIController:InColorBound()
+    if self.disableColor then
+        return
+    end
+
     local overlap = OverlapParams.new()
     overlap.FilterDescendantsInstances = {self.character}
     overlap.FilterType = Enum.RaycastFilterType.Include
@@ -798,6 +865,11 @@ function UIController:Disconnect()
         self.defenseDisplay = nil
     end
 
+    if self.inputChange then
+        self.inputChange:Disconnect()
+        self.inputChange = nil
+    end
+
     if self.input then
         self.input:Disconnect()
         self.input = nil
@@ -816,6 +888,11 @@ function UIController:Disconnect()
     if self.countDownEvent then
         self.countDownEvent:Disconnect()
         self.countDownEvent = nil
+    end
+
+    if self.teleportDisable then
+        self.teleportDisable:Disconnect()
+        self.teleportDisable = nil
     end
 
     if self.rewardsEvent then

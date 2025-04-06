@@ -68,7 +68,7 @@ end
 function CameraManager:Connections()
     CameraManager.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         if not gameProcessedEvent then
-            if input.KeyCode == Enum.KeyCode.LeftControl then
+            if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.ButtonR3 then
                 if self.lockCamera then
                     return
                 end

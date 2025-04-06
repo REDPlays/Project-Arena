@@ -402,7 +402,7 @@ function RoundManager:Update(deltaTime)
             if not self.startCountDown then
                 self.startCountDown = true
                 
-                self.countDown = 15
+                self.countDown = 25
 
                 --map selection
                 if not self.MapSelected then
@@ -427,11 +427,15 @@ function RoundManager:Update(deltaTime)
 
                     self:ConfigurePickups(self.Map.HealthPads)
 
+                    Events.Server_Client.teleportDisable:FireAllClients()
+
                     Events.Server_Client.CountDown:FireAllClients(self.currentGameMode.Name, self.roundDuration)
 
-                    self:TeleportAllPlayers()
+                    task.delay(0.1, function()
+                        self:TeleportAllPlayers()
+                    end)
 
-                    --warn("Start Round!!!")
+                    warn("Start Round!!!")
                 end
             end
         elseif self.roundStart then

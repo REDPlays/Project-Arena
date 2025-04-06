@@ -37,6 +37,7 @@ Events.Server_Client = {
     AnimationSystem = Server_Client:WaitForChild("AnimationSystem"),
     ScoreCount = Server_Client:WaitForChild("ScoreCount"),
     ToggleUI = Server_Client:WaitForChild("ToggleUI"),
+    teleportDisable = Server_Client:WaitForChild("teleportDisable"),
 }
 
 Events.Server_Server = {

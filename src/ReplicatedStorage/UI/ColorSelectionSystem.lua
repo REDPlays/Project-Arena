@@ -108,20 +108,39 @@ function ColorSelectionSystem:Init()
             button.Size = UDim2.new(xSize * 2, 0, ySize * 1.25, 0)
         end
     end
-
-    --Setting Buttons
-    if UserInputService.GamepadEnabled then
-        self.SectionPrev.Text = "LB"
-        self.SectionNext.Text = "RB"
-        self.EscapeUI.Label.Text = "B"
-    else
-        self.SectionPrev.Text = "<"
-        self.SectionNext.Text = ">"
-        self.EscapeUI.Label.Text = "X"
-    end
-
+    
+    self:InputDetection()
     self:Connections()
     self:SetupPresets()
+end
+
+function ColorSelectionSystem:InputDetection()
+    local keyboardOptions = {
+        [Enum.UserInputType.Keyboard] = true,
+        [Enum.UserInputType.MouseMovement] = true,
+    }
+    
+    local controllerOptions = {
+        [Enum.UserInputType.Gamepad1] = true,
+        [Enum.KeyCode.Thumbstick1] = true,
+        [Enum.KeyCode.Thumbstick2] = true,
+    }
+    
+    local mobileOptions = {
+        [Enum.UserInputType.Touch] = true,
+    }
+
+    UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
+        if keyboardOptions[input.UserInputType] or mobileOptions[input.UserInputType] then
+            self.SectionPrev.Text = "<"
+            self.SectionNext.Text = ">"
+            self.EscapeUI.Label.Text = "X"
+        elseif controllerOptions[input.UserInputType] or controllerOptions[input.KeyCode] then
+            self.SectionPrev.Text = "LB"
+            self.SectionNext.Text = "RB"
+            self.EscapeUI.Label.Text = "B"
+        end
+    end)
 end
 
 function ColorSelectionSystem:Connections()
@@ -169,15 +188,20 @@ function ColorSelectionSystem:Connections()
         Section("Previous", Enum.UserInputState.Begin)
     end)
 
-    ContextAction:BindAction("Previous", Section, false, Enum.KeyCode.ButtonL1)
-    ContextAction:BindAction("Next", Section, false, Enum.KeyCode.ButtonR1)
-
     --Exit Button
     self.ExitBtn = self.EscapeUI.Activated:Connect(function()
         Exit("Exit", Enum.UserInputState.Begin)
     end)
 
-    ContextAction:BindAction("Exit", Exit, false, Enum.KeyCode.ButtonB)
+    UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+        if input.KeyCode == Enum.KeyCode.ButtonB then
+            Exit("Exit", Enum.UserInputState.Begin)
+        elseif input.KeyCode == Enum.KeyCode.ButtonL1 then
+            Section("Previous", Enum.UserInputState.Begin)
+        elseif input.KeyCode == Enum.KeyCode.ButtonR1 then
+            Section("Next", Enum.UserInputState.Begin)
+        end
+    end)
 
     --RGB Buttons
     self.rgbConnects = {}
