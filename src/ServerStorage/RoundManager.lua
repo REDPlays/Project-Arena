@@ -19,7 +19,7 @@ local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
 
 local GamemodesList = {
-    --["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
+    ["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
     ["TeamDeathMatch"] = require(ServerStorage.ServerFiles.gamemodes.TeamDeathMatch),
 }
 
