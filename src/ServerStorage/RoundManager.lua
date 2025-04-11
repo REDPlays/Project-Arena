@@ -46,7 +46,7 @@ end
 function RoundManager:Init(ServerGameManager)
     self.serverGameManager = ServerGameManager
 
-    self.belowLimit = 0--1
+    self.belowLimit = 1
 
     if TestState then
         self.belowLimit = 0

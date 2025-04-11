@@ -140,6 +140,8 @@ function TeamDeathMatch:SetVisual(character: Model, team)
 end
 
 function TeamDeathMatch:AddKill(player)
+    --warn("Add Kill for:", player)
+    --print(debug.traceback())
     if self.roundEnded then
         --can't earn kills when round is over
         return

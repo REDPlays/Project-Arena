@@ -455,10 +455,6 @@ function UIController:Connect()
                 if self.LMBs >= 3 and not currentClassData.MoveData.LMBMove.ignoreLMBMoveCD then
                     cooldownDuration = 1
                 end
-
-                if workspace:GetAttribute("NoCooldowns") then
-                    cooldownDuration = 1
-                end
                 
                 self:toggleUICountdown("LMBMove", cooldownDuration)
 
