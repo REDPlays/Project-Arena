@@ -48,8 +48,6 @@ function ShurikenThrow:Activate(player, character, rootPart, placementCFrame, cl
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
 
-    local VFX_ID = HttpService:GenerateGUID(false)
-
     VisualEffectServer:SpawnEffectsInRange(
         "ShurikenThrow",
         nil,

@@ -58,10 +58,27 @@ function Retreat:Activate(player, character, rootPart, placementCFrame, class, c
 
         character:SetAttribute("DoubleCooldown", moveType)
         character:SetAttribute("teleportCFrame", floorCFrame)
+
+        VisualEffectServer:SpawnEffectsInRange(
+            "Retreat",
+            nil,
+            character,
+            {floorCFrame = floorCFrame},
+            1000,
+            "Retreat_"..character.Name
+        )
     else
         character:PivotTo(teleportCFrame)
         character:SetAttribute("teleportCFrame", nil)
         character:SetAttribute("DoubleCooldown", nil)
+
+        VisualEffectServer:TerminateVFX(
+            "Retreat",
+            nil,
+            character,
+            {},
+            "Retreat_"..character.Name
+        )
     end
 end
 
