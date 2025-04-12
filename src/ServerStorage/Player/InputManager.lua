@@ -74,10 +74,6 @@ function InputManager:RunInput(player, class, moveType, moveCount)
             cooldown = 1
         end
 
-        if workspace:GetAttribute("NoCooldowns") then
-            cooldown = 1
-        end
-
         task.delay(cooldown, function()
             if InputManager.ServerLMBDebounces[player.UserId] then
                 InputManager.ServerLMBDebounces[player.UserId] = nil

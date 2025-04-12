@@ -112,4 +112,21 @@ AnimationData["Ranger"] = {
     Run = Animations:WaitForChild("Ranger"):WaitForChild("Run"),
 }
 
+AnimationData["Shinobi"] = {
+    LMBMove = {
+        Animations:WaitForChild("Shinobi"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Shinobi"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Shinobi"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("Shinobi"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("Shinobi"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Shinobi"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("Shinobi"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("Shinobi"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Shinobi"):WaitForChild("Run"),
+}
+
 return AnimationData

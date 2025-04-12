@@ -18,7 +18,7 @@ end
 
 function CharacterSelectClient:Setup()
     local notAvailable = {
-        ["Shinobi"] = true,
+        --["Shinobi"] = true,
     }
 
     CharacterSelectClient.ClassList = {}

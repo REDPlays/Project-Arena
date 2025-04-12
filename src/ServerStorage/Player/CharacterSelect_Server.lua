@@ -35,7 +35,7 @@ end
 
 function CharacterSelectServer:Setup()
     local notAvailable = {
-        ["Shinobi"] = true,
+        --["Shinobi"] = true,
     }
 
     CharacterSelectServer.ClassList = {}

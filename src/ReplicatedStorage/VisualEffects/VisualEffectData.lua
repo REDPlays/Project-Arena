@@ -17,12 +17,10 @@ VisualEffectData["ShieldSlam"] = require(Visuals:WaitForChild("ShieldWarrior"):W
 VisualEffectData["ShieldJump"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ShieldJumpVFX"))
 VisualEffectData["Colosseum"] = require(Visuals:WaitForChild("ShieldWarrior"):WaitForChild("ColosseumVFX"))
 
-
 VisualEffectData["SamuraiM1"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("SamuraiM1"))
 VisualEffectData["ShadowStep"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("ShadowStepVFX"))
 VisualEffectData["RapidSlashes"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("RapidSlashesVFX"))
 VisualEffectData["WindTornado"] = require(Visuals:WaitForChild("Samurai"):WaitForChild("WindTornadoVFX"))
-
 
 VisualEffectData["EngineerM1"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("EngineerM1"))
 VisualEffectData["Turret"] = require(Visuals:WaitForChild("Engineer"):WaitForChild("TurretShot"))
@@ -34,6 +32,9 @@ VisualEffectData["RangerM1"] = require(Visuals:WaitForChild("Ranger"):WaitForChi
 VisualEffectData["PiercingArrow"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("PiercingArrowVFX"))
 VisualEffectData["NetTrap"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("NetTrapVFX"))
 VisualEffectData["ExplosiveArrow"] = require(Visuals:WaitForChild("Ranger"):WaitForChild("ExplosiveArrowVFX"))
+
+VisualEffectData["ShinobiM1"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("ShinobiM1"))
+VisualEffectData["QuickDash"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("QuickDashVFX"))
 
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))

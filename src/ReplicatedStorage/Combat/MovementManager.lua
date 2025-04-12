@@ -20,6 +20,15 @@ local function quadratic(t, p0, p1, p2)
 	return (1 - t) ^ 2 * p0 + 2 * (1 - t) * t * p1 + t ^ 2 * p2
 end
 
+function MovementManager:Assembly(character, assemblyData)
+    local rootPart: BasePart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    rootPart.AssemblyLinearVelocity = assemblyData.force
+end
+
 function MovementManager:Dash(character, dashData)
     if MovementManager.dashList[character] then
         return
@@ -243,6 +252,10 @@ local function movement(character, moveData, cancel)
     if cancel then
         MovementManager:Cleanup(character)
         return
+    end
+
+    if moveData.isAssembly then
+        MovementManager:Assembly(character, moveData)
     end
 
     if moveData.isDash then
