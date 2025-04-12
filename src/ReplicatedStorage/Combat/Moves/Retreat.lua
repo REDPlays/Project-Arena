@@ -56,10 +56,12 @@ function Retreat:Activate(player, character, rootPart, placementCFrame, class, c
             floorCFrame = CFrame.new(ray.Position, ray.Position + rootPart.CFrame.LookVector)
         end
 
+        character:SetAttribute("DoubleCooldown", moveType)
         character:SetAttribute("teleportCFrame", floorCFrame)
     else
         character:PivotTo(teleportCFrame)
         character:SetAttribute("teleportCFrame", nil)
+        character:SetAttribute("DoubleCooldown", nil)
     end
 end
 

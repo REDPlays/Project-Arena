@@ -628,9 +628,9 @@ ClassData["Shinobi"] = {
     },
     Cooldowns = {
         ["LMBMove"] = .4,
-        ["QMove"] = 15,
-        ["EMove"] = 25,
-        ["FMove"] = 15,
+        ["QMove"] = 10,
+        ["EMove"] = 15,
+        ["FMove"] = {0.25, 15},
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -683,7 +683,7 @@ ClassData["Shinobi"] = {
             Silenced = false,
         },
         ["FMove"] = {
-            hasEvent = true,
+            hasEvent = false,
             noMovement = false,
             Stunned = false,
             Burn = false,
@@ -691,6 +691,7 @@ ClassData["Shinobi"] = {
             CameraLock = false,
             Knockup = true,
             Silenced = false,
+            DoubleCooldown = true,
         },
     },
     VisualEffects = {

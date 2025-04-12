@@ -91,6 +91,13 @@ function InputManager:RunInput(player, class, moveType, moveCount)
         InputManager.ServerQDebounces[player.UserId] = true
 
         local cooldown = currentClassData.Cooldowns.QMove
+        if currentClassData.MoveData[moveType].DoubleCooldown then
+            if character:GetAttribute("DoubleCooldown") == moveType then
+                cooldown = cooldown[2]
+            else
+                cooldown = cooldown[1]
+            end
+        end
 
         if workspace:GetAttribute("NoCooldowns") then
             cooldown = 1
@@ -113,6 +120,13 @@ function InputManager:RunInput(player, class, moveType, moveCount)
         InputManager.ServerEDebounces[player.UserId] = true
 
         local cooldown = currentClassData.Cooldowns.EMove
+        if currentClassData.MoveData[moveType].DoubleCooldown then
+            if character:GetAttribute("DoubleCooldown") == moveType then
+                cooldown = cooldown[2]
+            else
+                cooldown = cooldown[1]
+            end
+        end
 
         if workspace:GetAttribute("NoCooldowns") then
             cooldown = 1
@@ -135,6 +149,13 @@ function InputManager:RunInput(player, class, moveType, moveCount)
         InputManager.ServerFDebounces[player.UserId] = true
 
         local cooldown = currentClassData.Cooldowns.FMove
+        if currentClassData.MoveData[moveType].DoubleCooldown then
+            if character:GetAttribute("DoubleCooldown") == moveType then
+                cooldown = cooldown[2]
+            else
+                cooldown = cooldown[1]
+            end
+        end
 
         if workspace:GetAttribute("NoCooldowns") then
             cooldown = 1

@@ -200,7 +200,7 @@ function QuickDash:Activate(player, character, rootPart, placementCFrame, class,
 
     local dashData = {
         duration = duration,
-        speed = 150,
+        speed = 125,
         isDash = true,
         allowPass = false,
     }

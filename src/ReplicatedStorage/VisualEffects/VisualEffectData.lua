@@ -35,6 +35,7 @@ VisualEffectData["ExplosiveArrow"] = require(Visuals:WaitForChild("Ranger"):Wait
 
 VisualEffectData["ShinobiM1"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("ShinobiM1"))
 VisualEffectData["QuickDash"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("QuickDashVFX"))
+VisualEffectData["ShurikenThrow"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("ShurikenThrowVFX"))
 
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))

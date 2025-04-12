@@ -59,8 +59,7 @@ function ShurikenThrow:Activate(player, character, rootPart, placementCFrame, cl
             endCFrame = Hitbox.CFrame * CFrame.new(0, -Hitbox.Size.Y/2, 0),
             Size = Hitbox.Size,
         },
-        1000,
-        VFX_ID
+        1000
     )
 
     local alreadyHit = {}

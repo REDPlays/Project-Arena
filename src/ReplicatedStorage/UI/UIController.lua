@@ -498,6 +498,14 @@ function UIController:Connect()
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["QMove"]
+                if currentClassData.MoveData["QMove"].DoubleCooldown then
+                    if self.character:GetAttribute("DoubleCooldown") == "QMove" then
+                        cooldownDuration = cooldownDuration[2]
+                    else
+                        cooldownDuration = cooldownDuration[1]
+                    end
+                end
+
                 if workspace:GetAttribute("NoCooldowns") then
                     cooldownDuration = 1
                 end
@@ -540,6 +548,14 @@ function UIController:Connect()
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["EMove"]
+                if currentClassData.MoveData["EMove"].DoubleCooldown then
+                    if self.character:GetAttribute("DoubleCooldown") == "EMove" then
+                        cooldownDuration = cooldownDuration[2]
+                    else
+                        cooldownDuration = cooldownDuration[1]
+                    end
+                end
+
                 if workspace:GetAttribute("NoCooldowns") then
                     cooldownDuration = 1
                 end
@@ -578,10 +594,19 @@ function UIController:Connect()
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "FMove")
             if canAttack then
+
                 self.debounces.FMove = true
                 local currentClassData = ClassData[self.class]
                 
                 local cooldownDuration = currentClassData.Cooldowns["FMove"]
+                if currentClassData.MoveData["FMove"].DoubleCooldown then
+                    if self.character:GetAttribute("DoubleCooldown") == "FMove" then
+                        cooldownDuration = cooldownDuration[2]
+                    else
+                        cooldownDuration = cooldownDuration[1]
+                    end
+                end
+
                 if workspace:GetAttribute("NoCooldowns") then
                     cooldownDuration = 1
                 end
