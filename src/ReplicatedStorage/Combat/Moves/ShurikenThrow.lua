@@ -160,16 +160,6 @@ function ShurikenThrow:Activate(player, character, rootPart, placementCFrame, cl
                 StateManager:AddTarget(parent, "Attacked", 1)
     
                 HealthManager:Damage(parent, damage, character)
-
-                VisualEffectServer:SpawnEffectsInRange(
-                    "ShurikenThrow",
-                    parent,
-                    character,
-                    {isHit = true},
-                    1000,
-                    VFX_ID,
-                    true
-                )
             end
             
             task.wait()

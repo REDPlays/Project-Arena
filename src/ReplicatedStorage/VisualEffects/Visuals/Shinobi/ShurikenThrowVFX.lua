@@ -80,6 +80,14 @@ function ShurikenThrow:Throw(startCFrame, endCFrame, size)
         shuriken.CFrame = newCFrame
         shuriken.Parent = self.Folder
 
+        if i==1 then
+            self.sfx1 = Sounds.Shinobi.Shuriken:Clone()
+            self.sfx1.Volume = .5
+            self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+            self.sfx1.Parent = shuriken
+            self.sfx1:Play()
+        end
+
         local info = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
         TweenService:Create(shuriken, info, {Position = newEnd.Position}):Play()
 

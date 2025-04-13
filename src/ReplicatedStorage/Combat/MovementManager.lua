@@ -43,10 +43,15 @@ function MovementManager:Dash(character, dashData)
         rootPart.CFrame = dashData.facingCFrame
    end
 
+   local Transparency = 1
+   if ShowHitboxes then
+    Transparency = 0.5
+   end
+
     local detector = Hitboxes.Hitbox:Clone()
     detector.Size = Vector3.new(5, 5, 5)
     detector.Color = Color3.fromRGB(82, 180, 173)
-    detector.Transparency = .5
+    detector.Transparency = Transparency
     detector.Anchored = true
     detector.CFrame = character.HumanoidRootPart.CFrame
     detector.Parent = workspace.Ignore
