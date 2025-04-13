@@ -29,6 +29,13 @@ function CharacterSelectServer:Init(lobby, roundManager, playerManager)
     CharacterSelectServer.Teleporter = workspace.Teleporter
     CharacterSelectServer.Bound = workspace.Bound
     CharacterSelectServer.LobbyTeleporter = workspace.LobbyTeleporter.Door
+    CharacterSelectServer.TrainingTeleporter = workspace.TrainingTeleporter.Door
+
+    CharacterSelectServer.TrainingRoom = workspace.TrainingRoom
+    CharacterSelectServer.TrainingSpawn = CharacterSelectServer.TrainingRoom.Spawner
+
+    CharacterSelectServer.WaitingRoomTeleporter = workspace.WaitingRoomTeleporter
+    CharacterSelectServer.WaitingDoor = CharacterSelectServer.WaitingRoomTeleporter.Door
 
     CharacterSelectServer:Setup()
 end
@@ -485,6 +492,16 @@ function CharacterSelectServer:ResetCharacter(character)
     end
 end
 
+function CharacterSelectServer:SendToTraining(character)
+    character:PivotTo(CharacterSelectServer.TrainingSpawn.CFrame * CFrame.new(0, 1, 0))
+end
+
+function CharacterSelectServer:SendToWaiting(character)
+    
+
+    character:PivotTo(CharacterSelectServer.Teleporter.CFrame * CFrame.new(0, 1, 0))
+end
+
 function CharacterSelectServer:UpdateStatues()
     for _, player in pairs(Players:GetChildren()) do
         local playerData = CharacterSelectServer.playerManager:GetData(player)
@@ -603,9 +620,107 @@ function CharacterSelectServer:TeleportToLobby()
     end
 end
 
+function CharacterSelectServer:TeleportToTraining()
+    local overlap = OverlapParams.new()
+    overlap.FilterType = Enum.RaycastFilterType.Include
+
+    local listOfChars = {}
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        local _chr = plr.Character
+        if _chr then
+            table.insert(listOfChars, _chr)
+        end
+    end
+
+    overlap.FilterDescendantsInstances = {listOfChars}
+
+    local partList = workspace:GetPartsInPart(CharacterSelectServer.TrainingTeleporter, overlap)
+
+    for _, object in pairs(partList) do
+        if object:IsA("BasePart") then
+            local objectParent = object:FindFirstAncestorOfClass("Model")
+            if not objectParent then
+                continue
+            end
+
+            local humanoid = objectParent:FindFirstChild("Humanoid")
+            if not humanoid then
+                continue
+            end
+
+            local rootPart = objectParent:FindFirstChild("HumanoidRootPart")
+            if not rootPart then
+                continue
+            end
+
+            if CharacterSelectServer.resetTeleport[objectParent] then
+                continue
+            end
+
+            CharacterSelectServer.resetTeleport[objectParent] = true
+
+            CharacterSelectServer:SendToTraining(objectParent)
+
+            task.delay(1, function()
+                CharacterSelectServer.resetTeleport[objectParent] = nil
+            end)
+        end
+    end
+end
+
+function CharacterSelectServer:TeleportToWaiting()
+    local overlap = OverlapParams.new()
+    overlap.FilterType = Enum.RaycastFilterType.Include
+
+    local listOfChars = {}
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        local _chr = plr.Character
+        if _chr then
+            table.insert(listOfChars, _chr)
+        end
+    end
+
+    overlap.FilterDescendantsInstances = {listOfChars}
+
+    local partList = workspace:GetPartsInPart(CharacterSelectServer.WaitingDoor, overlap)
+
+    for _, object in pairs(partList) do
+        if object:IsA("BasePart") then
+            local objectParent = object:FindFirstAncestorOfClass("Model")
+            if not objectParent then
+                continue
+            end
+
+            local humanoid = objectParent:FindFirstChild("Humanoid")
+            if not humanoid then
+                continue
+            end
+
+            local rootPart = objectParent:FindFirstChild("HumanoidRootPart")
+            if not rootPart then
+                continue
+            end
+
+            if CharacterSelectServer.resetTeleport[objectParent] then
+                continue
+            end
+
+            CharacterSelectServer.resetTeleport[objectParent] = true
+
+            CharacterSelectServer:SendToWaiting(objectParent)
+
+            task.delay(1, function()
+                CharacterSelectServer.resetTeleport[objectParent] = nil
+            end)
+        end
+    end
+end
+
 function CharacterSelectServer:Update(deltaTime)
     CharacterSelectServer:TeleportFromBounds()
     CharacterSelectServer:TeleportToLobby()
+    CharacterSelectServer:TeleportToTraining()
+    CharacterSelectServer:TeleportToWaiting()
 
     tick += deltaTime
 
