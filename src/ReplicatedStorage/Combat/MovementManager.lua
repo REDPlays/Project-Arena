@@ -15,6 +15,7 @@ local MovementManager = {}
 MovementManager.dashList = {}
 MovementManager.bezierList = {}
 MovementManager.knockupList = {}
+MovementManager.assemblyList = {}
 
 local function quadratic(t, p0, p1, p2)
 	return (1 - t) ^ 2 * p0 + 2 * (1 - t) * t * p1 + t ^ 2 * p2
@@ -27,6 +28,24 @@ function MovementManager:Assembly(character, assemblyData)
     end
 
     rootPart.AssemblyLinearVelocity = assemblyData.force
+end
+
+function MovementManager:AssemblyDuration(character, assemblyData)
+    local rootPart: BasePart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    if MovementManager.assemblyList[character] then
+        return
+    end
+
+    MovementManager.assemblyList[character] = {
+        force = assemblyData.force,
+        duration = assemblyData.duration,
+        currTime = 0,
+        character = character,
+    }
 end
 
 function MovementManager:Dash(character, dashData)
@@ -218,6 +237,13 @@ function MovementManager:CleanupKnockup(character)
     end
 end
 
+function MovementManager:CleanAssembly(character)
+    local assemblyData = MovementManager.assemblyList[character]
+    if assemblyData then
+        MovementManager.assemblyList[character] = nil
+    end
+end
+
 function MovementManager:GetDetection(detector: BasePart, character, allowPass)
     local playerList = {}
     for _, plr in pairs(game.Players:GetChildren()) do
@@ -261,6 +287,10 @@ local function movement(character, moveData, cancel)
 
     if moveData.isAssembly then
         MovementManager:Assembly(character, moveData)
+    end
+
+    if moveData.isAssemblyDuration then
+        MovementManager:AssemblyDuration(character, moveData)
     end
 
     if moveData.isDash then
@@ -354,6 +384,34 @@ RunService.Heartbeat:Connect(function(deltaTime)
         end
 
         knockupData.currTime += deltaTime
+    end
+
+    for id, assemblyData in pairs(MovementManager.assemblyList) do
+        local humanoid = assemblyData.character:FindFirstChild("Humanoid")
+        if not humanoid then
+            MovementManager:CleanAssembly(assemblyData.character)
+            continue
+        end
+
+        local rootPart = assemblyData.character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then
+            MovementManager:CleanAssembly(assemblyData.character)
+            continue
+        end
+
+        if assemblyData.currTime >= assemblyData.duration then
+            MovementManager:CleanAssembly(assemblyData.character)
+            continue
+        end
+
+        if humanoid and humanoid.Health <= 0 then
+            MovementManager:CleanAssembly(assemblyData.character)
+            continue
+        end
+
+        assemblyData.currTime += deltaTime
+
+        rootPart.AssemblyLinearVelocity = rootPart.CFrame.LookVector * assemblyData.force
     end
 end)
 

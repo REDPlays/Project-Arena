@@ -22,10 +22,11 @@ local DataTemplate = {
         ["Engineer"] = false,
         ["Ranger"] = false,
         ["Shinobi"] = false,
+        ["Oni"] = false,
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test19", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test21", DataTemplate)
 
 local Profiles = {}
 

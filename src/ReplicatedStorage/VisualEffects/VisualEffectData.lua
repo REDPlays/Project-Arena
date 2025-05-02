@@ -38,6 +38,8 @@ VisualEffectData["QuickDash"] = require(Visuals:WaitForChild("Shinobi"):WaitForC
 VisualEffectData["ShurikenThrow"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("ShurikenThrowVFX"))
 VisualEffectData["Retreat"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("RetreatVFX"))
 
+VisualEffectData["ClubSlam"] = require(Visuals:WaitForChild("Oni"):WaitForChild("ClubSlamVFX"))
+
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))

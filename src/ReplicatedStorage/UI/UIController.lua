@@ -885,7 +885,42 @@ function UIController:LoadCharacter(class)
     for btnName, btn in pairs(self.Btns) do
         local MoveName = btn:FindFirstChild("MoveName")
         if MoveName then
-            MoveName.Text = currentClassData.MoveName[btnName]
+            local moveText = currentClassData.MoveName[btnName]
+            if typeof(moveText) == "table" then
+                moveText = moveText[1]
+            end
+            MoveName.Text = moveText
+        end
+    end
+end
+
+function UIController:UpdateUI()
+    local Stats = self.character:FindFirstChild("Stats")
+    if Stats then
+        local isAwakened = Stats:GetAttribute("Awakened")
+
+        if not self.class then
+            return
+        end
+
+        local currentClassData = ClassData[self.class]
+        if not currentClassData then
+            return
+        end
+
+        for btnName, btn in pairs(self.Btns) do
+            local MoveName = btn:FindFirstChild("MoveName")
+            if MoveName then
+                local moveText = currentClassData.MoveName[btnName]
+                if typeof(moveText) == "table" then
+                    if not isAwakened then
+                        moveText = moveText[1]
+                    elseif isAwakened then
+                        moveText = moveText[2]
+                    end
+                end
+                MoveName.Text = moveText
+            end
         end
     end
 end
@@ -941,6 +976,8 @@ function UIController:Disconnect()
 end
 
 function UIController:Update(deltaTime)
+    self:UpdateUI()
+
     self:InColorBound()
 
     self.colorSystem:Update(deltaTime)

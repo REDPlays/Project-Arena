@@ -216,7 +216,7 @@ ClassData["Pyromancer"] = {
 ClassData["ShieldWarrior"] = {
     Health = 250,
     Defense = 150,
-    Speed = 27,
+    Speed = 30,
     Role = "Tank",
     Cost = 200,
     Description = "Shield Hero",
@@ -705,6 +705,102 @@ ClassData["Shinobi"] = {
         ["QMove"] = "Quick Dash",
         ["EMove"] = "Shuriken Throw",
         ["FMove"] = "Retreat",
+    },
+}
+
+ClassData["Oni"] = {
+    ignoreLMBMoveCD = false,
+    Health = 175,
+    Defense = 100,
+    Speed = 30,
+    Role = "Brawler",
+    Cost = 400,
+    Description = "The strongest of warriors",
+    DamageList = {
+        ["LMBMove"] = {3, 3, 3},
+        ["QMove"] = {15, 30},
+        ["EMove"] = 5,
+        ["FMove"] = 25,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .4,
+        ["QMove"] = 15,
+        ["EMove"] = 15,
+        ["FMove"] = 40,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(8, 6, 6),
+            Offset = CFrame.new(0, 4, -4),
+        },
+        ["QMove"] = {
+            Size = Vector3.new(7, 7, 14),
+            Offset = CFrame.new(0, 3.5, -7),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(8, 16, 16),
+            Offset = CFrame.new(0, 2, 0),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(10, 15, 10),
+            Offset = CFrame.new(0, 7.5, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            ignoreLMBMoveCD = false,
+            Silenced = false,
+        },
+        ["QMove"] = {
+            hasEvent = true,
+            noMovement = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+        ["EMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = true,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+        ["FMove"] = {
+            hasEvent = false,
+            noMovement = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+            DoubleCooldown = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "OniM1",
+        ["QMove"] = "ClubSlam",
+        ["EMove"] = "ClubSpin_FireBreath",
+        ["FMove"] = "Enrage",
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Club Slam",
+        ["EMove"] = {"Club Spin", "Fire Breath"},
+        ["FMove"] = "Enrage",
     },
 }
 

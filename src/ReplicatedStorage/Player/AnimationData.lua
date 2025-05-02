@@ -129,4 +129,22 @@ AnimationData["Shinobi"] = {
     Run = Animations:WaitForChild("Shinobi"):WaitForChild("Run"),
 }
 
+AnimationData["Oni"] = {
+    LMBMove = {
+        Animations:WaitForChild("Oni"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Oni"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Oni"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("Oni"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("Oni"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Oni"):WaitForChild("EMove"),
+    EMove2 = Animations:WaitForChild("Oni"):WaitForChild("EMove2"),
+    FMove = Animations:WaitForChild("Oni"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("Oni"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Oni"):WaitForChild("Run"),
+}
+
 return AnimationData

@@ -22,7 +22,7 @@ local function TweenScale(model: Model, startScale: number, endScale: number, du
         model:ScaleTo(numVal.Value)
     end)
 
-    TweenService:Create(numVal, info, {Value = 1}):Play()
+    TweenService:Create(numVal, info, {Value = endScale}):Play()
 
     task.delay(duration, function()
         if connect then
