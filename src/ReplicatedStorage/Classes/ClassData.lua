@@ -725,7 +725,7 @@ ClassData["Oni"] = {
     Cooldowns = {
         ["LMBMove"] = .4,
         ["QMove"] = 15,
-        ["EMove"] = 15,
+        ["EMove"] = {15, 15},
         ["FMove"] = 40,
     },
     Hitboxes = {
@@ -777,6 +777,7 @@ ClassData["Oni"] = {
             CameraLock = false,
             Knockup = false,
             Silenced = false,
+            DoubleCooldown = true,
         },
         ["FMove"] = {
             hasEvent = false,
@@ -787,7 +788,6 @@ ClassData["Oni"] = {
             CameraLock = false,
             Knockup = false,
             Silenced = false,
-            DoubleCooldown = false,
         },
     },
     VisualEffects = {

@@ -26,12 +26,12 @@ function StateManager:CheckState(target: Model, currState)
 end
 
 if RunService:IsServer() then
-    function StateManager:AddTarget(target: Model, currState, stateData)
+    function StateManager:AddTarget(target: Model, currState, stateData, additionalData)
         if not states[currState] then
             return
         end
 
-        states[currState]:AddTarget(target, stateData)
+        states[currState]:AddTarget(target, stateData, additionalData)
     end
 
     function StateManager:RemoveTarget(target: Model, currState)

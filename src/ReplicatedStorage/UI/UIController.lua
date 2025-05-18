@@ -547,12 +547,18 @@ function UIController:Connect()
                 self.debounces.EMove = true
                 local currentClassData = ClassData[self.class]
                 
+                local animationName = "EMove"
                 local cooldownDuration = currentClassData.Cooldowns["EMove"]
                 if currentClassData.MoveData["EMove"].DoubleCooldown then
                     if self.character:GetAttribute("DoubleCooldown") == "EMove" then
                         cooldownDuration = cooldownDuration[2]
                     else
                         cooldownDuration = cooldownDuration[1]
+                    end
+                    
+                    local Stats = self.character:FindFirstChild("Stats")
+                    if Stats and Stats:GetAttribute("Awakened") then
+                        animationName = "EMove2"
                     end
                 end
 
@@ -583,7 +589,7 @@ function UIController:Connect()
                 local noMovement = currentClassData.MoveData.EMove.noMovement
                 self:LockInPlace(noMovement, "EMove")
 
-                self.animationSystem:Play(self.class, "EMove", nil, conditionalData, hitBoxCallBack, hasEvent)
+                self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
 

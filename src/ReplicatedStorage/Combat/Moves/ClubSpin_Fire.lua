@@ -201,7 +201,30 @@ function ClubSpin_Fire:Activate(player, character, rootPart, placementCFrame, cl
 
         Events.Server_Client.Movement:FireAllClients(character, assemblyData)
     elseif isAwakened then
-        
+        local duration = 2
+
+        StateManager:AddTarget(character, "Slow", duration, {WalkSpeed = 8})
+
+        local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
+        Hitbox.Transparency = 1
+        if ShowHitboxes then
+            Hitbox.Transparency = .5
+        end
+
+        Hitbox.Size = Vector3.new(10, 10, 15)
+        Hitbox.CFrame = character:GetPivot() * CFrame.new(0, 5, -7.5)
+        Hitbox.Parent = IgnoreFolder
+
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = Hitbox
+        weld.Part1 = rootPart
+        weld.Parent = weld.Part0
+
+
+
+        task.delay(duration, function()
+            Stats:SetAttribute("AbilityLocked", false)
+        end)
     end
 end
 

@@ -14,7 +14,7 @@ function Slow:CheckState(target: Model)
     return Slow.InState[target]
 end
 
-function Slow:AddTarget(target: Model, duration)
+function Slow:AddTarget(target: Model, duration, additionalData)
     if not target then
         return
     end
@@ -48,9 +48,17 @@ function Slow:AddTarget(target: Model, duration)
         return
     end
 
+    local newSpeed = 4
+    if additionalData and additionalData.WalkSpeed then
+        newSpeed = additionalData.WalkSpeed
+    end
+
     if Slow.InState[target] then
         Slow.InState[target].currTime = 0
         Slow.InState[target].duration = duration
+        Slow.InState[target].speed = newSpeed
+
+        humanoid.WalkSpeed = newSpeed
         
         return
     end
@@ -72,10 +80,11 @@ function Slow:AddTarget(target: Model, duration)
         duration = duration,
         currTime = 0,
         prevSpeed = Stats:GetAttribute("Speed"),
+        speed = newSpeed,
         Icon = Icon,
     }
 
-    humanoid.WalkSpeed = 4
+    humanoid.WalkSpeed = newSpeed
 end
 
 function Slow:RemoveTarget(target: Model)
@@ -119,7 +128,7 @@ function Slow:Update(deltaTime)
             local humanoid = data.target:FindFirstChild("Humanoid")
             if humanoid and humanoid.Health > 0 then
                 if not Stats:GetAttribute("Stunned") then
-                    humanoid.WalkSpeed = 4
+                    humanoid.WalkSpeed = data.speed
                 end
             end
         end
