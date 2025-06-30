@@ -36,32 +36,16 @@ function VisualEffectServer:SpawnEffectsInRange(
     if not sourceRootPart then
         return
     end
-    
-    for _, player in pairs(Players:GetChildren()) do
-        local character = player.Character
-        if not character then
-            continue
-        end
-        
-        local playerRootPart = character:FindFirstChild("HumanoidRootPart")
-        if not playerRootPart then
-            continue
-        end
 
-        local distance = (playerRootPart.Position - sourceRootPart.Position).Magnitude
-        if distance < displayRange then
-            --Fire to Client Visual Effects Manager
-           Events.Server_Client.VisualEffects:FireClient(
-                player,
-                vfxName,
-                target,
-                sourceUnit,
-                conditionalData,
-                VFX_ID,
-                runFunction
-           )
-        end
-    end
+    Events.Server_Client.VisualEffects:FireAllClients(
+        vfxName,
+        target,
+        sourceUnit,
+        conditionalData,
+        VFX_ID,
+        runFunction,
+        displayRange
+    )
 end
 
 function VisualEffectServer:TerminateVFX(

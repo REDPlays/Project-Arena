@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
@@ -8,7 +10,23 @@ local VisualEffectClient = {}
 
 local ActiveVisualEffects = {}
 
-function VisualEffectClient:SpawnEffects(vfxName, target, sourceUnit, conditionalData, VFX_ID, runFunction)
+function VisualEffectClient:SpawnEffects(vfxName, target, sourceUnit, conditionalData, VFX_ID, runFunction, displayRange)
+    displayRange = displayRange or 1000
+    
+    local  LocalCharacter = LocalPlayer.Character
+    if not LocalCharacter then  return end
+
+    local LocalRoot = LocalCharacter:FindFirstChild("HumanoidRootPart")
+    if  not LocalRoot then return end
+
+    local sourceRoot = sourceUnit:FindFirstChild("HumanoidRootPart")
+    if not sourceRoot then return end
+
+    local distance = (LocalRoot.Position - sourceRoot.Position).Magnitude
+    if distance >= displayRange then
+        return
+    end
+
     if ActiveVisualEffects[VFX_ID] then
         if runFunction then
             ActiveVisualEffects[VFX_ID].Instance:RunFunction(target, sourceUnit, conditionalData)

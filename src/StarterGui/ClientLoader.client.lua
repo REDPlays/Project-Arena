@@ -11,7 +11,9 @@ local Channels = TextChatService:WaitForChild("TextChannels")
 local RBXSystem: TextChannel = Channels:WaitForChild("RBXSystem")
 
 local function PlayerAdded()
-    LocalGameManager:Init(Players.LocalPlayer)
+    local LocalPlayer = Players.LocalPlayer
+    
+    LocalGameManager:Init(LocalPlayer)
 
     RunService.Heartbeat:Connect(function(deltaTime)
         LocalGameManager:Update(deltaTime)
