@@ -17,13 +17,13 @@ function LocalGameManager:Init(player: Player)
     LocalGameManager.player = player
     LocalGameManager.character = LocalGameManager.player.Character
 
-    VisualEffectClient:SpawnEffects(
+    --[==[VisualEffectClient:SpawnEffects(
         "RunningVFX",
         nil,
         player.Character,
         {},
         "RunVFX"..player.UserId
-    )
+    )]==]
 
     LocalGameManager:Setup()
 end
@@ -51,13 +51,13 @@ function LocalGameManager:Setup()
 end
 
 function LocalGameManager:Disconnect(player: Player)
-    VisualEffectClient:TerminateVFX(
+    --[==[VisualEffectClient:TerminateVFX(
         "RunningVFX",
         nil,
         player.Character,
         {},
         "RunVFX"..player.UserId
-    )
+    )]==]
 
     if LocalGameManager.cameraSystem then
         LocalGameManager.cameraSystem:Disconnect()
