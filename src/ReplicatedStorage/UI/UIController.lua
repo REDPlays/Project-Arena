@@ -5,6 +5,7 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
+local RunService = game:GetService("RunService")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
@@ -49,8 +50,8 @@ function UIController:Init(player, character, animationSystem, cameraSystem, cer
     self.MoveList = self.Gameplay:WaitForChild("MoveList")
     self.Stats = self.Gameplay:WaitForChild("Stats")
 
-    self.HealthBar = self.Stats:WaitForChild("HealthBar")
-    self.DefenseBar = self.Stats:WaitForChild("DefenseBar")
+    self.HealthBar = self.Stats:WaitForChild("Health")
+    self.DefenseBar = self.Stats:WaitForChild("Defense")
 
     self.Leaderboard = self.HUD:WaitForChild("Leaderboard")
     self.HolderFrame = self.Leaderboard:WaitForChild("Holder")
@@ -158,6 +159,14 @@ function UIController:toggleUICountdown(moveType, duration)
         MoveName = self.Btns[moveType]:FindFirstChild("MoveName"),
     }
 
+    local Left = self.Btns[moveType]:FindFirstChild("Left")
+    local Right = self.Btns[moveType]:FindFirstChild("Right")
+    local Layer3 = self.Btns[moveType]:FindFirstChild("Layer3")
+    if Left and Right and Layer3 then
+        Left.Layer.ImageColor3 = Color3.fromRGB(255, 0, 0)
+        Right.Layer.ImageColor3 = Color3.fromRGB(255, 0, 0)
+        Layer3.Visible = true
+    end
     
     self.UICooldowns[moveType].MoveName.TextTransparency = 0.5
     self.UICooldowns[moveType].CooldownUI.Text = duration
@@ -168,6 +177,15 @@ function UIController:removeUICountdown(moveType)
     if not self.UICooldowns[moveType] then
         warn("not in cooldown")
         return
+    end
+
+    local Left = self.Btns[moveType]:FindFirstChild("Left")
+    local Right = self.Btns[moveType]:FindFirstChild("Right")
+    local Layer3 = self.Btns[moveType]:FindFirstChild("Layer3")
+    if Left and Right and Layer3 then
+        Left.Layer.ImageColor3 = Color3.fromRGB(255, 255, 255)
+        Right.Layer.ImageColor3 = Color3.fromRGB(255, 255, 255)
+        Layer3.Visible = false
     end
 
     self.UICooldowns[moveType].CooldownUI.Visible = false
@@ -181,28 +199,67 @@ function UIController:StatConnect()
         return
     end
 
-    --First Time Set
-    local health = self.statsFolder:GetAttribute("Health")
-    local maxHealth = self.statsFolder:GetAttribute("MaxHealth")
-    self.HealthBar.Bar.Size = UDim2.new((health / maxHealth) * 1, 0, 1, 0)
+    local HealthDisplay = self.HealthBar:FindFirstChild("Display")
+    local HealthLeft = self.HealthBar:FindFirstChild("Left")
+    local HealthRight = self.HealthBar:FindFirstChild("Right")
 
-    local defense = self.statsFolder:GetAttribute("Defense")
-    local maxDefense = self.statsFolder:GetAttribute("MaxDefense")
-    self.DefenseBar.Bar.Size = UDim2.new((defense / maxDefense) * 1, 0, 1, 0)
+    local DefenseDisplay = self.DefenseBar:FindFirstChild("Display")
+    local DefenseLeft = self.DefenseBar:FindFirstChild("Left")
+    local DefenseRight = self.DefenseBar:FindFirstChild("Right")
 
-    self.healthDisplay = self.humanoid.HealthChanged:Connect(function()
+    if HealthDisplay and HealthLeft and HealthRight then
+        --First Time Set
         local health = self.statsFolder:GetAttribute("Health")
         local maxHealth = self.statsFolder:GetAttribute("MaxHealth")
 
-        self.HealthBar.Bar.Size = UDim2.new((health / maxHealth) * 1, 0, 1, 0)
-    end)
+        HealthDisplay.Text = health.." / "..maxHealth
+        
+        self.healthDisplay = self.humanoid.HealthChanged:Connect(function()
+            health = self.statsFolder:GetAttribute("Health")
+            maxHealth = self.statsFolder:GetAttribute("MaxHealth")
 
-    self.defenseDisplay = self.statsFolder:GetAttributeChangedSignal("Defense"):Connect(function()
+            HealthDisplay.Text = math.floor(health).." / "..math.floor(maxHealth)
+
+            local percentage = 1 - (health / maxHealth)
+            
+            local rotation = percentage * 360
+            if rotation > 180 then
+                HealthLeft.Visible = false
+            else
+                HealthLeft.Visible = true
+            end
+
+            HealthLeft.Layer.UIGradient.Rotation = math.clamp(rotation, 0, 180)
+            HealthRight.Layer.UIGradient.Rotation = math.clamp(rotation, 180, 360)
+        end)
+    end
+
+    if DefenseDisplay and DefenseLeft and DefenseRight then
+        --First Time Set
         local defense = self.statsFolder:GetAttribute("Defense")
         local maxDefense = self.statsFolder:GetAttribute("MaxDefense")
 
-        self.DefenseBar.Bar.Size = UDim2.new((defense / maxDefense) * 1, 0, 1, 0)
-    end)
+        DefenseDisplay.Text = defense.." / "..maxDefense
+
+        self.defenseDisplay = self.statsFolder:GetAttributeChangedSignal("Defense"):Connect(function()
+            defense = self.statsFolder:GetAttribute("Defense")
+            maxDefense = self.statsFolder:GetAttribute("MaxDefense")
+
+            DefenseDisplay.Text = math.floor(defense).." / "..math.floor(maxDefense)
+
+            local percentage = 1 - (defense / maxDefense)
+            
+            local rotation = percentage * 360
+            if rotation > 180 then
+                DefenseLeft.Visible = false
+            else
+                DefenseLeft.Visible = true
+            end
+
+            DefenseLeft.Layer.UIGradient.Rotation = math.clamp(rotation, 0, 180)
+            DefenseRight.Layer.UIGradient.Rotation = math.clamp(rotation, 180, 360)
+        end)
+    end
 
     --toggle dummy Overhead
     for _, dummy in pairs(workspace.Dummies:GetChildren()) do
@@ -384,7 +441,42 @@ function UIController:Connect()
         end
     end)
 
+    local percentage = 0
+    local min = 0
+    local testCooldown = false
+    RunService.Heartbeat:Connect(function(deltaTime)
+        if testCooldown then
+            percentage -= deltaTime * 2
+            percentage = math.clamp(percentage, min, 100)
+
+            self.TestCooldownUI.Text = math.floor(percentage)
+
+            local rotation = math.floor(math.clamp(percentage * 3.6, 0, 360))
+            self.TestLeftUI.Rotation = math.clamp(rotation, 0, 180)
+            self.TestRightUI.Rotation = math.clamp(rotation, 180, 360)
+
+            if percentage <= min then
+                testCooldown = false
+                self.TestCooldownUI.Visible = false
+                self.TestLeftLayer.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                self.TestLeftLayer2.ImageColor3 = Color3.fromRGB(255, 255, 255)
+                --self.TestButtonsUI.ImageColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        end
+    end)
+
+    self.testHealthSlots = {}
     self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+        if input.KeyCode == Enum.KeyCode.P then
+            percentage = 100
+            min = 0
+            testCooldown = true
+            self.TestCooldownUI.Visible = true
+            self.TestLeftLayer.ImageColor3 = Color3.fromRGB(255, 0, 0)
+            self.TestLeftLayer2.ImageColor3 = Color3.fromRGB(255, 0, 0)
+            --self.TestButtonsUI.ImageColor3 = Color3.fromRGB(255, 0, 0)
+        end
+
         if self.SelectingColor then
             return
         end
@@ -1103,22 +1195,39 @@ function UIController:Update(deltaTime)
     end
 
     for moveType, UIData in pairs(self.UICooldowns) do
-        if not UIData.CooldownUI then
+        local currentUIData = UIData
+        if not currentUIData.CooldownUI then
             continue
         end
 
-        if UIData.duration <= 0 then
+        if currentUIData.duration <= 0 then
             self:removeUICountdown(moveType)
 
             continue
         end 
 
-        UIData.duration -= deltaTime
-        UIData.duration = math.clamp(UIData.duration, 0, UIData.maxDuration)
+        currentUIData.duration -= deltaTime
+        currentUIData.duration = math.clamp(currentUIData.duration, 0, currentUIData.maxDuration)
 
-        local durationText = string.format("%0.2f", UIData.duration)
+        local durationText = string.format("%0.2f", currentUIData.duration)
 
-        UIData.CooldownUI.Text = durationText
+        local Left = currentUIData.UIObject:FindFirstChild("Left")
+        local Right = currentUIData.UIObject:FindFirstChild("Right")
+        if Left and Right then
+            local percentage = (currentUIData.duration / currentUIData.maxDuration)
+
+            local rotation = percentage * 360
+            if rotation > 180 then
+                Left.Visible = false
+            else
+                Left.Visible = true
+            end
+
+            Left.Layer.UIGradient.Rotation = math.clamp(rotation, 0, 180)
+            Right.Layer.UIGradient.Rotation = math.clamp(rotation, 180, 360)
+        end
+
+        currentUIData.CooldownUI.Text = durationText
     end
 
     local Stats = self.character:FindFirstChild("Stats")
