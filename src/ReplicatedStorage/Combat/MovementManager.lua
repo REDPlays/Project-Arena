@@ -16,6 +16,7 @@ MovementManager.dashList = {}
 MovementManager.bezierList = {}
 MovementManager.knockupList = {}
 MovementManager.assemblyList = {}
+MovementManager.linearList = {}
 
 local function quadratic(t, p0, p1, p2)
 	return (1 - t) ^ 2 * p0 + 2 * (1 - t) * t * p1 + t ^ 2 * p2
@@ -44,7 +45,55 @@ function MovementManager:AssemblyDuration(character, assemblyData)
         force = assemblyData.force,
         duration = assemblyData.duration,
         currTime = 0,
+        character = character
+    }
+end
+
+function MovementManager:Linear(character, linearData)
+    local rootPart: BasePart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    if MovementManager.linearList[character] then
+        return
+    end
+
+    local Transparency = 1
+    if ShowHitboxes then
+        Transparency = 0.5
+    end
+
+    local detector = Hitboxes.Hitbox:Clone()
+    detector.Size = Vector3.new(4, 4, 6)
+    detector.Color = Color3.fromRGB(82, 180, 173)
+    detector.Transparency = Transparency
+    detector.Anchored = true
+    detector.CFrame = character.HumanoidRootPart.CFrame
+    detector.Parent = workspace.Ignore
+
+    local attach = Instance.new("Attachment")
+    attach.Name = "forwardAttach"
+    attach.Parent = rootPart
+
+    local linearVel = Instance.new("LinearVelocity")
+    linearVel.Attachment0 = attach
+    linearVel.RelativeTo = Enum.ActuatorRelativeTo.World
+    linearVel.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+    linearVel.ForceLimitsEnabled = true
+    linearVel.ForceLimitMode = Enum.ForceLimitMode.PerAxis
+    linearVel.MaxAxesForce = Vector3.new(1, 0, 1) * 5e4
+    linearVel.Parent = rootPart
+
+    MovementManager.linearList[character] = {
+        force = linearData.force,
+        duration = linearData.duration,
+        currTime = 0,
         character = character,
+        allowPass = linearData.allowPass,
+        attach = attach,
+        linearVel = linearVel,
+        detector = detector
     }
 end
 
@@ -163,12 +212,6 @@ function MovementManager:Knockup(character, knockupData)
         end
     end
 
-    --[==[local upwardVelocity = Instance.new("BodyVelocity")
-    upwardVelocity.Name = "upwardVelocity"
-    upwardVelocity.MaxForce = Vector3.new(0, math.huge, 0)
-    upwardVelocity.Velocity = Vector3.new(0, knockupData.Force, 0)
-    upwardVelocity.Parent = rootPart]==]
-
     local attach = Instance.new("Attachment")
     attach.Name = "upwardAttach"
     attach.Parent = rootPart
@@ -244,6 +287,25 @@ function MovementManager:CleanAssembly(character)
     end
 end
 
+function MovementManager:CleanLinear(character)
+    local linearData = MovementManager.linearList[character]
+    if linearData then
+        if MovementManager.linearList[character].attach then
+            MovementManager.linearList[character].attach:Destroy()
+        end
+
+        if MovementManager.linearList[character].linearVel then
+            MovementManager.linearList[character].linearVel:Destroy()
+        end
+
+        if MovementManager.linearList[character].detector then
+            MovementManager.linearList[character].detector:Destroy()
+        end
+
+        MovementManager.linearList[character] = nil
+    end
+end
+
 function MovementManager:GetDetection(detector: BasePart, character, allowPass)
     local playerList = {}
     for _, plr in pairs(game.Players:GetChildren()) do
@@ -303,6 +365,10 @@ local function movement(character, moveData, cancel)
 
     if moveData.isKnockup then
         MovementManager:Knockup(character, moveData)
+    end
+
+    if moveData.isLinear then
+        MovementManager:Linear(character, moveData)
     end
 end
 
@@ -411,7 +477,53 @@ RunService.Heartbeat:Connect(function(deltaTime)
 
         assemblyData.currTime += deltaTime
 
-        rootPart.AssemblyLinearVelocity = rootPart.CFrame.LookVector * assemblyData.force
+        local newForce = rootPart.CFrame.LookVector * assemblyData.force
+        rootPart.AssemblyLinearVelocity = newForce
+    end
+
+    for id, linearData in pairs(MovementManager.linearList) do
+        local humanoid = linearData.character:FindFirstChild("Humanoid")
+        if not humanoid then
+            MovementManager:CleanLinear(linearData.character)
+            continue
+        end
+
+        local rootPart = linearData.character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then
+            MovementManager:CleanLinear(linearData.character)
+            continue
+        end
+
+        local detector = linearData.detector
+        if not detector then
+            MovementManager:Cleanup(linearData.character)
+            continue
+        end
+
+        if linearData.currTime >= linearData.duration then
+            MovementManager:CleanLinear(linearData.character)
+            continue
+        end
+
+        if humanoid and humanoid.Health <= 0 then
+            MovementManager:CleanLinear(linearData.character)
+            continue
+        end
+
+        linearData.currTime += deltaTime
+
+        if linearData.linearVel then
+            local velocity = rootPart.CFrame.LookVector * linearData.force
+
+            detector.CFrame = rootPart.CFrame * CFrame.new(0, 0, -(detector.Size.Z/2))
+            
+            local wall = MovementManager:GetDetection(detector, linearData.character, linearData.allowPass)
+            if wall then
+                velocity = Vector3.zero
+            end
+
+            linearData.linearVel.VectorVelocity = velocity
+        end
     end
 end)
 

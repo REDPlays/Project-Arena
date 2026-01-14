@@ -179,15 +179,23 @@ function UIController:removeUICountdown(moveType)
         return
     end
 
+    self.UICooldowns[moveType].duration = self.UICooldowns[moveType].maxDuration
+
     local Left = self.Btns[moveType]:FindFirstChild("Left")
     local Right = self.Btns[moveType]:FindFirstChild("Right")
     local Layer3 = self.Btns[moveType]:FindFirstChild("Layer3")
     if Left and Right and Layer3 then
+        Left.Visible = true
         Left.Layer.ImageColor3 = Color3.fromRGB(255, 255, 255)
+        Left.Layer.UIGradient.Rotation = 0
+
+        Right.Visible = true
         Right.Layer.ImageColor3 = Color3.fromRGB(255, 255, 255)
+        Right.Layer.UIGradient.Rotation = 180
+
         Layer3.Visible = false
     end
-
+    
     self.UICooldowns[moveType].CooldownUI.Visible = false
     self.UICooldowns[moveType].MoveName.TextTransparency = 0
     self.UICooldowns[moveType] = nil
@@ -199,26 +207,30 @@ function UIController:StatConnect()
         return
     end
 
-    local HealthDisplay = self.HealthBar:FindFirstChild("Display")
+    local HealthDisplay = self.HealthBar:FindFirstChild("DisplayTop")
+    local HealthDisplay2 = self.HealthBar:FindFirstChild("DisplayBot")
     local HealthLeft = self.HealthBar:FindFirstChild("Left")
     local HealthRight = self.HealthBar:FindFirstChild("Right")
 
-    local DefenseDisplay = self.DefenseBar:FindFirstChild("Display")
+    local DefenseDisplay = self.DefenseBar:FindFirstChild("DisplayTop")
+    local DefenseDisplay2 = self.DefenseBar:FindFirstChild("DisplayBot")
     local DefenseLeft = self.DefenseBar:FindFirstChild("Left")
     local DefenseRight = self.DefenseBar:FindFirstChild("Right")
 
-    if HealthDisplay and HealthLeft and HealthRight then
+    if HealthDisplay and HealthDisplay2 and HealthLeft and HealthRight then
         --First Time Set
         local health = self.statsFolder:GetAttribute("Health")
         local maxHealth = self.statsFolder:GetAttribute("MaxHealth")
 
-        HealthDisplay.Text = health.." / "..maxHealth
+        HealthDisplay.Text = health
+        HealthDisplay2.Text = maxHealth
         
         self.healthDisplay = self.humanoid.HealthChanged:Connect(function()
             health = self.statsFolder:GetAttribute("Health")
             maxHealth = self.statsFolder:GetAttribute("MaxHealth")
 
-            HealthDisplay.Text = math.floor(health).." / "..math.floor(maxHealth)
+            HealthDisplay.Text = math.floor(health)
+            HealthDisplay2.Text = math.floor(maxHealth)
 
             local percentage = 1 - (health / maxHealth)
             
@@ -234,18 +246,20 @@ function UIController:StatConnect()
         end)
     end
 
-    if DefenseDisplay and DefenseLeft and DefenseRight then
+    if DefenseDisplay and DefenseDisplay2 and DefenseLeft and DefenseRight then
         --First Time Set
         local defense = self.statsFolder:GetAttribute("Defense")
         local maxDefense = self.statsFolder:GetAttribute("MaxDefense")
 
-        DefenseDisplay.Text = defense.." / "..maxDefense
+        DefenseDisplay.Text = defense
+        DefenseDisplay2.Text = maxDefense
 
         self.defenseDisplay = self.statsFolder:GetAttributeChangedSignal("Defense"):Connect(function()
             defense = self.statsFolder:GetAttribute("Defense")
             maxDefense = self.statsFolder:GetAttribute("MaxDefense")
 
-            DefenseDisplay.Text = math.floor(defense).." / "..math.floor(maxDefense)
+            DefenseDisplay.Text = math.floor(defense)
+            DefenseDisplay2.Text = math.floor(maxDefense)
 
             local percentage = 1 - (defense / maxDefense)
             
@@ -430,6 +444,66 @@ local mobileOptions = {
     [Enum.UserInputType.Touch] = true,
 }
 
+function UIController:M1()
+    if self.debounces.LMBMove then
+        return
+    end
+
+    self.currTime = os.clock()
+
+    self.LMBs += 1
+    if self.LMBs > self.maxCount then
+        self.LMBs = 1
+    end
+
+    if self.currTime - self.prevTime >= 1.5 then
+        self.LMBs = 1
+    end
+
+    self.debounces.LMBMove = true
+
+    local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "LMBMove", self.LMBs)
+    if canAttack then
+        local currentClassData = ClassData[self.class]
+        
+        local cooldownDuration = currentClassData.Cooldowns["LMBMove"]
+
+        if self.LMBs >= 3 and not currentClassData.MoveData.LMBMove.ignoreLMBMoveCD then
+            cooldownDuration = 1
+        end
+        
+        self:toggleUICountdown("LMBMove", cooldownDuration)
+
+        local conditionalData = {
+            priority = Enum.AnimationPriority.Action,
+            isAttack = true,
+            weight = 2,
+        }
+
+        local function hitBoxCallBack()
+            if not currentClassData then
+                return
+            end
+
+            local moveData = currentClassData.MoveData
+
+            local currentMoveData = moveData.LMBMove
+
+            if currentMoveData.CameraLock then
+                self.cameraSystem:OutsideToggle(true)
+            end
+
+            Events.Client_Server.Hitbox:FireServer(self.class, "LMBMove", self.LMBs, currentMoveData)
+        end
+
+        self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack, true)
+    elseif not canAttack then
+        self.LMBs -= 1
+        self.LMBs = math.clamp(self.LMBs, 0, 3)
+        self.debounces.LMBMove = false
+    end
+end
+
 function UIController:Connect()
     self.inputChange = UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
         if keyboardOptions[input.UserInputType] then
@@ -462,6 +536,10 @@ function UIController:Connect()
                 self.TestLeftLayer2.ImageColor3 = Color3.fromRGB(255, 255, 255)
                 --self.TestButtonsUI.ImageColor3 = Color3.fromRGB(255, 255, 255)
             end
+        end
+
+        if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) or UserInputService:IsKeyDown(Enum.KeyCode.ButtonR1) then
+            self:M1()
         end
     end)
 
@@ -518,64 +596,6 @@ function UIController:Connect()
                     loop = true
                 }
                 self.animationSystem:Play(self.class, "Block", nil, conditionalData)
-            end
-        end
-
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.KeyCode == Enum.KeyCode.ButtonR1 then
-            if self.debounces.LMBMove then
-                return
-            end
-
-            self.currTime = os.clock()
-
-            self.LMBs += 1
-            if self.LMBs > self.maxCount then
-                self.LMBs = 1
-            end
-
-            if self.currTime - self.prevTime >= 1.5 then
-                self.LMBs = 1
-            end
-
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "LMBMove", self.LMBs)
-            if canAttack then
-                self.debounces.LMBMove = true
-                local currentClassData = ClassData[self.class]
-                
-                local cooldownDuration = currentClassData.Cooldowns["LMBMove"]
-
-                if self.LMBs >= 3 and not currentClassData.MoveData.LMBMove.ignoreLMBMoveCD then
-                    cooldownDuration = 1
-                end
-                
-                self:toggleUICountdown("LMBMove", cooldownDuration)
-
-                local conditionalData = {
-                    priority = Enum.AnimationPriority.Action,
-                    isAttack = true,
-                    weight = 2,
-                }
-
-                local function hitBoxCallBack()
-                    if not currentClassData then
-                        return
-                    end
-
-                    local moveData = currentClassData.MoveData
-
-                    local currentMoveData = moveData.LMBMove
-
-                    if currentMoveData.CameraLock then
-                        self.cameraSystem:OutsideToggle(true)
-                    end
-
-                    Events.Client_Server.Hitbox:FireServer(self.class, "LMBMove", self.LMBs, currentMoveData)
-                end
-
-                self.animationSystem:Play(self.class, "LMBMove", self.LMBs, conditionalData, hitBoxCallBack, true)
-            elseif not canAttack then
-                self.LMBs -= 1
-                self.LMBs = math.clamp(self.LMBs, 0, 3)
             end
         end
 
@@ -760,26 +780,53 @@ function UIController:Connect()
         end
     end)
 
-    self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType)
-        if moveType == "LMBMove" then
-            self.prevTime = self.currTime
-            self.debounces.LMBMove = false
-        end
+    self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType, actionType)
+        if actionType == "Single" then
+            if moveType == "LMBMove" then
+                self.prevTime = self.currTime
+                self.debounces.LMBMove = false
+            end
 
-        if moveType == "Block" then
-            self.animationSystem:Stop(self.class, "Block")
-        end
+            if moveType == "Block" then
+                self.animationSystem:Stop(self.class, "Block")
+            end
 
-        if moveType == "QMove" then
-            self.debounces.QMove = false
-        end
+            if moveType == "QMove" then
+                self.debounces.QMove = false
+            end
 
-        if moveType == "EMove" then
-            self.debounces.EMove = false
-        end
+            if moveType == "EMove" then
+                self.debounces.EMove = false
+            end
 
-        if moveType == "FMove" then
-            self.debounces.FMove = false
+            if moveType == "FMove" then
+                self.debounces.FMove = false
+            end
+
+        elseif actionType == "Multi" then
+            moveType = moveType or {}
+
+            for _, _moveType in ipairs(moveType) do
+                if _moveType == "LMBMove" then
+                    self.prevTime = self.currTime
+                    self.debounces.LMBMove = false
+                end
+                
+                if _moveType == "QMove" then
+                    self.debounces.QMove = false
+                end
+
+                if _moveType == "EMove" then
+                    self.debounces.EMove = false
+                end
+
+                if _moveType == "FMove" then
+                    self.debounces.FMove = false
+                end
+                
+                self:removeUICountdown(_moveType)
+            end
+
         end
     end)
 

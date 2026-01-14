@@ -35,8 +35,22 @@ function MoveManager:Ability(player, class, moveType, moveData)
         return
     end
 
+    local Stats = character:FindFirstChild("Stats")
+    if not Stats then
+        return
+    end
+
+    local isAwakened = Stats:GetAttribute("Awakened")
+    if typeof(currentMoveData) == "table" and currentMoveData[1] and currentMoveData[2] then
+        if not isAwakened then
+            currentMoveData = currentMoveData[1] 
+        else
+            currentMoveData = currentMoveData[2]
+        end
+    end
+
     local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
-    MoveData[class][moveType]:Activate(player, character, rootPart, placementCFrame, class, currentClassData, moveType)
+    currentMoveData:Activate(player, character, rootPart, placementCFrame, class, currentClassData, moveType)
 end
 
 function MoveManager:AbilityNonPlayer(character, class, moveType, moveData)
@@ -55,8 +69,22 @@ function MoveManager:AbilityNonPlayer(character, class, moveType, moveData)
         return
     end
 
+    local Stats = character:FindFirstChild("Stats")
+    if not Stats then
+        return
+    end
+
+    local isAwakened = Stats:GetAttribute("Awakened")
+    if typeof(currentMoveData) == "table" and currentMoveData[1] and currentMoveData[2] then
+        if not isAwakened then
+            currentMoveData = currentMoveData[1]
+        else
+            currentMoveData = currentMoveData[2]
+        end
+    end
+
     local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
-    MoveData[class][moveType]:Activate(character, character, rootPart, placementCFrame, class, currentClassData, moveType)
+    currentMoveData:Activate(character, character, rootPart, placementCFrame, class, currentClassData, moveType)
 end
 
 function MoveManager:ProjectileAbility(player, class, moveType, moveData)

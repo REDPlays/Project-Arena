@@ -14,6 +14,34 @@ InputManager.ServerQDebounces = {}
 InputManager.ServerEDebounces = {}
 InputManager.ServerFDebounces = {}
 
+Events.Server_Server.ResetCooldowns.Event:Connect(function(player: Player, moves: {})
+    if not player then return end
+
+    moves = moves or {}
+
+    for _, moveType in ipairs(moves) do
+        if moveType == "LMBMove" then
+            if InputManager.ServerLMBDebounces[player.UserId] then
+                InputManager.ServerLMBDebounces[player.UserId] = nil
+            end
+        elseif moveType == "QMove" then
+            if InputManager.ServerQDebounces[player.UserId] then
+                InputManager.ServerQDebounces[player.UserId] = nil
+            end
+        elseif moveType == "EMove" then
+            if InputManager.ServerEDebounces[player.UserId] then
+                InputManager.ServerEDebounces[player.UserId] = nil
+            end
+        elseif moveType == "FMove" then
+            if InputManager.ServerFDebounces[player.UserId] then
+                InputManager.ServerFDebounces[player.UserId] = nil
+            end
+        end
+    end
+    
+    Events.Server_Client.Cooldown:FireClient(player, moves, "Multi")
+end)
+
 function InputManager:RunInput(player, class, moveType, moveCount)
     if not class then
         return
@@ -79,7 +107,7 @@ function InputManager:RunInput(player, class, moveType, moveCount)
                 InputManager.ServerLMBDebounces[player.UserId] = nil
             end
 
-            Events.Server_Client.Cooldown:FireClient(player, "LMBMove")
+            Events.Server_Client.Cooldown:FireClient(player, "LMBMove", "Single")
         end)
     end
 
@@ -108,7 +136,7 @@ function InputManager:RunInput(player, class, moveType, moveCount)
                 InputManager.ServerQDebounces[player.UserId] = nil
             end
 
-            Events.Server_Client.Cooldown:FireClient(player, "QMove")
+            Events.Server_Client.Cooldown:FireClient(player, "QMove", "Single")
         end)
     end
 
@@ -137,7 +165,7 @@ function InputManager:RunInput(player, class, moveType, moveCount)
                 InputManager.ServerEDebounces[player.UserId] = nil
             end
 
-            Events.Server_Client.Cooldown:FireClient(player, "EMove")
+            Events.Server_Client.Cooldown:FireClient(player, "EMove", "Single")
         end)
     end
 
@@ -166,7 +194,7 @@ function InputManager:RunInput(player, class, moveType, moveCount)
                 InputManager.ServerFDebounces[player.UserId] = nil
             end
 
-            Events.Server_Client.Cooldown:FireClient(player, "FMove")
+            Events.Server_Client.Cooldown:FireClient(player, "FMove", "Single")
         end)
     end
 

@@ -43,8 +43,9 @@ Events.Server_Client = {
 }
 
 Events.Server_Server = {
-    Hitbox = Server_Server:WaitForChild("Hitbox"),
-    RewardPlayers = Server_Server:WaitForChild("RewardPlayers"),
+    Hitbox = Server_Server:WaitForChild("Hitbox") :: BindableEvent,
+    RewardPlayers = Server_Server:WaitForChild("RewardPlayers") :: BindableEvent,
+    ResetCooldowns = Server_Server:WaitForChild("ResetCooldowns") :: BindableEvent,
 }
 
 return Events

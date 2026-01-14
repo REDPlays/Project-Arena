@@ -197,6 +197,13 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
         return
     end
 
+    local Stats = character:FindFirstChild("Stats")
+    if not Stats then
+        return
+    end
+
+    local isAwakened = Stats:GetAttribute("Awakened")
+
     local damage = 1
     if not moveCount then
         damage = currentClassData.DamageList[moveType]
@@ -215,7 +222,26 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
         VisualID
     )
     
-    local Offset = currentClassData.Hitboxes[moveType].Offset
+    local Offset
+    local HitboxSize
+
+    if not isAwakened then
+        Offset = currentClassData.Hitboxes[moveType].Offset
+        HitboxSize = currentClassData.Hitboxes[moveType].Size
+    elseif isAwakened then
+        if currentClassData.Hitboxes[moveType].Offset2 then
+            Offset = currentClassData.Hitboxes[moveType].Offset2
+        else
+            Offset = currentClassData.Hitboxes[moveType].Offset
+        end
+
+        if currentClassData.Hitboxes[moveType].Size2 then
+            HitboxSize = currentClassData.Hitboxes[moveType].Size2
+        else
+            HitboxSize = currentClassData.Hitboxes[moveType].Size
+        end
+    end
+
     if typeof(Offset) == "table" then
         Offset = Offset[moveCount]
     end
@@ -230,7 +256,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = currentClassData.Hitboxes[moveType].Size
+    Hitbox.Size = HitboxSize
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
     Debris:AddItem(Hitbox, hitboxLifeTime)

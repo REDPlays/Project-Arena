@@ -62,6 +62,12 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
     Stats:SetAttribute("AbilityLocked", true)
     Stats:SetAttribute("Awakened", true)
 
+    local resetList = {
+        "QMove",
+        "EMove",
+    }
+    Events.Server_Server.ResetCooldowns:Fire(player, resetList)
+
     local duration = 1
     local lifeTime = 15
     local scale = 1.5
@@ -73,8 +79,16 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
     end)
 
     task.delay(lifeTime, function()
+        Stats:SetAttribute("AbilityLocked", true)
         Stats:SetAttribute("Awakened", nil)
+
+        Events.Server_Server.ResetCooldowns:Fire(player, resetList)
+
         TweenScale(character, scale, 1, duration)
+
+        task.delay(1, function()
+            Stats:SetAttribute("AbilityLocked", false)
+        end)
     end)
 end
 
