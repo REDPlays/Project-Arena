@@ -795,8 +795,8 @@ ClassData["Oni"] = {
     VisualEffects = {
         ["LMBMove"] = "OniM1",
         ["QMove"] = "ClubSlam",
-        ["EMove"] = "ClubSpin_SumoStance",
-        ["FMove"] = "Enrage",
+        ["EMove"] = {"SumoRush", "SumoStanceVFX"},
+        ["FMove"] = "EnragedVFX",
     },
     MoveName = {
         ["LMBMove"] = "M1",

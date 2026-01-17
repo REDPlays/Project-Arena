@@ -59,6 +59,8 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
         return
     end
 
+    local VFX_ID = "Enraged"..HttpService:GenerateGUID(false)
+
     Stats:SetAttribute("AbilityLocked", true)
     Stats:SetAttribute("Awakened", true)
 
@@ -67,6 +69,15 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
         "EMove",
     }
     Events.Server_Server.ResetCooldowns:Fire(player, resetList)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "Enraged",
+        nil,
+        character,
+        {},
+        1000,
+        VFX_ID
+    )
 
     local duration = 1
     local lifeTime = 15
@@ -83,6 +94,14 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
         Stats:SetAttribute("Awakened", nil)
 
         Events.Server_Server.ResetCooldowns:Fire(player, resetList)
+
+        VisualEffectServer:TerminateVFX(
+            "Enraged",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
 
         TweenScale(character, scale, 1, duration)
 

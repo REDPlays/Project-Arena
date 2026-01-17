@@ -36,6 +36,17 @@ function SumoStance:Activate(player, character, rootPart, placementCFrame, class
 
     Stats:SetAttribute("AbilityLocked", true)
 
+    local VFX_ID = "SumoStance"..HttpService:GenerateGUID(false)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "SumoStance",
+        nil,
+        character,
+        {},
+        1000,
+        VFX_ID
+    )
+
     local isAwakened = Stats:GetAttribute("Awakened")
 
     local duration = 90/60
@@ -159,6 +170,16 @@ function SumoStance:Activate(player, character, rootPart, placementCFrame, class
         Hitbox.CFrame = character:GetPivot() * CFrame.new(0, 4, 0) * CFrame.Angles(0, 0, math.rad(90))
         Hitbox.Parent = IgnoreFolder
 
+        VisualEffectServer:SpawnEffectsInRange(
+            "SumoStance",
+            nil,
+            character,
+            {isStomp = true},
+            1000,
+            VFX_ID,
+            true
+        )
+
         local hitboxLifeTime = 0.15
         detectTarget(Hitbox, 1, hitboxLifeTime)
     end)
@@ -174,12 +195,30 @@ function SumoStance:Activate(player, character, rootPart, placementCFrame, class
         Hitbox.CFrame = character:GetPivot() * CFrame.new(0, 4, 0) * CFrame.Angles(0, 0, math.rad(90))
         Hitbox.Parent = IgnoreFolder
 
+        VisualEffectServer:SpawnEffectsInRange(
+            "SumoStance",
+            nil,
+            character,
+            {isStomp = true},
+            1000,
+            VFX_ID,
+            true
+        )
+
         local hitboxLifeTime = 0.15
         detectTarget(Hitbox, 2, hitboxLifeTime)
     end)
 
     task.delay(duration, function()
         Stats:SetAttribute("AbilityLocked", false)
+        
+        VisualEffectServer:TerminateVFX(
+            "SumoStance",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
     end)
 end
 

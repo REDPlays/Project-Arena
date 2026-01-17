@@ -36,6 +36,17 @@ function SumoRush:Activate(player, character, rootPart, placementCFrame, class, 
 
     Stats:SetAttribute("AbilityLocked", true)
 
+    local VFX_ID = "SumoRush"..HttpService:GenerateGUID(false)
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "SumoRush",
+        nil,
+        character,
+        {},
+        1000,
+        VFX_ID
+    )
+
     local duration = 2
     local damageTick = 0.5
     local currTime = 0
@@ -165,6 +176,14 @@ function SumoRush:Activate(player, character, rootPart, placementCFrame, class, 
         end
 
         Stats:SetAttribute("AbilityLocked", false)
+
+        VisualEffectServer:TerminateVFX(
+            "SumoRush",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
     end)
 
     local dashData = {
