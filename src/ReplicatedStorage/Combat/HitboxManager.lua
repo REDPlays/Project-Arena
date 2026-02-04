@@ -11,6 +11,7 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 local StateManager
 local HealthManager
+local PassiveManager
 local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectServer"))
 
 local IgnoreFolder = workspace.Ignore
@@ -20,6 +21,7 @@ local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 if RunService:IsServer() then
     StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
     HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
+    PassiveManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("PassiveManager"))
 end
 
 local HitboxManager = {}
@@ -482,6 +484,10 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
         return
     end
 
+    if character ~= HitboxManager.projectiles[projectileId].character then
+        return
+    end
+
     local damage = 1
     if not moveCount then
         damage = classData.DamageList[moveType]
@@ -540,6 +546,11 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     --apply silence
     if classData.MoveData[moveType].Silenced then
         StateManager:AddTarget(target, "Silenced", 2)
+    end
+
+    --apply hydrostack? make a better setting for if the state or passives are there rather than all being their own if statements
+    if classData.MoveData[moveType].HydroStack then
+        PassiveManager:AddStack(character, "HydroStack", {})
     end
 
     StateManager:AddTarget(target, "Attacked", 1)

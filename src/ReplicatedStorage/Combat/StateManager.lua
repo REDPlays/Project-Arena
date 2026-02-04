@@ -43,7 +43,7 @@ if RunService:IsServer() then
     end
 
     function StateManager:RemoveAll(target: Model)
-        for state, _ in pairs(states) do
+        for _, state in ipairs(states) do
             if states[state]:CheckState(target) then
                 states[state]:RemoveTarget(target)
             end
@@ -51,15 +51,9 @@ if RunService:IsServer() then
     end
 
     function StateManager:Update(deltaTime)
-        states.HealthRegen:Update(deltaTime)
-        states.Stunned:Update(deltaTime)
-        states.Blocking:Update(deltaTime)
-        states.Attacked:Update(deltaTime)
-        states.Burn:Update(deltaTime)
-        states.Slow:Update(deltaTime)
-        states.Knockup:Update(deltaTime)
-        states.Invulnerable:Update(deltaTime)
-        states.Silenced:Update(deltaTime)
+        for _, state in ipairs(states) do
+            state:Update(deltaTime)
+        end
     end
 end
 

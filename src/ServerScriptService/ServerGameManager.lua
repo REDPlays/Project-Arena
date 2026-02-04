@@ -10,6 +10,7 @@ local CharacterSelectServer = require(ServerStorage.ServerFiles.Player.Character
 local InputManager = require(ServerStorage.ServerFiles.Player.InputManager)
 local HitboxManager = require(ReplicatedStorage.RepFiles.Combat.HitboxManager)
 local StateManager = require(ReplicatedStorage.RepFiles.Combat.StateManager)
+local PassiveManager = require(ReplicatedStorage.RepFiles.Combat.PassiveManager)
 local MoveManager = require(ReplicatedStorage.RepFiles.Combat.MoveManager)
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
 local RoundManager = require(ServerStorage.ServerFiles.RoundManager)
@@ -133,6 +134,8 @@ function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
 
         StateManager:RemoveAll(character)
 
+        PassiveManager:ClearAllStacks(character)
+
         if ServerGameManager.characterSelect.hasClass[player] then
             ServerGameManager.characterSelect.hasClass[player] = nil
         end
@@ -187,6 +190,7 @@ function ServerGameManager:Update(deltaTime)
     HitboxManager:Update(deltaTime)
     StateManager:Update(deltaTime)
     MoveManager:Update(deltaTime)
+    PassiveManager:Update(deltaTime)
     ServerGameManager.playerManager:Update(deltaTime)
     ServerGameManager.characterSelect:Update(deltaTime)
     LeaderboardManager:Update(deltaTime)

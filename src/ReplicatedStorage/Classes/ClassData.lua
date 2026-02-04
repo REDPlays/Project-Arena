@@ -960,6 +960,7 @@ ClassData["Hydromancer"] = {
             ignoreLMBMoveCD = false,
             isMultiShot = false,
             Silenced = false,
+            HydroStack = true,
         },
         ["QMove"] = {
             hasEvent = false,
