@@ -430,7 +430,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
         ID = projectileId,
         character = character,
         speed = currentClassData.ProjectileSpeed or 50,
-        duration = 1,
+        duration = currentClassData.ProjectileDuration or 1,
         classData = currentClassData,
         moveType = moveType,
         moveCount = moveCount,

@@ -10,9 +10,9 @@ local DataTemplate = {
     Kills = 0,
     Wins = 0,
 
-    ["Primary"] = {0.38, 0.37, 0.38},
-    ["Secondary"] = {0.63, 0.63, 0.64},
-    ["Energy"] = {0.63, 0.63, 0.64},
+    ["Primary"] = {0.388235, 0.372549, 0.384314},
+    ["Secondary"] = {0.639216, 0.635294, 0.647059},
+    ["Energy"] = {0.639216, 0.635294, 0.647059},
 
 	["Classes"] = {
 		["AngelKnight"] = false,
@@ -23,10 +23,12 @@ local DataTemplate = {
         ["Ranger"] = false,
         ["Shinobi"] = false,
         ["Oni"] = false,
+        ["Judge"] = false,
+        ["Hydromancer"] = false,
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test22", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test27", DataTemplate)
 
 local Profiles = {}
 

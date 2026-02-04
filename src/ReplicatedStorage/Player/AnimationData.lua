@@ -147,4 +147,39 @@ AnimationData["Oni"] = {
     Run = Animations:WaitForChild("Oni"):WaitForChild("Run"),
 }
 
+AnimationData["Judge"] = {
+    LMBMove = {
+        Animations:WaitForChild("Judge"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Judge"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Judge"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("Judge"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("Judge"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Judge"):WaitForChild("EMove"),
+    EMove2 = Animations:WaitForChild("Judge"):WaitForChild("EMove2"),
+    FMove = Animations:WaitForChild("Judge"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("Judge"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Judge"):WaitForChild("Run"),
+}
+
+AnimationData["Hydromancer"] = {
+    LMBMove = {
+        Animations:WaitForChild("Hydromancer"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Hydromancer"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Hydromancer"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("Hydromancer"):WaitForChild("Block"),
+
+    QMove = Animations:WaitForChild("Hydromancer"):WaitForChild("QMove"),
+    EMove = Animations:WaitForChild("Hydromancer"):WaitForChild("EMove"),
+    FMove = Animations:WaitForChild("Hydromancer"):WaitForChild("FMove"),
+
+    Idle = Animations:WaitForChild("Hydromancer"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Hydromancer"):WaitForChild("Run"),
+}
+
 return AnimationData

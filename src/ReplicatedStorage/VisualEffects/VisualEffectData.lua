@@ -43,6 +43,8 @@ VisualEffectData["SumoRush"] = require(Visuals:WaitForChild("Oni"):WaitForChild(
 VisualEffectData["Enraged"] = require(Visuals:WaitForChild("Oni"):WaitForChild("EnragedVFX"))
 VisualEffectData["SumoStance"] = require(Visuals:WaitForChild("Oni"):WaitForChild("SumoStanceVFX"))
 
+VisualEffectData["WaterBall"] = require(Visuals:WaitForChild("Hydromancer"):WaitForChild("WaterBallVFX"))
+
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))

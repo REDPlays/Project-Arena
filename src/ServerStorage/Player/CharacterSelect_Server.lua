@@ -6,6 +6,7 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 local Assets = ReplicatedStorage.Assets
 local CharacterModels = Assets.CharacterModels
 local UI = Assets.UI
+local ColorCode = Assets.ColorCode
 
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
@@ -47,7 +48,11 @@ function CharacterSelectServer:Setup()
 
     CharacterSelectServer.ClassList = {}
     for _, group in pairs(CharacterSelectServer.Classes:GetChildren()) do
+        if group.Name == "Test" then continue end
+        
         CharacterSelectServer.ClassList[group.Name] = {}
+
+        local groupColor = ColorCode:FindFirstChild(group.Name)
 
         for _, class in pairs(group:GetChildren()) do
             if notAvailable[class.Name] then
@@ -72,6 +77,14 @@ function CharacterSelectServer:Setup()
             DescriptionUI.Background:WaitForChild("Speed").Text = "Speed: "..currClassData.Speed
             DescriptionUI.Background:WaitForChild("Role").Text = "Role: "..currClassData.Role
             DescriptionUI.Background:WaitForChild("Description").Text = currClassData.Description
+
+            --set group color
+            for _, obj in pairs(class:GetChildren()) do
+                if obj:IsA("BasePart") and CollectionService:HasTag(obj, "ClassGlow") then
+                    obj.Color = groupColor and groupColor.Color or Color3.fromRGB(255, 255, 255)
+                end
+            end
+
         end
     end
 end

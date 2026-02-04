@@ -120,6 +120,7 @@ ClassData["Pyromancer"] = {
     Defense = 100,
     Speed = 30,
     ProjectileSpeed = 75,
+    ProjectileDuration = 1,
     Role = "Burst",
     Cost = 200,
     Ammo = 1, --number of shots per LMB
@@ -407,6 +408,7 @@ ClassData["Engineer"] = {
     Defense = 100,
     Speed = 24,
     ProjectileSpeed = 150,
+    ProjectileDuration = 1,
     Role = "Summoner",
     Cost = 200,
     Ammo = 4, --number of shots per LMB
@@ -513,6 +515,7 @@ ClassData["Ranger"] = {
     Defense = 100,
     Speed = 24,
     ProjectileSpeed = 150,
+    ProjectileDuration = 1,
     Role = "Marksman",
     Cost = 200,
     Ammo = 2, --number of shots per LMB
@@ -805,5 +808,203 @@ ClassData["Oni"] = {
         ["FMove"] = "Enrage",
     },
 }
+
+ClassData["Judge"] = {
+    ignoreLMBMoveCD = false,
+    Health = 100,
+    Defense = 100,
+    Speed = 35,
+    Role = "Support",
+    Cost = 400,
+    Description = "Justice Prevails",
+    DamageList = {
+        ["LMBMove"] = {3, 3, 3},
+        ["QMove"] = {15, 30},
+        ["EMove"] = {20, 10},
+        ["FMove"] = 25,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .4,
+        ["QMove"] = 5,
+        ["EMove"] = {15, 15},
+        ["FMove"] = 40,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(8, 6, 6),
+            Size2 = Vector3.new(12, 9, 9),
+            Offset = CFrame.new(0, 4, -4),
+            Offset2 = CFrame.new(0, 4.5, -5)
+        },
+        ["QMove"] = {
+            Size = Vector3.new(7, 7, 14),
+            Offset = CFrame.new(0, 3.5, -7),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(8, 16, 16),
+            Offset = CFrame.new(0, 2, 0),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(10, 15, 10),
+            Offset = CFrame.new(0, 7.5, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            ignoreLMBMoveCD = false,
+            Silenced = false,
+        },
+        ["QMove"] = {
+            hasEvent = true,
+            noMovement = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+        ["EMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+            DoubleCooldown = true,
+        },
+        ["FMove"] = {
+            hasEvent = false,
+            noMovement = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "OniM1",
+        ["QMove"] = "ClubSlam",
+        ["EMove"] = {"SumoRush", "SumoStanceVFX"},
+        ["FMove"] = "EnragedVFX",
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Club Slam",
+        ["EMove"] = {"Sumo Rush", "Sumo Stance"},
+        ["FMove"] = "Enrage",
+    },
+}
+
+ClassData["Hydromancer"] = {
+    Health = 100,
+    Defense = 100,
+    Speed = 30,
+    ProjectileSpeed = 60,
+    ProjectileDuration = 2,
+    Role = "Burst",
+    Cost = 200,
+    Ammo = 1, --number of shots per LMB
+    ShotDelay = 0.15, --delay between shots(based on ammo)
+    Description = "Sustainer of life",
+    DamageList = {
+        ["LMBMove"] = {3, 3, 3},
+        ["QMove"] = 4,
+        ["EMove"] = 3,
+        ["FMove"] = 20,
+    }, 
+    Cooldowns = {
+        ["LMBMove"] = .5,
+        ["QMove"] = 3,
+        ["EMove"] = 7,
+        ["FMove"] = 10,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(5, 5, 5),
+            Offset = CFrame.new(0, 0, -2),
+        },
+        ["QMove"] = {
+            Size = Vector3.new(3, 3, 3),
+            Offset = CFrame.new(0, 0, -1),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(6, 6, 20),
+            Offset = CFrame.new(0, 3, -12),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(20, 20, 20),
+            Offset = CFrame.new(0, 0, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = {
+            isAOE = false,
+            isProjectile = true,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            ignoreLMBMoveCD = false,
+            isMultiShot = false,
+            Silenced = false,
+        },
+        ["QMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+        ["EMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = true,
+            Knockup = false,
+            Silenced = false,
+        },
+        ["FMove"] = {
+            hasEvent = false,
+            noMovement = false,
+            Stunned = false,
+            Burn = false,
+            Slow = false,
+            CameraLock = false,
+            Knockup = false,
+            Silenced = false,
+        },
+    },
+    VisualEffects = {
+        ["LMBMove"] = "WaterBall",
+        ["QMove"] = "FireBall",
+        ["EMove"] = "Flamethrower",
+        ["FMove"] = "Eruption",
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Triple Fire Ball",
+        ["EMove"] = "Flame thrower",
+        ["FMove"] = "Eruption",
+    },
+}
+
 
 return ClassData

@@ -5,7 +5,7 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 
 local CharacterSelectClient = {}
 
-function CharacterSelectClient:Init(character, lobby, uiController, animationSystem)
+function CharacterSelectClient:Init(character: Model, lobby: Model, uiController, animationSystem)
     CharacterSelectClient.character = character
     CharacterSelectClient.Lobby = lobby
     CharacterSelectClient.Classes = lobby:WaitForChild("Classes")
@@ -25,6 +25,8 @@ function CharacterSelectClient:Setup()
     CharacterSelectClient.Bounds = {}
 
     for _, group in pairs(CharacterSelectClient.Classes:GetChildren()) do
+        if group.Name == "Test" then continue end
+
         CharacterSelectClient.ClassList[group.Name] = {}
 
         for _, class in pairs(group:GetChildren()) do
@@ -89,6 +91,8 @@ function CharacterSelectClient:UpdateStatue(tokenAmount, classes)
     end
 
     for _, group in pairs(CharacterSelectClient.Classes:GetChildren()) do
+        if group.Name == "Test" then continue end
+        
         for _, class in pairs(group:GetChildren()) do
             local currClassData = ClassData[class.Name]
 
