@@ -43,15 +43,15 @@ if RunService:IsServer() then
     end
 
     function StateManager:RemoveAll(target: Model)
-        for _, state in ipairs(states) do
-            if states[state]:CheckState(target) then
-                states[state]:RemoveTarget(target)
+        for stateName, state in pairs(states) do
+            if state:CheckState(target) then
+                state:RemoveTarget(target)
             end
         end
     end
 
     function StateManager:Update(deltaTime)
-        for _, state in ipairs(states) do
+        for stateName, state in pairs(states) do
             state:Update(deltaTime)
         end
     end

@@ -368,6 +368,10 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
                 if currentClassData.MoveData[moveType].Silenced then
                     StateManager:AddTarget(parent, "Silenced", 2)
                 end
+
+                if currentClassData.MoveData[moveType].HydroStack then
+                    PassiveManager:AddStack(character, "HydroStack", {})
+                end
         
                 VisualEffectServer:SpawnEffectsInRange(
                     currentClassData.VisualEffects[moveType],

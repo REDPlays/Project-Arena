@@ -15,20 +15,20 @@ local DataTemplate = {
     ["Energy"] = {0.639216, 0.635294, 0.647059},
 
 	["Classes"] = {
-		["AngelKnight"] = false,
-        ["Pyromancer"] = false,
-        ["ShieldWarrior"] = false,
-        ["Samurai"] = false,
-        ["Engineer"] = false,
-        ["Ranger"] = false,
-        ["Shinobi"] = false,
-        ["Oni"] = false,
+		["AngelKnight"] = true,
+        ["Pyromancer"] = true,
+        ["ShieldWarrior"] = true,
+        ["Samurai"] = true,
+        ["Engineer"] = true,
+        ["Ranger"] = true,
+        ["Shinobi"] = true,
+        ["Oni"] = true,
         ["Judge"] = false,
-        ["Hydromancer"] = false,
+        ["Hydromancer"] = true,
 	},
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test27", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test28", DataTemplate)
 
 local Profiles = {}
 
