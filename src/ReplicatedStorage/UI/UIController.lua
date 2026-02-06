@@ -570,7 +570,6 @@ function UIController:Connect()
         end
 
         local isAwakened = self.statsFolder:GetAttribute("Awakened")
-        warn("isAwakened:", isAwakened)
 
         if input.KeyCode == Enum.KeyCode.C or input.KeyCode == Enum.KeyCode.ButtonL1 then
             if self.debounces.Block then
