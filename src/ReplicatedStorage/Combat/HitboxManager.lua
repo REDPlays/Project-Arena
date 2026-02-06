@@ -14,6 +14,10 @@ local HealthManager
 local PassiveManager
 local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectServer"))
 
+local CombatFiles = ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat")
+local PassiveFiles = CombatFiles:WaitForChild("Passives")
+local StatusFiles = CombatFiles:WaitForChild("States")
+
 local IgnoreFolder = workspace.Ignore
 
 local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
@@ -26,6 +30,29 @@ end
 
 local HitboxManager = {}
 HitboxManager.projectiles = {}
+
+function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, target: Model, attacker: Model)
+    for mod, enabled in pairs(moveData) do
+        if enabled then
+            local isStatus = StatusFiles:FindFirstChild(mod)
+            local isPassive = PassiveFiles:FindFirstChild(mod)
+
+            if isStatus then
+                StateManager:AddTarget(
+                    target, 
+                    mod, 
+                    moveDataDurations[mod] or 1
+                )
+            end
+
+            if isPassive then
+                if mod == "HydroStack" then
+                    PassiveManager:AddStack(attacker, mod, {})
+                end
+            end
+        end
+    end
+end
 
 function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnockup, isSilenced)
     local currentClassData = ClassData["Base"]
@@ -314,8 +341,8 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
                     continue
                 end
         
-                local Stats = parent:FindFirstChild("Stats")
-                if not Stats then
+                local enemyStats = parent:FindFirstChild("Stats")
+                if not enemyStats then
                     continue
                 end
         
@@ -343,35 +370,14 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
                     HealthManager:Block(parent, damage, character)
                     continue
                 end
-        
-                --apply burn
-                if currentClassData.MoveData[moveType].Burn then
-                    StateManager:AddTarget(parent, "Burn", 3)
-                end
-        
-                --apply stun
-                if currentClassData.MoveData[moveType].Stunned then
-                    StateManager:AddTarget(parent, "Stunned", 2)
-                end
-        
-                --apply slow
-                if currentClassData.MoveData[moveType].Slow then
-                    StateManager:AddTarget(parent, "Slow", 1)
-                end
 
-                --apply knockup
-                if currentClassData.MoveData[moveType].Knockup then
-                    StateManager:AddTarget(parent, "Knockup", 50)
-                end
-
-                --apply silence
-                if currentClassData.MoveData[moveType].Silenced then
-                    StateManager:AddTarget(parent, "Silenced", 2)
-                end
-
-                if currentClassData.MoveData[moveType].HydroStack then
-                    PassiveManager:AddStack(character, "HydroStack", {})
-                end
+                --check modifiers
+                HitboxManager:CheckModifiers(
+                    currentClassData.MoveData[moveType],
+                    currentClassData.MoveDataDurations[moveType],
+                    parent, 
+                    character
+                )
         
                 VisualEffectServer:SpawnEffectsInRange(
                     currentClassData.VisualEffects[moveType],
@@ -527,35 +533,13 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
         return
     end
 
-    --apply burn
-    if classData.MoveData[moveType].Burn then
-        StateManager:AddTarget(target, "Burn", 2)
-    end
-
-    --apply stun
-    if classData.MoveData[moveType].Stunned then
-        StateManager:AddTarget(target, "Stunned", 2)
-    end
-
-    --apply slow
-    if classData.MoveData[moveType].Slow then
-        StateManager:AddTarget(target, "Slow", 1)
-    end
-
-    --apply knockup
-    if classData.MoveData[moveType].Knockup then
-        StateManager:AddTarget(target, "Knockup", 50)
-    end
-
-    --apply silence
-    if classData.MoveData[moveType].Silenced then
-        StateManager:AddTarget(target, "Silenced", 2)
-    end
-
-    --apply hydrostack? make a better setting for if the state or passives are there rather than all being their own if statements
-    if classData.MoveData[moveType].HydroStack then
-        PassiveManager:AddStack(character, "HydroStack", {})
-    end
+    --check modifiers
+    HitboxManager:CheckModifiers(
+        classData.MoveData[moveType],
+        classData.MoveDataDurations[moveType],
+        target, 
+        character
+    )
 
     StateManager:AddTarget(target, "Attacked", 1)
 

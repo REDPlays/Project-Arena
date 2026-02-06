@@ -14,6 +14,7 @@ local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForC
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local IgnoreFolder = workspace.Ignore
 
@@ -120,24 +121,14 @@ function SumoStance:Activate(player, character, rootPart, placementCFrame, class
                         continue
                     end
 
-                    local currentDamage
+                    local currentDamage = damage[2]
 
-                    if hitType == 1 then
-                        currentDamage = damage[2]
-
-                        StateManager:AddTarget(parent, "Slow", 2)
-                        StateManager:AddTarget(parent, "Knockup", 75)
-                    elseif hitType == 2 then
-                        currentDamage = damage[2]
-
-                        local parentPlayer = Players:GetPlayerFromCharacter(parent)
-                        if not parentPlayer then
-                            enemyRoot:SetNetworkOwner(player)
-                        end
-
-                        StateManager:AddTarget(parent, "Slow", 2)
-                        StateManager:AddTarget(parent, "Knockup", 75)
-                    end
+                    HitboxManager:CheckModifiers(
+                        classData.MoveData[moveType][2],
+                        classData.MoveDataDurations[moveType][2],
+                        parent, 
+                        character
+                    )
 
                     StateManager:AddTarget(parent, "Attacked", 2)
         

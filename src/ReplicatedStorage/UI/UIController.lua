@@ -545,16 +545,6 @@ function UIController:Connect()
 
     self.testHealthSlots = {}
     self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-        if input.KeyCode == Enum.KeyCode.P then
-            percentage = 100
-            min = 0
-            testCooldown = true
-            self.TestCooldownUI.Visible = true
-            self.TestLeftLayer.ImageColor3 = Color3.fromRGB(255, 0, 0)
-            self.TestLeftLayer2.ImageColor3 = Color3.fromRGB(255, 0, 0)
-            --self.TestButtonsUI.ImageColor3 = Color3.fromRGB(255, 0, 0)
-        end
-
         if self.SelectingColor then
             return
         end
@@ -578,6 +568,9 @@ function UIController:Connect()
         if self.statsFolder:GetAttribute("Blocking") and self.statsFolder:GetAttribute("Blocking") == true then
             return
         end
+
+        local isAwakened = self.statsFolder:GetAttribute("Awakened")
+        warn("isAwakened:", isAwakened)
 
         if input.KeyCode == Enum.KeyCode.C or input.KeyCode == Enum.KeyCode.ButtonL1 then
             if self.debounces.Block then
@@ -608,13 +601,35 @@ function UIController:Connect()
             if canAttack then
                 self.debounces.QMove = true
                 local currentClassData = ClassData[self.class]
+
+                local animationName = "QMove"
                 
                 local cooldownDuration = currentClassData.Cooldowns["QMove"]
-                if currentClassData.MoveData["QMove"].DoubleCooldown then
+                local DoubleCooldown
+
+                local hasEvent
+                if currentClassData.MoveData["QMove"][1] then
+                    if isAwakened then
+                        hasEvent = currentClassData.MoveData.QMove[2].hasEvent
+                        DoubleCooldown = currentClassData.MoveData.QMove[2].DoubleCooldown
+                    else
+                        hasEvent = currentClassData.MoveData.QMove[1].hasEvent
+                        DoubleCooldown = currentClassData.MoveData.QMove[1].DoubleCooldown
+                    end
+                else
+                    hasEvent = currentClassData.MoveData.QMove.hasEvent
+                    DoubleCooldown = currentClassData.MoveData.QMove.DoubleCooldown
+                end
+
+                if DoubleCooldown then
                     if self.character:GetAttribute("DoubleCooldown") == "QMove" then
                         cooldownDuration = cooldownDuration[2]
                     else
                         cooldownDuration = cooldownDuration[1]
+                    end
+
+                    if isAwakened then
+                        animationName = "QMove2"
                     end
                 end
 
@@ -641,11 +656,10 @@ function UIController:Connect()
                     Events.Client_Server.Moves:FireServer(self.class, "QMove", currentMoveData)
                 end
 
-                local hasEvent = currentClassData.MoveData.QMove.hasEvent
                 local noMovement = currentClassData.MoveData.QMove.noMovement
                 self:LockInPlace(noMovement, "QMove")
 
-                self.animationSystem:Play(self.class, "QMove", nil, conditionalData, hitBoxCallBack, hasEvent)
+                self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
 
@@ -660,19 +674,37 @@ function UIController:Connect()
                 local currentClassData = ClassData[self.class]
                 
                 local animationName = "EMove"
+
                 local cooldownDuration = currentClassData.Cooldowns["EMove"]
-                if currentClassData.MoveData["EMove"].DoubleCooldown then
+                local DoubleCooldown
+                
+                local hasEvent
+                if currentClassData.MoveData["EMove"][1] then
+                    if isAwakened then
+                        hasEvent = currentClassData.MoveData.EMove[2].hasEvent
+                        DoubleCooldown = currentClassData.MoveData.EMove[2].DoubleCooldown
+                    else
+                        hasEvent = currentClassData.MoveData.EMove[1].hasEvent
+                        DoubleCooldown = currentClassData.MoveData.EMove[1].DoubleCooldown
+                    end
+                else
+                    hasEvent = currentClassData.MoveData.EMove.hasEvent
+                    DoubleCooldown = currentClassData.MoveData.EMove.DoubleCooldown
+                end
+                
+                if DoubleCooldown then
                     if self.character:GetAttribute("DoubleCooldown") == "EMove" then
                         cooldownDuration = cooldownDuration[2]
                     else
                         cooldownDuration = cooldownDuration[1]
                     end
                     
-                    local Stats = self.character:FindFirstChild("Stats")
-                    if Stats and Stats:GetAttribute("Awakened") then
+                    if isAwakened then
                         animationName = "EMove2"
                     end
                 end
+
+                warn("animationName:", animationName)
 
                 if workspace:GetAttribute("NoCooldowns") then
                     cooldownDuration = 1
@@ -697,7 +729,6 @@ function UIController:Connect()
                     Events.Client_Server.Moves:FireServer(self.class, "EMove", currentMoveData)
                 end
 
-                local hasEvent = currentClassData.MoveData.EMove.hasEvent
                 local noMovement = currentClassData.MoveData.EMove.noMovement
                 self:LockInPlace(noMovement, "EMove")
 
@@ -712,16 +743,37 @@ function UIController:Connect()
 
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "FMove")
             if canAttack then
-
                 self.debounces.FMove = true
                 local currentClassData = ClassData[self.class]
+
+                local animationName = "FMove"
                 
                 local cooldownDuration = currentClassData.Cooldowns["FMove"]
-                if currentClassData.MoveData["FMove"].DoubleCooldown then
+                local DoubleCooldown
+
+                local hasEvent
+                if currentClassData.MoveData["FMove"][1] then
+                    if isAwakened then
+                        hasEvent = currentClassData.MoveData.FMove[2].hasEvent
+                        DoubleCooldown = currentClassData.MoveData.FMove[2].DoubleCooldown
+                    else
+                        hasEvent = currentClassData.MoveData.FMove[1].hasEvent
+                        DoubleCooldown = currentClassData.MoveData.FMove[1].DoubleCooldown
+                    end
+                else
+                    hasEvent = currentClassData.MoveData.FMove.hasEvent
+                    DoubleCooldown = currentClassData.MoveData.FMove.DoubleCooldown
+                end
+
+                if DoubleCooldown then
                     if self.character:GetAttribute("DoubleCooldown") == "FMove" then
                         cooldownDuration = cooldownDuration[2]
                     else
                         cooldownDuration = cooldownDuration[1]
+                    end
+
+                    if isAwakened then
+                        animationName = "FMove2"
                     end
                 end
 
@@ -748,11 +800,10 @@ function UIController:Connect()
                     Events.Client_Server.Moves:FireServer(self.class, "FMove", currentMoveData)
                 end
 
-                local hasEvent = currentClassData.MoveData.FMove.hasEvent
                 local noMovement = currentClassData.MoveData.FMove.noMovement
                 self:LockInPlace(noMovement, "FMove")
 
-                self.animationSystem:Play(self.class, "FMove", nil, conditionalData, hitBoxCallBack, hasEvent)
+                self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
             end
         end
     end)

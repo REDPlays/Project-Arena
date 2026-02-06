@@ -14,6 +14,7 @@ local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForC
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local IgnoreFolder = workspace.Ignore
 
@@ -164,30 +165,13 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
                     continue
                 end
     
-                --apply burn
-                if classData.MoveData[moveType].Burn then
-                    StateManager:AddTarget(parent, "Burn", 3)
-                end
-    
-                --apply stun
-                if classData.MoveData[moveType].Stunned then
-                    StateManager:AddTarget(parent, "Stunned", 2)
-                end
-    
-                --apply slow
-                if classData.MoveData[moveType].Slow then
-                    StateManager:AddTarget(parent, "Slow", 1)
-                end
-    
-                --apply knockup
-                if classData.MoveData[moveType].Knockup then
-                    StateManager:AddTarget(parent, "Knockup", 50)
-                end
-
-                --apply silence
-                if classData.MoveData[moveType].Silenced then
-                    StateManager:AddTarget(parent, "Silenced", 2)
-                end
+                --check modifiers
+                HitboxManager:CheckModifiers(
+                    classData.MoveData[moveType],
+                    classData.MoveDataDurations[moveType],
+                    parent, 
+                    character
+                )
     
                 StateManager:AddTarget(parent, "Attacked", 1)
     

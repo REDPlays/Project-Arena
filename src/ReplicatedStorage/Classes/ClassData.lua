@@ -77,6 +77,12 @@ ClassData["AngelKnight"] = {
         ["EMove"] = ClassMoveData:SetupModifiers({"Slow"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"CameraLock"}),
     },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {Slow = 2},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "AngelKnightM1",
         ["QMove"] = "HolyBeam",
@@ -138,6 +144,12 @@ ClassData["Pyromancer"] = {
         ["EMove"] = ClassMoveData:SetupModifiers({"Burn", "CameraLock"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"Burn"}),
     },
+    MoveDataDurations = {
+        ["LMBMove"] = {Burn = 3},
+        ["QMove"] = {Burn = 3},
+        ["EMove"] = {Burn = 3},
+        ["FMove"] = {Burn = 3},
+    },
     VisualEffects = {
         ["LMBMove"] = "FireBall",
         ["QMove"] = "FireBall",
@@ -194,6 +206,12 @@ ClassData["ShieldWarrior"] = {
         ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Knockup"}),
         ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Stunned"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement"}),
+    },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {Knockup = 50},
+        ["EMove"] = {Stunned = 3},
+        ["FMove"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "ShieldWarriorM1",
@@ -252,6 +270,12 @@ ClassData["Samurai"] = {
         ["QMove"] = ClassMoveData:SetupModifiers({}),
         ["EMove"] = ClassMoveData:SetupModifiers({"Slow", "noMovement"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Slow", "Knockup"}),
+    },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {Slow = 2},
+        ["FMove"] = {Knockup = 50, Slow = 2},
     },
     VisualEffects = {
         ["LMBMove"] = "SamuraiM1",
@@ -320,7 +344,13 @@ ClassData["Engineer"] = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
         ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced"}),
         ["EMove"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned", "Slow"}),
+        ["FMove"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned"}),
+    },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {Silenced = 2},
+        ["EMove"] = {},
+        ["FMove"] = {Stunned = 2},
     },
     VisualEffects = {
         ["LMBMove"] = "EngineerM1",
@@ -389,6 +419,12 @@ ClassData["Ranger"] = {
         ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Stunned"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Burn"}),
     },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {Stunned = 2},
+        ["FMove"] = {Burn = 3},
+    },
     VisualEffects = {
         ["LMBMove"] = "RangerM1",
         ["QMove"] = "PiercingArrow",
@@ -445,7 +481,13 @@ ClassData["Shinobi"] = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({}),
         ["QMove"] = ClassMoveData:SetupModifiers({"Slow"}),
         ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"Slow", "Knockup", "DoubleCooldown"}),
+        ["FMove"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
+    },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {Slow = 2},
+        ["EMove"] = {},
+        ["FMove"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "ShinobiM1",
@@ -503,9 +545,21 @@ ClassData["Oni"] = {
     },
     MoveData = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
+        ["QMove"] = {
+            ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow"}),
+            ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow", "Knockup"})
+        },
+        ["EMove"] = {
+            ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
+            ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"})
+        },
         ["FMove"] = ClassMoveData:SetupModifiers({"noMovement"}),
+    },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {{Slow = 3}, {Slow = 3, Knockup = 50}},
+        ["EMove"] = {{Knockup = 35}, {Knockup = 70}},
+        ["FMove"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "OniM1",
@@ -567,6 +621,12 @@ ClassData["Judge"] = {
         ["EMove"] = ClassMoveData:SetupModifiers({}),
         ["FMove"] = ClassMoveData:SetupModifiers({}),
     },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "OniM1",
         ["QMove"] = "ClubSlam",
@@ -627,6 +687,12 @@ ClassData["Hydromancer"] = {
         ["QMove"] = ClassMoveData:SetupModifiers({}),
         ["EMove"] = ClassMoveData:SetupModifiers({}),
         ["FMove"] = ClassMoveData:SetupModifiers({}),
+    },
+    MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "WaterBall",

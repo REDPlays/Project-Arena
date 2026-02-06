@@ -17,6 +17,7 @@ local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForC
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local IgnoreFolder = workspace.Ignore
 
@@ -148,10 +149,13 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
                     continue
                 end
 
-                --apply slow
-                if classData.MoveData[moveType].Slow then
-                    StateManager:AddTarget(parent, "Slow", 2)
-                end
+                --check modifiers
+                HitboxManager:CheckModifiers(
+                    classData.MoveData[moveType],
+                    classData.MoveDataDurations[moveType],
+                    parent, 
+                    character
+                )
 
                 StateManager:AddTarget(parent, "Attacked", 2)
 
@@ -224,10 +228,13 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
                     continue
                 end
 
-                --apply slow
-                if classData.MoveData[moveType].Stunned then
-                    StateManager:AddTarget(parent, "Stunned", 2)
-                end
+                --check modifiers
+                HitboxManager:CheckModifiers(
+                    classData.MoveData[moveType],
+                    classData.MoveDataDurations[moveType],
+                    parent, 
+                    character
+                )
 
                 StateManager:AddTarget(parent, "Attacked", 2)
 

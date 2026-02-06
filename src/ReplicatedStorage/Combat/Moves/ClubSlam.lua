@@ -14,6 +14,7 @@ local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForC
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local IgnoreFolder = workspace.Ignore
 
@@ -171,18 +172,22 @@ function ClubSlam:Activate(player, character, rootPart, placementCFrame, class, 
                             continue
                         end
 
+                        --check modifiers
                         if not isAwakened then
-                            StateManager:AddTarget(parent, "Slow", 2)
+                            HitboxManager:CheckModifiers(
+                                classData.MoveData[moveType][1],
+                                classData.MoveDataDurations[moveType][1],
+                                parent, 
+                                character
+                            )
 
                         elseif isAwakened then
-                            StateManager:AddTarget(parent, "Slow", 3)
-
-                            local parentPlayer = Players:GetPlayerFromCharacter(parent)
-                            if not parentPlayer then
-                                enemyRoot:SetNetworkOwner(player)
-                            end
-
-                            StateManager:AddTarget(parent, "Knockup", 50)
+                            HitboxManager:CheckModifiers(
+                                classData.MoveData[moveType][2],
+                                classData.MoveDataDurations[moveType][2],
+                                parent, 
+                                character
+                            )
                         end
 
                         StateManager:AddTarget(parent, "Attacked", 1)
