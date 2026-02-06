@@ -704,8 +704,6 @@ function UIController:Connect()
                     end
                 end
 
-                warn("animationName:", animationName)
-
                 if workspace:GetAttribute("NoCooldowns") then
                     cooldownDuration = 1
                 end
