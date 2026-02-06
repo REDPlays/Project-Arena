@@ -103,8 +103,6 @@ function HydroStack:RemoveStack(target: Model)
     HydroStack.InPassive[target].stack -= 1
 
     if HydroStack.InPassive[target].stack <= 0 then
-        HydroStack.InPassive[target] = nil
-
         Stats:SetAttribute("HydroStack", nil)
 
         VisualEffectServer:TerminateVFX(
@@ -114,6 +112,8 @@ function HydroStack:RemoveStack(target: Model)
             {},
             HydroStack.InPassive[target].VFX_ID
         )
+
+        HydroStack.InPassive[target] = nil
     else
         VisualEffectServer:SpawnEffectsInRange(
             "HydroStack",
@@ -150,8 +150,6 @@ function HydroStack:ClearStack(target: Model)
     if not HydroStack.InPassive[target] then
         return
     end
-
-    HydroStack.InPassive[target] = nil
     
     Stats:SetAttribute("HydroStack", nil)
 
@@ -162,6 +160,8 @@ function HydroStack:ClearStack(target: Model)
         {},
         HydroStack.InPassive[target].VFX_ID
     )
+
+    HydroStack.InPassive[target] = nil
 end
 
 function HydroStack:Update(deltaTime: number)

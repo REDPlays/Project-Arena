@@ -43,7 +43,7 @@ if RunService:IsServer() then
     end
 
     function PassiveManager:ClearAllStacks(target: Model)
-        for _, passive in ipairs(passives) do
+        for passiveName, passive in pairs(passives) do
             if passive:CheckPassive(target) then
                 passive:ClearStack(target)
             end
@@ -51,7 +51,7 @@ if RunService:IsServer() then
     end
 
     function PassiveManager:Update(deltaTime)
-        for _, passive in ipairs(passives) do
+        for passiveName, passive in pairs(passives) do
             passive:Update(deltaTime)
         end
     end
