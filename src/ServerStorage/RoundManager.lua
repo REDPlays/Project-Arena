@@ -433,7 +433,7 @@ function RoundManager:Update(deltaTime)
             if not self.startCountDown then
                 self.startCountDown = true
                 
-                self.countDown = 25
+                self.countDown = 15
 
                 --map selection
                 if not self.MapSelected then

@@ -374,13 +374,13 @@ ClassData["Ranger"] = {
     ProjectileDuration = 1,
     Role = "Marksman",
     Cost = 200,
-    Ammo = 2, --number of shots per LMB
+    Ammo = 1, --number of shots per LMB
     ShotDelay = 0.1, --delay between shots(based on ammo)
     Description = "Eyes of an Eagle",
     DamageList = {
         ["LMBMove"] = {5, 5, 5},
         ["QMove"] = 15,
-        ["EMove"] = 10,
+        ["EMove"] = 20,
         ["FMove"] = 10,
     },
     Cooldowns = {
@@ -403,7 +403,7 @@ ClassData["Ranger"] = {
             Offset = CFrame.new(1, 1, 0.5),
         },
         ["EMove"] = {
-            Size = Vector3.new(2, 2, 2),
+            Size = Vector3.new(3, 7, 7),
             Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
@@ -422,7 +422,7 @@ ClassData["Ranger"] = {
     MoveDataDurations = {
         ["LMBMove"] = {},
         ["QMove"] = {},
-        ["EMove"] = {Stunned = 2},
+        ["EMove"] = {Stunned = 3},
         ["FMove"] = {Burn = 3},
     },
     VisualEffects = {
