@@ -65,11 +65,15 @@ function NetTrap:Activate(player, character, rootPart, placementCFrame, class, c
 
     local VFX_ID = "NetTrap"..HttpService:GenerateGUID(false)
 
+    local primaryColor = player:GetAttribute("Primary")
+    local secondaryColor = player:GetAttribute("Secondary")
+    local energyColor = player:GetAttribute("Energy")
+
     VisualEffectServer:SpawnEffectsInRange(
         "NetTrap",
         nil,
         character,
-        {hitbox = Hitbox},
+        {hitbox = Hitbox, primaryColor = primaryColor, secondaryColor = secondaryColor, energyColor = energyColor},
         1000,
         VFX_ID
     )

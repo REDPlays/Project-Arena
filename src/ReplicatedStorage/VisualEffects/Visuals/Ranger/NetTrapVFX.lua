@@ -70,6 +70,9 @@ function NetTrap:DisplayVFX()
     self.trap:PivotTo(self.hitbox.CFrame * CFrame.Angles(0, 0, math.rad(-90)) - Vector3.new(0, self.hitbox.Size.Y/4, 0))
     self.trap.Parent = self.Folder
 
+    self.trap.Group1.Color = self.conditionalData.primaryColor
+    self.trap.Group3.Color = self.conditionalData.energyColor
+
     self.MainAttach = self.trap.Main.Attachment
     self.FloorVFX = self.trap.Main.FloorVFX
     self.A0 = self.MainAttach.A0
