@@ -3,6 +3,7 @@ local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -42,230 +43,293 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
         return
     end
 
-    local distance = 30
-    local height = 20
+    local travelDistance = 24
+    local speed = 48
+    local travelTime = travelDistance/speed
+    local targetHit = false
 
-    local startPosition = predictPosition(rootPart, 0.25)
+    local lifeTime = 6
 
-    local VFX_ID = "ConcussiveBomb"..HttpService:GenerateGUID(false)
-
-    local startCFrame = CFrame.new(startPosition, rootPart.CFrame.LookVector + startPosition) * CFrame.new(0, 0, -3)
-    local endCFrame = startCFrame * CFrame.new(0, 0, -distance)
-    local middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, height, 0)
-
-    local listOfChars = {}
-    for _, plr in pairs(game.Players:GetPlayers()) do
-        local _chr = plr.Character
-        if _chr then
-            table.insert(listOfChars, _chr)
-        end
-    end
-
-    local raycastParams = RaycastParams.new()
-    raycastParams.FilterDescendantsInstances = {listOfChars, IgnoreFolder, workspace.VFX, workspace.Dummies}
-    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
-
-    local endRay = workspace:Raycast(endCFrame.Position, endCFrame.UpVector * -1000, raycastParams) 
-    if endRay then
-        local rayPosition = endRay.Position
-        endCFrame = CFrame.lookAt(rayPosition, rayPosition + endCFrame.LookVector, Vector3.new(0, 1, 0))
-        middleCFrame = startCFrame:Lerp(endCFrame, 0.5) * CFrame.new(0, height, 0)
-    end
-
-    local pointsList = {}
-    --[==[for i=0, 1.05, 0.05 do
-        local newPosition = quadratic(i, startCFrame.Position, middleCFrame.Position, endCFrame.Position)
-        local lookVector = endCFrame.LookVector
-
-        local point = Instance.new("Part")
-        point.Size = Vector3.new(.5, .5, .5)
-        point.Material = Enum.Material.Neon
-        point.Anchored = true
-        point.CFrame = CFrame.new(newPosition, newPosition + lookVector)
-        point.CanCollide = false
-        point.CanQuery = false
-        point.CanTouch = false
-        point.Parent = IgnoreFolder
-
-        table.insert(pointsList, point)
-    end]==]
-
-    local function checkCollision(hitbox: BasePart)
-        local overlapParams = OverlapParams.new()
-        overlapParams.FilterDescendantsInstances = {listOfChars, IgnoreFolder, workspace.VFX, workspace.Dummies}
-        overlapParams.FilterType = Enum.RaycastFilterType.Exclude
-        
-        local collided = false
-        local parts = workspace:GetPartsInPart(hitbox, overlapParams)
-
-        for _, obj in parts do
-            if obj then
-                collided = true
-                break
-            end
-        end
-
-        return collided
-    end
-
-    local function Explode(spawnCFrame: CFrame)
-        local BombHitbox: BasePart = Hitboxes.CircleHitbox:Clone()
-        BombHitbox.Transparency = 1
-        if ShowHitboxes then
-            BombHitbox.Transparency = .5
-        end
-        BombHitbox.Anchored = true
-        BombHitbox.Size = classData.Hitboxes[moveType].Size2
-        BombHitbox.CFrame = spawnCFrame
-        BombHitbox.Parent = IgnoreFolder
-        Debris:AddItem(BombHitbox, 1)
-
-        VisualEffectServer:SpawnEffectsInRange(
-            "ConcussiveBomb",
-            nil,
-            character,
-            {spawnCFrame = spawnCFrame},
-            1000,
-            VFX_ID,
-            true
-        )
-
-        local overlapParams = OverlapParams.new()
-        overlapParams.FilterDescendantsInstances = {listOfChars, workspace.Dummies}
-        overlapParams.FilterType = Enum.RaycastFilterType.Include
-
-        local alreadyHit = {}
-
-        local parts = workspace:GetPartsInPart(BombHitbox, overlapParams)
-        for _, object in parts do
-            local parent = object.Parent
-
-            if not parent:IsA("Model") then
-                continue
-            end
-
-            if parent == character then
-                continue
-            end
-
-            --ignoreTargets
-            if CollectionService:HasTag(parent, "Ignore") then
-                continue
-            end
-
-            local enemyHum = parent:FindFirstChild("Humanoid")
-            if not enemyHum then
-                continue
-            end
-
-            local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-            if not enemyRoot then
-                continue
-            end
-
-            if alreadyHit[parent.Name] then
-                continue
-            end
-
-            if CollectionService:HasTag(parent, "Invulnerable") then
-                continue
-            end
-
-            local isUserStun = StateManager:CheckState(character, "Stunned")
-            if isUserStun then
-                return
-            end
-
-            local myTeam = character:GetAttribute("Team")
-            local theirTeam = parent:GetAttribute("Team")
-
-            if (myTeam and theirTeam) and myTeam == theirTeam then
-                continue
-            end
-
-            alreadyHit[parent.Name] = true
-
-            local isBlocking = StateManager:CheckState(parent, "Blocking")
-            if isBlocking then
-                --Block Indication
-                HealthManager:Block(parent, damage, character)
-                continue
-            end
-
-            --check modifiers
-            HitboxManager:CheckModifiers(
-                classData.MoveData[moveType],
-                classData.MoveDataDurations[moveType],
-                parent, 
-                character
-            )
-
-            StateManager:AddTarget(parent, "Attacked", 1)
-
-            HealthManager:Damage(parent, damage, character)
-        end
-    end
-
-    local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
+    local size = classData.Hitboxes[moveType].Size
+    local startCFrame = character:GetPivot() + Vector3.new(0, size.Y/4, 0)
+    
+    local Hitbox: BasePart = Hitboxes.CylinderHitbox:Clone()
     Hitbox.Transparency = 1
     if ShowHitboxes then
         Hitbox.Transparency = .5
     end
+    Hitbox.Size = size
     Hitbox.Anchored = true
-    Hitbox.Size = classData.Hitboxes[moveType].Size
-    Hitbox.CFrame = startCFrame
+    Hitbox.CFrame = startCFrame * CFrame.Angles(0, 0, math.rad(90))
     Hitbox.Parent = IgnoreFolder
+
+    local VFX_ID = "ConcussiveBomb"..HttpService:GenerateGUID(false)
+
+    local primaryColor = player:GetAttribute("Primary")
+    local secondaryColor = player:GetAttribute("Secondary")
+    local energyColor = player:GetAttribute("Energy")
 
     VisualEffectServer:SpawnEffectsInRange(
         "ConcussiveBomb",
         nil,
         character,
-        {hitbox  = Hitbox},
+        {hitbox = Hitbox, primaryColor = primaryColor, secondaryColor = secondaryColor, energyColor = energyColor},
         1000,
         VFX_ID
     )
 
-    local speed = 75
+    local thread = task.spawn(function()
+        local currentTime = 0
+        local stoppedMoving = false
 
-    local totalDistance = (startCFrame.Position - middleCFrame.Position).Magnitude + (middleCFrame.Position - endCFrame.Position).Magnitude
+        local rayparams = RaycastParams.new()
+        local forwardCFrame = startCFrame
 
-    local totalTime = totalDistance / speed
-
-    local startTime = tick()
-    local RunConnect
-    RunConnect = RunService.Heartbeat:Connect(function(deltaTime)
-        local _elapsedTime = tick() - startTime
-        local t = _elapsedTime / totalTime
-
-        if t > 1 then
-            t = 1
-        end
-
-        local newPosition = quadratic(t, startCFrame.Position, middleCFrame.Position, endCFrame.Position)
-        local lookVector = endCFrame.LookVector
-
-        Hitbox.CFrame = CFrame.new(newPosition, newPosition + lookVector)
-
-        local collided = checkCollision(Hitbox)
-        if collided then
-            Explode(Hitbox.CFrame)
-
-            Debris:AddItem(Hitbox, 1)
-
-            for _, obj in pointsList do
-                Debris:AddItem(obj, 1)
+        local function AoeHitDetection()
+            local characterList = {}
+            for _, plr in pairs(Players:GetPlayers()) do
+                local plrChar = plr.Character
+                if not plrChar then
+                    continue
+                end
+                table.insert(characterList, plrChar)
             end
 
-            if RunConnect then
-                RunConnect:Disconnect()
+            for _, dummy in pairs(workspace.Dummies:GetChildren()) do
+                if dummy:IsA("Model") then
+                    table.insert(characterList, dummy)
+                end
+            end
+
+            local aoeCenterPos = Hitbox.Position - Vector3.new(0, size.X/2, 0)
+            local aoeRange = 9 --half of vfx explosion hitbox
+            local alreadyHit = {}
+
+            VisualEffectServer:SpawnEffectsInRange(
+                "ConcussiveBomb",
+                nil,
+                character,
+                {action = "Trap", spawnPosition = aoeCenterPos},
+                1000,
+                VFX_ID,
+                true
+            )
+
+            for _, entity: Model in pairs(characterList) do
+                --ignoreTargets
+                if CollectionService:HasTag(entity, "Ignore") then
+                    continue
+                end
+
+                local enemyHum = entity:FindFirstChild("Humanoid")
+                if not enemyHum then
+                    continue
+                end
+
+                local enemyRoot = entity:FindFirstChild("HumanoidRootPart")
+                if not enemyRoot then
+                    continue
+                end
+
+                local distanceFromCenter = (aoeCenterPos - enemyRoot.Position).Magnitude
+                if distanceFromCenter > aoeRange then
+                    continue
+                end
+
+                if alreadyHit[entity.Name] then
+                    continue
+                end
+
+                if CollectionService:HasTag(entity, "Invulnerable") then
+                    continue
+                end
+
+                local isUserStun = StateManager:CheckState(character, "Stunned")
+                if isUserStun then
+                    return
+                end
+
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = entity:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
+                    continue
+                end
+
+                alreadyHit[entity.Name] = true
+
+                local isBlocking = StateManager:CheckState(entity, "Blocking")
+                if isBlocking then
+                    --Block Indication
+                    HealthManager:Block(entity, damage, character)
+                    continue
+                end
+
+                --check modifiers
+                HitboxManager:CheckModifiers(
+                    classData.MoveData[moveType],
+                    classData.MoveDataDurations[moveType],
+                    entity, 
+                    character
+                )
+
+                StateManager:AddTarget(entity, "Attacked", 1)
+
+                HealthManager:Damage(entity, damage, character)
             end
         end
 
-        if t == 1 then
-            if RunConnect then
-                RunConnect:Disconnect()
+        local function Movement(deltaTime)
+           forwardCFrame *= CFrame.new(0, 0, -speed * deltaTime)
+
+            local characterList = {}
+            for _, plr in pairs(Players:GetPlayers()) do
+                local plrChar = plr.Character
+                if not plrChar then
+                    continue
+                end
+                table.insert(characterList, plrChar)
+            end
+
+            rayparams.FilterDescendantsInstances = {workspace.Dummies, workspace.Ignore, workspace.Obstacles, workspace.VFX, characterList}
+            rayparams.FilterType = Enum.RaycastFilterType.Exclude
+
+            local ray = workspace:Raycast(forwardCFrame.Position + Vector3.new(0, 5, 0), Vector3.new(0, -50, 0), rayparams)
+            if ray then
+                local floorPostion = ray.Position + Vector3.new(0, size.Y/4, 0)
+                forwardCFrame = CFrame.new(floorPostion, floorPostion + forwardCFrame.LookVector)
+            end
+
+            Hitbox.CFrame = forwardCFrame * CFrame.Angles(0, 0, math.rad(90)) 
+        end
+
+        local function hitDetection()
+            local hasTarget = false
+
+            local listOfChars = {}
+            for _, plr in pairs(game.Players:GetPlayers()) do
+                local _chr = plr.Character
+                if _chr then
+                    table.insert(listOfChars, _chr)
+                end
+            end
+
+            local overlapParams = OverlapParams.new()
+            overlapParams.FilterDescendantsInstances = {listOfChars, workspace.Dummies}
+            overlapParams.FilterType = Enum.RaycastFilterType.Include
+
+            local alreadyHit = {}
+
+            local parts = workspace:GetPartsInPart(Hitbox, overlapParams)
+            for _, object in parts do
+                local parent = object.Parent
+
+                if not parent:IsA("Model") then
+                    continue
+                end
+
+                if parent == character then
+                    continue
+                end
+
+                --ignoreTargets
+                if CollectionService:HasTag(parent, "Ignore") then
+                    continue
+                end
+
+                local enemyHum = parent:FindFirstChild("Humanoid")
+                if not enemyHum then
+                    continue
+                end
+
+                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
+                if not enemyRoot then
+                    continue
+                end
+
+                if alreadyHit[parent.Name] then
+                    continue
+                end
+
+                if CollectionService:HasTag(parent, "Invulnerable") then
+                    continue
+                end
+
+                local isUserStun = StateManager:CheckState(character, "Stunned")
+                if isUserStun then
+                    return
+                end
+
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = parent:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
+                    continue
+                end
+
+                alreadyHit[parent.Name] = true
+
+                hasTarget = true
+
+                AoeHitDetection()
+
+                if Hitbox then
+                    Debris:AddItem(Hitbox, 1)
+                end
+
+                break
+            end
+
+            return hasTarget
+        end
+
+        while true do
+            local deltaTime = task.wait()
+
+            currentTime += deltaTime
+            if currentTime < travelTime then
+                Movement(deltaTime)
+            elseif currentTime >= travelTime and not stoppedMoving then
+                stoppedMoving = true
+
+                VisualEffectServer:SpawnEffectsInRange(
+                    "ConcussiveBomb",
+                    nil,
+                    character,
+                    {action = "Stop"},
+                    1000,
+                    VFX_ID,
+                    true
+                )
+            end
+
+            if hitDetection() then
+                targetHit = true
+                break
             end
         end
+    end)
+
+    task.delay(travelTime, function()
+       task.delay(lifeTime, function()
+            if thread then
+                task.cancel(thread)
+            end
+
+            if not targetHit then
+                VisualEffectServer:TerminateVFX(
+                    "ConcussiveBomb",
+                    nil,
+                    character,
+                    {},
+                    VFX_ID
+                )
+            end
+            
+            if Hitbox then
+                Debris:AddItem(Hitbox, 1)
+            end
+        end)
     end)
 end
 

@@ -324,7 +324,7 @@ ClassData["Engineer"] = {
             },
         },
         ["QMove"] = {
-            Size = Vector3.new(1, 1, 1),
+            Size = Vector3.new(3, 7, 7),
             Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
@@ -342,13 +342,13 @@ ClassData["Engineer"] = {
     },
     MoveData = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced"}),
+        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced", "Slow"}),
         ["EMove"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned"}),
     },
     MoveDataDurations = {
         ["LMBMove"] = {},
-        ["QMove"] = {Silenced = 2},
+        ["QMove"] = {Silenced = 3, Slow = 3},
         ["EMove"] = {},
         ["FMove"] = {Stunned = 2},
     },
@@ -360,7 +360,7 @@ ClassData["Engineer"] = {
     },
     MoveName = {
         ["LMBMove"] = "M1",
-        ["QMove"] = "Concussive Bomb",
+        ["QMove"] = "Concussive Mine",
         ["EMove"] = "Turret",
         ["FMove"] = "Electro Ball",
     },
