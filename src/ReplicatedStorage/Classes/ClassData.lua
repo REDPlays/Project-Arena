@@ -348,7 +348,7 @@ ClassData["Engineer"] = {
     },
     MoveDataDurations = {
         ["LMBMove"] = {},
-        ["QMove"] = {Silenced = 3, Slow = 3},
+        ["QMove"] = {Silenced = 2, Slow = 3},
         ["EMove"] = {},
         ["FMove"] = {Stunned = 2},
     },

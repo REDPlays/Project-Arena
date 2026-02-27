@@ -124,7 +124,7 @@ function NetTrap:Terminate(target, sourceUnit, conditionalData)
         if self.Chain1 and self.Chain2 then
             disableBeam(self.Chain1)
             disableBeam(self.Chain2)
-        end
+        end 
 
         TweenService:Create(self.trap.PrimaryPart, info, {CFrame = self.trap.PrimaryPart.CFrame - Vector3.new(0, 2.5, 0)}):Play()
     end
