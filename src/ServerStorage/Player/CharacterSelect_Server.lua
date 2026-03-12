@@ -442,6 +442,8 @@ function CharacterSelectServer:SetCharacter(player, group, className)
         --Set Stats
         CharacterSelectServer:SetStats(player, className)
 
+        Events.Server_Client.Movement:FireClient(player, character, {isNoFalling = true})
+
         if not CharacterSelectServer.hasClass[player] then
             CharacterSelectServer.hasClass[player] = {
                 player = player,

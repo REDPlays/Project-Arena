@@ -31,7 +31,7 @@ end
 local HitboxManager = {}
 HitboxManager.projectiles = {}
 
-function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, target: Model, attacker: Model)
+function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, target: Model, attacker: Model, additionalData: {})
     for mod, enabled in pairs(moveData) do
         if enabled then
             local isStatus = StatusFiles:FindFirstChild(mod)
@@ -41,7 +41,8 @@ function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, targe
                 StateManager:AddTarget(
                     target, 
                     mod, 
-                    moveDataDurations[mod] or 1
+                    moveDataDurations[mod] or 1,
+                    additionalData
                 )
             end
 

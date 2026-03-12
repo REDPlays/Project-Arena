@@ -17,6 +17,7 @@ MovementManager.bezierList = {}
 MovementManager.knockupList = {}
 MovementManager.assemblyList = {}
 MovementManager.linearList = {}
+MovementManager.knockbackList = {}
 
 local function quadratic(t, p0, p1, p2)
 	return (1 - t) ^ 2 * p0 + 2 * (1 - t) * t * p1 + t ^ 2 * p2
@@ -229,7 +230,45 @@ function MovementManager:Knockup(character, knockupData)
         duration = knockupData.duration,
         currTime = 0,
         character = character,
-        --upwardVelocity = upwardVelocity,
+        attach = attach,
+        linearVel = linearVel,
+    }
+end
+
+function MovementManager:Knockback(character, knockbackData)
+    if MovementManager.knockbackList[character] then
+        warn("already knock back")
+        return
+    end
+
+    local rootPart: BasePart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    for _, velocity in pairs(rootPart:GetChildren()) do
+        if velocity:IsA("BodyVelocity") or velocity:IsA("LinearVelocity") then
+            velocity:Destroy()
+        end
+    end
+
+    local attach = Instance.new("Attachment")
+    attach.Name = "upwardAttach"
+    attach.Parent = rootPart
+
+    local linearVel = Instance.new("LinearVelocity")
+    linearVel.Attachment0 = attach
+    linearVel.MaxForce = math.huge
+    linearVel.RelativeTo = Enum.ActuatorRelativeTo.World
+    linearVel.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+    linearVel.Parent = rootPart
+    linearVel.Enabled = true
+    linearVel.VectorVelocity = knockbackData.direction
+
+    MovementManager.knockbackList[character] = {
+        duration = knockbackData.duration,
+        currTime = 0,
+        character = character,
         attach = attach,
         linearVel = linearVel,
     }
@@ -277,6 +316,25 @@ function MovementManager:CleanupKnockup(character)
         end
 
         MovementManager.knockupList[character] = nil
+    end
+end
+
+function MovementManager:CleanupKnockback(character)
+    local knockbackData = MovementManager.knockbackList[character]
+    if knockbackData then
+        if knockbackData.upwardVelocity then
+            knockbackData.upwardVelocity:Destroy()
+        end
+
+        if knockbackData.attach then
+            knockbackData.attach:Destroy()
+        end
+
+        if knockbackData.linearVel then
+            knockbackData.linearVel:Destroy()
+        end
+
+        MovementManager.knockbackList[character] = nil
     end
 end
 
@@ -369,6 +427,10 @@ local function movement(character, moveData, cancel)
 
     if moveData.isLinear then
         MovementManager:Linear(character, moveData)
+    end
+
+    if moveData.isKnockback then
+        MovementManager:Knockback(character, moveData)
     end
 end
 
@@ -525,8 +587,38 @@ RunService.Heartbeat:Connect(function(deltaTime)
             linearData.linearVel.VectorVelocity = velocity
         end
     end
+
+    for id, knockbackData in pairs(MovementManager.knockbackList) do
+        local humanoid = knockbackData.character:FindFirstChild("Humanoid")
+        if not humanoid then
+            MovementManager:CleanupKnockback(knockbackData.character)
+
+            continue
+        end
+
+        local rootPart = knockbackData.character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then
+            MovementManager:CleanupKnockback(knockbackData.character)
+            continue
+        end
+
+        if knockbackData.currTime >= knockbackData.duration then
+            MovementManager:CleanupKnockback(knockbackData.character)
+            continue
+        end
+
+        if humanoid and humanoid.Health <= 0 then
+            MovementManager:CleanupKnockback(knockbackData.character)
+            
+            continue
+        end
+
+        knockbackData.currTime += deltaTime
+    end
 end)
 
-Events.Server_Client.Movement.OnClientEvent:Connect(movement)
+if RunService:IsClient() then
+    Events.Server_Client.Movement.OnClientEvent:Connect(movement)
+end
 
 return MovementManager

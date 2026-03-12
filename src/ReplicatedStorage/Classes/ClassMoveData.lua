@@ -9,6 +9,7 @@ local Modifiers = {
     ["Knockup"] = false,
     ["noMovement"] = false,
     ["DoubleCooldown"] = false,
+    ["Knockback"] = false,
 
     --status effects
     ["Stunned"] = false,

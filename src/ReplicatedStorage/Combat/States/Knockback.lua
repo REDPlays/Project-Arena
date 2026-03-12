@@ -4,19 +4,19 @@ local CollectionService = game:GetService("CollectionService")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
-local Knockup = {}
-Knockup.InState = {}
+local Knockback = {}
+Knockback.InState = {}
 
-function Knockup:CheckState(target: Model)
-    return Knockup.InState[target]
+function Knockback:CheckState(target: Model)
+    return Knockback.InState[target]
 end
 
-function Knockup:AddTarget(target: Model, Force: number)
+function Knockback:AddTarget(target: Model, Force: number, additionalData: {})
     if not target then
         return
     end
     
-    if Knockup.InState[target] then
+    if Knockback.InState[target] then
         return
     end
     
@@ -34,39 +34,46 @@ function Knockup:AddTarget(target: Model, Force: number)
     if not rootPart then
         return
     end
+
+    additionalData = additionalData or {}
+    local originCFrame = additionalData.originCFrame or rootPart.CFrame
     
     Force = Force or 15
 
-    local duration = 0.25
-    
-    Stats:SetAttribute("Knockup", true)
+    local direction = originCFrame.LookVector * Force + originCFrame.UpVector * (Force * 0.5)
 
-    local knockupData = {
+    local duration = additionalData.duration or 0.25
+    
+    Stats:SetAttribute("Knockback", true)
+
+    local knockBackData = {
         Force = Force,
-        isKnockup = true,
+        isKnockback = true,
         duration = duration,
+        direction = direction,
     }
 
     local player = Players:GetPlayerFromCharacter(target)
     if player then
-        Events.Server_Client.Movement:FireClient(player, target, knockupData)
+        Events.Server_Client.Movement:FireClient(player, target, knockBackData)
     else
-        Events.Server_Client.Movement:FireAllClients(target, knockupData)
+        Events.Server_Client.Movement:FireAllClients(target, knockBackData)
     end
 
-    Knockup.InState[target] = {
+    Knockback.InState[target] = {
         target = target,
         duration = duration,
         currTime = 0,
+        direction = direction,
     }
 end
 
-function Knockup:RemoveTarget(target: Model)
+function Knockback:RemoveTarget(target: Model)
     if not target then
         return
     end
 
-    if not Knockup.InState[target] then
+    if not Knockback.InState[target] then
         return
     end
 
@@ -80,21 +87,21 @@ function Knockup:RemoveTarget(target: Model)
         return
     end
 
-    Stats:SetAttribute("Knockup", false)
+    Stats:SetAttribute("Knockback", false)
 
-    if Knockup.InState[target] then
-        Knockup.InState[target] = nil
+    if Knockback.InState[target] then
+        Knockback.InState[target] = nil
     end
 end
 
-function Knockup:Update(deltaTime)
-    for targetId, data in pairs(Knockup.InState) do
+function Knockback:Update(deltaTime)
+    for targetId, data in pairs(Knockback.InState) do
         if not data.target then
             continue
         end
 
         if data.currTime >= data.duration then
-            Knockup:RemoveTarget(targetId)
+            Knockback:RemoveTarget(targetId)
             continue
         end
 
@@ -102,4 +109,4 @@ function Knockup:Update(deltaTime)
     end
 end
 
-return Knockup
+return Knockback

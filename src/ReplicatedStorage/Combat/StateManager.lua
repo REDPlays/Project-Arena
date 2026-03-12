@@ -13,6 +13,7 @@ local states = {
     Knockup = require(States:WaitForChild("Knockup")),
     Invulnerable = require(States:WaitForChild("Invulnerable")),
     Silenced = require(States:WaitForChild("Silenced")),
+    Knockback = require(States:WaitForChild("Knockback")),
 }
 
 local StateManager = {}

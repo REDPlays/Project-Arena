@@ -670,7 +670,7 @@ ClassData["Hydromancer"] = {
             Offset = CFrame.new(0, 0, -2),
         },
         ["QMove"] = {
-            Size = Vector3.new(3, 3, 3),
+            Size = Vector3.new(8, 9, 3),
             Offset = CFrame.new(0, 0, -1),
         },
         ["EMove"] = {
@@ -684,13 +684,13 @@ ClassData["Hydromancer"] = {
     },
     MoveData = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "HydroStack"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({}),
+        ["QMove"] = ClassMoveData:SetupModifiers({"Knockback"}),
         ["EMove"] = ClassMoveData:SetupModifiers({}),
         ["FMove"] = ClassMoveData:SetupModifiers({}),
     },
     MoveDataDurations = {
         ["LMBMove"] = {},
-        ["QMove"] = {},
+        ["QMove"] = {Knockback = 50},
         ["EMove"] = {},
         ["FMove"] = {},
     },
@@ -702,9 +702,9 @@ ClassData["Hydromancer"] = {
     },
     MoveName = {
         ["LMBMove"] = "M1",
-        ["QMove"] = "Triple Fire Ball",
-        ["EMove"] = "Flame thrower",
-        ["FMove"] = "Eruption",
+        ["QMove"] = "Water Wave",
+        ["EMove"] = "Water Bubble",
+        ["FMove"] = "Whirlpool",
     },
 }
 
