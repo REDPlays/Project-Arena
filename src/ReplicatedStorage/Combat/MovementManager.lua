@@ -265,12 +265,21 @@ function MovementManager:Knockback(character, knockbackData)
     linearVel.Enabled = true
     linearVel.VectorVelocity = knockbackData.direction
 
+    local alignOrient = Instance.new("AlignOrientation")
+    alignOrient.Mode = Enum.OrientationAlignmentMode.OneAttachment
+    alignOrient.Attachment0 = attach
+    alignOrient.MaxTorque = math.huge
+    alignOrient.Responsiveness = 200
+    alignOrient.Parent = rootPart
+    alignOrient.Enabled = true
+
     MovementManager.knockbackList[character] = {
         duration = knockbackData.duration,
         currTime = 0,
         character = character,
         attach = attach,
         linearVel = linearVel,
+        alignOrient = alignOrient,
     }
 end
 
@@ -592,7 +601,6 @@ RunService.Heartbeat:Connect(function(deltaTime)
         local humanoid = knockbackData.character:FindFirstChild("Humanoid")
         if not humanoid then
             MovementManager:CleanupKnockback(knockbackData.character)
-
             continue
         end
 
@@ -609,8 +617,19 @@ RunService.Heartbeat:Connect(function(deltaTime)
 
         if humanoid and humanoid.Health <= 0 then
             MovementManager:CleanupKnockback(knockbackData.character)
-            
             continue
+        end
+
+        local rootCFr = rootPart.CFrame
+        local lookVector = rootCFr.LookVector
+
+        local flatLook = Vector3.new(lookVector.X, 0, lookVector.Z)
+
+        if flatLook.Magnitude > 0 then
+            knockbackData.alignOrient.CFrame = CFrame.lookAt(
+				rootCFr.Position,
+				rootCFr.Position + flatLook
+			)
         end
 
         knockbackData.currTime += deltaTime
