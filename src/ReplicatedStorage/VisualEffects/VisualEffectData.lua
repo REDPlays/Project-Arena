@@ -45,6 +45,7 @@ VisualEffectData["SumoStance"] = require(Visuals:WaitForChild("Oni"):WaitForChil
 
 
 VisualEffectData["WaterBall"] = require(Visuals:WaitForChild("Hydromancer"):WaitForChild("WaterBallVFX"))
+VisualEffectData["WaterWall"] = require(Visuals:WaitForChild("Hydromancer"):WaitForChild("WaterWallVFX"))
 
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))

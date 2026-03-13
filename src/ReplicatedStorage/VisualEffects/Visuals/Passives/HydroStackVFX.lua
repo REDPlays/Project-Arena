@@ -65,12 +65,7 @@ function HydroStack:Update(deltaTime)
     for i=1, #self.stacks do
         local currentStack = self.stacks[i]
 
-        local angle = 0
-        if i == 2 then
-            angle = anglePivot
-        elseif i == 3 then
-            angle = anglePivot * 2
-        end
+        local angle = anglePivot * i
 
         currentStack.CFrame = self.rootPart.CFrame * CFrame.Angles(0, math.rad(angle + self.currentRotation), 0) * CFrame.new(0, 0, -self.distance)
     end

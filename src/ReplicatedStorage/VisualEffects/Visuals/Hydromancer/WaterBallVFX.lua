@@ -86,7 +86,7 @@ function WaterBall:Ball()
     self.waterBall.Parent = self.Folder
 
     self.sfx2 = Sounds.Hydromancer.WaterLoop:Clone()
-    self.sfx2.Volume = .4
+    self.sfx2.Volume = .75
     self.sfx2._Pitch.Octave = math.random(95,  105) / 100
     self.sfx2.Parent = self.waterBall
     self.sfx2:Play()
@@ -109,7 +109,7 @@ function WaterBall:Explode(spawnCFrame)
     self.WaterHit.Parent = self.Folder
 
     self.sfx3 = Sounds.Hydromancer.WaterHit:Clone()
-    self.sfx3.Volume = .65
+    self.sfx3.Volume = 1
     self.sfx3._Pitch.Octave = math.random(95,  105) / 100
     self.sfx3.Parent = self.WaterHit
     self.sfx3:Play()
@@ -117,7 +117,7 @@ function WaterBall:Explode(spawnCFrame)
     self.WaterHit.Water:Emit(8)
     self.WaterHit.Water2:Emit(8)
 
-    task.delay(1, function()
+    task.delay(2, function()
         if self.Folder then
             self.Folder:Destroy()
         end

@@ -38,32 +38,28 @@ function WaterWave:Activate(player, character, rootPart, placementCFrame, class,
     local hydroStacks = PassiveManager:CheckPassive(character, "HydroStack")
     local maxStacks = false
 
-    if hydroStacks and hydroStacks.stack >= 3 then
+    if hydroStacks and hydroStacks.stack >= 5 then
         maxStacks = true
+        damage *= 1.5
+        PassiveManager:ClearStack(character, "HydroStack")
     end
 
     local rayparams = RaycastParams.new()
     rayparams.FilterType = Enum.RaycastFilterType.Exclude
 
     local numOfWalls = maxStacks and 3 or 1
-    local angle = 0
-    local angleSeparate = 30
+    local angleSeparate = 20
 
-    local distance = 6
-    local duration = 2
-    local speed = 50
+    local distance = 3
+    local duration = 1
+    local speed = 35
 
-    if numOfWalls > 1 then
-        if numOfWalls % 2 == 0 then
-            --even
-            angle = -(angleSeparate/2)
-        else
-            --odd
-            angle = -angleSeparate
-        end
-    end
+    local VFX_ID = "WaterWave"..HttpService:GenerateGUID(false)
 
+    local hitboxes = {}
     for i=1, numOfWalls do
+        local angle = (i - (numOfWalls + 1) / 2) * angleSeparate
+
         local wallCFrame = placementCFrame * CFrame.Angles(0, math.rad(angle), 0) * CFrame.new(0, 0, -distance)
 
         local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
@@ -76,6 +72,32 @@ function WaterWave:Activate(player, character, rootPart, placementCFrame, class,
         Hitbox.CFrame = wallCFrame * CFrame.new(0, Hitbox.Size.Y/2, 0)
         Hitbox.Anchored = true
         Hitbox.Parent = IgnoreFolder
+
+        hitboxes[i] = Hitbox
+    end
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "WaterWall",
+        nil,
+        character,
+        {hitboxes = hitboxes},
+        1000,
+        VFX_ID
+    )
+
+    task.delay(duration, function()
+        VisualEffectServer:TerminateVFX(
+            "WaterWall",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
+    end)
+
+    for i=1, numOfWalls do
+        local Hitbox = hitboxes[i]
+        if not Hitbox then continue end
 
         local alreadyHit = {}
 
@@ -202,17 +224,13 @@ function WaterWave:Activate(player, character, rootPart, placementCFrame, class,
             end
         end)
 
-        Debris:AddItem(Hitbox, duration)
+        Debris:AddItem(Hitbox, duration + 0.25)
 
         task.delay(duration, function()
             if thread then
                 task.cancel(thread)
             end
-
-            
         end)
-
-        angle += angleSeparate
     end
 end
 
