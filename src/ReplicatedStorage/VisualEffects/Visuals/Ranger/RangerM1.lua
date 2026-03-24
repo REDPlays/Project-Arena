@@ -33,19 +33,35 @@ function Ranger:Activate(target, sourceUnit, conditionalData)
 end
 
 function Ranger:DisplayVFX()
-    self.gear = self.sourceUnit:FindFirstChild("Gear")
-    if not self.gear then
+    self.rootPart = self.sourceUnit:FindFirstChild("HumanoidRootPart")
+    if not self.rootPart then
         return
     end
 
-    self.weapon = self.gear:FindFirstChild("Weapon")
-    if not self.weapon then
-        return
-    end
+    self.spawnCFrame = nil
+    self.pivotObj = nil
 
-    self.Barrel = self.weapon.PrimaryPart
-    if not self.Barrel then
-        return
+    if not self.conditionalData.isReflected then
+        self.gear = self.sourceUnit:FindFirstChild("Gear")
+        if not self.gear then
+            return
+        end
+
+        self.weapon = self.gear:FindFirstChild("Weapon")
+        if not self.weapon then
+            return
+        end
+
+        self.Barrel = self.weapon.PrimaryPart
+        if not self.Barrel then
+            return
+        end
+
+        self.spawnCFrame = self.Barrel.CFrame
+        self.pivotObj = self.Barrel
+    else
+        self.spawnCFrame = self.conditionalData.startCFrame
+        self.pivotObj = self.rootPart
     end
 
     self.Folder = Instance.new("Folder")
@@ -83,7 +99,7 @@ function Ranger:Arrow()
     end
 
     self.Spread = RangerVFX.M1s.FireSpread:Clone()
-    self.Spread.CFrame = self.Barrel.CFrame
+    self.Spread.CFrame = self.spawnCFrame
     self.Spread.Transparency = 1
     self.Spread.Parent = self.Folder
 
@@ -99,7 +115,7 @@ function Ranger:Arrow()
 
     local weld2 = Instance.new("WeldConstraint")
     weld2.Part0 = self.Spread
-    weld2.Part1 = self.Barrel
+    weld2.Part1 = self.pivotObj
     weld2.Parent = weld.Part0
 
     for _, particle in pairs(self.Spread:GetDescendants()) do

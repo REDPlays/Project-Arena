@@ -8,7 +8,7 @@ local MoveData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild
 
 local MoveManager = {}
 
-function MoveManager:Ability(player, class, moveType, moveData)
+function MoveManager:Ability(player: Player | Model, class, moveType, moveData)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -25,7 +25,12 @@ function MoveManager:Ability(player, class, moveType, moveData)
         return
     end
 
-    local character = player.Character
+    local character = nil
+    if player:IsA("Model") then
+        character = player
+    else
+        character = player.Character
+    end
     if not character then
         return
     end
@@ -104,7 +109,7 @@ function MoveManager:AOEAbility(player, class, moveType, moveData)
 end
 
 local function Ability(player, class, moveType, moveData)
-    if moveData.isProjectile then
+    if moveData.isProjectile and moveType == "LMBMove" then
         MoveManager:ProjectileAbility(player, class, moveType, moveData)
     elseif moveData.isAOE then
         MoveManager:AOEAbility(player, class, moveType, moveData)

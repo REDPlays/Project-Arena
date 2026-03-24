@@ -20,7 +20,7 @@ local function predictPosition(part: BasePart, timeInterval)
     return part.Position + part.AssemblyLinearVelocity * timeInterval
 end
 
-function ClientHitboxManager:HitboxProjectile(projectileData)
+function ClientHitboxManager:HitboxProjectile(projectileData: {})
     local rootPart = projectileData.character:FindFirstChild("HumanoidRootPart")
 
     if projectileData.conditionalData.rootPart then
@@ -55,8 +55,16 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
 
     local position = predictPosition(rootPart, 0.1)
 
+    --this will determine the direction of the projectile
+    local startCFrame
+    if projectileData.conditionalData.spawnCFrame then
+        startCFrame = projectileData.conditionalData.spawnCFrame * projectileData.offSet
+    else
+        startCFrame = CFrame.new(position, rootPart.CFrame.LookVector + position) * projectileData.offSet
+    end
+
     Hitbox.Size = projectileData.classData.Hitboxes[projectileData.moveType].Size
-    Hitbox.CFrame = CFrame.new(position, rootPart.CFrame.LookVector + position) * projectileData.offSet
+    Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
 
@@ -82,7 +90,8 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
                     projectileData.classData, 
                     projectileData.moveType, 
                     projectileData.moveCount,
-                    projectileData.ID
+                    projectileData.ID,
+                    projectileData
                 )
 
                 local conditionalData = {}
@@ -141,7 +150,8 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
                 projectileData.classData, 
                 projectileData.moveType, 
                 projectileData.moveCount,
-                projectileData.ID
+                projectileData.ID,
+                projectileData
             )
 
             local conditionalData = {}
@@ -166,6 +176,8 @@ function ClientHitboxManager:HitboxProjectile(projectileData)
         projectile = Hitbox,
         duration = projectileData.duration,
         sourceUnit = projectileData.conditionalData.sourceUnit,
+        startCFrame = startCFrame,
+        isReflected = projectileData.conditionalData.spawnCFrame and true or false
     }
 
     VisualEffectClient:SpawnEffects(

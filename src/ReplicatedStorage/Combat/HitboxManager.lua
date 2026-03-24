@@ -28,8 +28,17 @@ if RunService:IsServer() then
     PassiveManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("PassiveManager"))
 end
 
+local ReflectionWhiteList = {
+    ["Triple Fire Ball"] = true,
+    ["Turret"] = true,
+}
+
 local HitboxManager = {}
 HitboxManager.projectiles = {}
+
+local function predictPosition(part: BasePart, timeInterval)
+    return part.Position + part.AssemblyLinearVelocity * timeInterval
+end
 
 function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, target: Model, attacker: Model, additionalData: {})
     for mod, enabled in pairs(moveData) do
@@ -47,12 +56,50 @@ function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, targe
             end
 
             if isPassive then
+                --can check if the mod is stackable?
                 if mod == "HydroStack" then
                     PassiveManager:AddStack(attacker, mod, {})
                 end
             end
         end
     end
+end
+
+function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerClass, moveType: string, moveCount: number, alreadyReflected: boolean)
+    local canReflect = false
+
+    if alreadyReflected then
+        return canReflect
+    end
+
+    if not StateManager:CheckState(target, "Reflecting") then
+        return canReflect
+    end
+
+    local attackerRoot = attacker:FindFirstChild("HumanoidRootPart")
+    if not attackerRoot then return end
+
+    local targetRoot = target:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then return end
+
+    if attackerClass.MoveData[moveType].isProjectile and (moveType == "LMBMove" or ReflectionWhiteList[attackerClass.MoveName[moveType]]) then
+        canReflect = true
+
+        local attackerCFrame = attackerRoot.CFrame
+        local targetCFrame = targetRoot.CFrame
+        local direction: Vector3 = (predictPosition(attackerRoot, 0.25) - targetCFrame.Position).Unit
+
+        local reflectCFrame = CFrame.new(targetRoot.Position, targetRoot.Position + direction)
+
+        HitboxManager:HitboxProjectile(target, attackerClass.ClassName, moveType, moveCount, nil, {
+            reflecting = true,
+            spawnCFrame = reflectCFrame,
+        })
+    else
+        canReflect = true
+    end
+
+    return canReflect
 end
 
 function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnockup, isSilenced)
@@ -167,6 +214,7 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
                     continue
                 end
 
+                --[==[
                 if isStun then
                     StateManager:AddTarget(parent, "Stunned", 1)
                 end
@@ -186,6 +234,7 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
                 if isSilenced then
                     StateManager:AddTarget(parent, "Silenced", 2)
                 end
+                ]==]
 
                 StateManager:AddTarget(parent, "Attacked", 1)
 
@@ -205,9 +254,12 @@ function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnock
     end)
 end
 
-function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, conditionalData)
+function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType, moveCount, conditionalData)
+    conditionalData = conditionalData or {}
+    conditionalData.conditionalData = conditionalData.conditionalData or {}
+
     local currentClass = player:GetAttribute("CurrentClass")
-    if currentClass ~= class then
+    if currentClass ~= class and not conditionalData.reflecting then
         warn("Wrong Class Equipped")
         return
     end
@@ -217,7 +269,12 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
         return
     end
 
-    local character = player.Character
+    local character = nil
+    if player:IsA("Model") then
+        character = player
+    else
+        character = player.Character
+    end
     if not character then
         return
     end
@@ -372,6 +429,11 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
                     continue
                 end
 
+                local isReflecting = HitboxManager:CheckReflecting(character, parent, currentClassData, moveType, moveCount, conditionalData.conditionalData.reflecting)
+                if isReflecting and not conditionalData.reflecting then
+                    break
+                end
+
                 --check modifiers
                 HitboxManager:CheckModifiers(
                     currentClassData.MoveData[moveType],
@@ -408,18 +470,20 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
     end)
 end
 
-function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet, conditionalData)
+function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType, moveCount, offSet, conditionalData)
+    conditionalData = conditionalData or {}
+    
     local currentClass = player:GetAttribute("CurrentClass")
-    if currentClass ~= class then
+    if currentClass ~= class and not conditionalData.reflecting then
         warn("Wrong Class Equipped")
         return
     end
-
+    
     local currentClassData = ClassData[class]
     if not currentClassData then
         return
     end
-
+    
     local character = nil
     if player:IsA("Model") then
         character = player
@@ -429,13 +493,11 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
     if not character then
         return
     end
-
+    
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
         return
     end
-
-    conditionalData = conditionalData or {}
 
     local projectileId = player.Name..HttpService:GenerateGUID(false)
 
@@ -448,7 +510,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
         moveType = moveType,
         moveCount = moveCount,
         offSet = offSet,
-        conditionalData = conditionalData
+        conditionalData = conditionalData,
     }
 
     HitboxManager.projectiles[projectileId] = projectileData
@@ -457,7 +519,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
 end
 
 local function HitboxCreateMove(player, class, moveType, moveCount, moveData, conditionalData)
-    if moveData.isProjectile then
+    if moveData.isProjectile and moveType == "LMBMove" then
         if not moveData.isMultiShot then
             HitboxManager:HitboxProjectile(player, class, moveType, moveCount, conditionalData)
         elseif moveData.isMultiShot then
@@ -481,24 +543,24 @@ local function HitboxCreateMove(player, class, moveType, moveCount, moveData, co
     end
 end
 
-local function ProjectileHitboxTarget(player, target, classData, moveType, moveCount, projectileId)
+local function ProjectileHitboxTarget(player, target, classData, moveType, moveCount, projectileId, projectileData)
     if not HitboxManager.projectiles[projectileId] then
         return
     end
-
+    
     if not target then
         return
     end
 
-    local character = player.Character
+    local character = player.Character == target and projectileData.character or player.Character
     if not character then
         return
     end
-
+    
     if character ~= HitboxManager.projectiles[projectileId].character then
         return
     end
-
+    
     local damage = 1
     if not moveCount then
         damage = classData.DamageList[moveType]
@@ -510,20 +572,25 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     if not Stats then
         return
     end
-
+    
     local isUserStun = StateManager:CheckState(character, "Stunned")
     if isUserStun then
         return
     end
-
+    
     if CollectionService:HasTag(target, "Invulnerable") then
         return
     end
-
+    
     local isBlocking = StateManager:CheckState(target, "Blocking")
     if isBlocking then
         --Block Indication
         HealthManager:Block(target, damage, character)
+        return
+    end
+    
+    local isReflecting = HitboxManager:CheckReflecting(character, target, classData, moveType, moveCount, projectileData.conditionalData.reflecting)
+    if isReflecting and not projectileData.reflecting then
         return
     end
 
@@ -551,12 +618,13 @@ local function HitboxProjectile(player, class, moveType, moveCount, offSet, cond
     HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet, conditionalData)
 end
 
-function HitboxManager:Update(deltaTime)
+function HitboxManager:Update(deltaTime: number)
     ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 end
 
 Events.Client_Server.Hitbox.OnServerEvent:Connect(HitboxCreateMove)
 Events.Client_Server.ProjectileTarget.OnServerEvent:Connect(ProjectileHitboxTarget)
 Events.Server_Server.Hitbox.Event:Connect(HitboxProjectile)
+Events.Server_Server.DummyHitbox.Event:Connect(HitboxCreateMove)
 
 return HitboxManager

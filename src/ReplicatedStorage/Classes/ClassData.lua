@@ -35,6 +35,7 @@ ClassData["Base"] = {
 }
 
 ClassData["AngelKnight"] = {
+    ClassName = "AngelKnight",
     Health = 125,
     Defense = 100,
     Speed = WalkSpeeds.Support,
@@ -98,6 +99,7 @@ ClassData["AngelKnight"] = {
 }
 
 ClassData["Pyromancer"] = {
+    ClassName = "Pyromancer",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Burst,
@@ -140,7 +142,7 @@ ClassData["Pyromancer"] = {
     },
     MoveData = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "Burn"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"Burn"}),
+        ["QMove"] = ClassMoveData:SetupModifiers({"Burn", "isProjectile"}),
         ["EMove"] = ClassMoveData:SetupModifiers({"Burn", "CameraLock"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"Burn"}),
     },
@@ -165,6 +167,7 @@ ClassData["Pyromancer"] = {
 }
 
 ClassData["ShieldWarrior"] = {
+    ClassName = "ShieldWarrior",
     Health = 250,
     Defense = 150,
     Speed = WalkSpeeds.Tank,
@@ -228,6 +231,7 @@ ClassData["ShieldWarrior"] = {
 }
 
 ClassData["Samurai"] = {
+    ClassName = "Samurai",
     ignoreLMBMoveCD = false,
     Health = 150,
     Defense = 100,
@@ -292,6 +296,7 @@ ClassData["Samurai"] = {
 }
 
 ClassData["Engineer"] = {
+    ClassName = "Engineer",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Summoner,
@@ -343,7 +348,7 @@ ClassData["Engineer"] = {
     MoveData = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
         ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced", "Slow"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock"}),
+        ["EMove"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock", "isProjectile"}),
         ["FMove"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned"}),
     },
     MoveDataDurations = {
@@ -367,6 +372,7 @@ ClassData["Engineer"] = {
 }
 
 ClassData["Ranger"] = {
+    ClassName = "Ranger",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Marksman,
@@ -415,9 +421,9 @@ ClassData["Ranger"] = {
     },
     MoveData = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement"}),
+        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "isProjectile"}),
         ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Stunned"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Burn"}),
+        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Burn", "isProjectile"}),
     },
     MoveDataDurations = {
         ["LMBMove"] = {},
@@ -440,6 +446,7 @@ ClassData["Ranger"] = {
 }
 
 ClassData["Shinobi"] = {
+    ClassName = "Shinobi",
     ignoreLMBMoveCD = false,
     Health = 125,
     Defense = 100,
@@ -504,6 +511,7 @@ ClassData["Shinobi"] = {
 }
 
 ClassData["Oni"] = {
+    ClassName = "Oni",
     ignoreLMBMoveCD = false,
     Health = 175,
     Defense = 100,
@@ -576,6 +584,7 @@ ClassData["Oni"] = {
 }
 
 ClassData["Judge"] = {
+    ClassName = "Judge",
     ignoreLMBMoveCD = false,
     Health = 100,
     Defense = 100,
@@ -642,6 +651,7 @@ ClassData["Judge"] = {
 }
 
 ClassData["Hydromancer"] = {
+    ClassName = "Hydromancer",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Support,
@@ -674,8 +684,8 @@ ClassData["Hydromancer"] = {
             Offset = CFrame.new(0, 0, -1),
         },
         ["EMove"] = {
-            Size = Vector3.new(6, 6, 20),
-            Offset = CFrame.new(0, 3, -12),
+            Size = Vector3.new(8, 8, 8),
+            Offset = CFrame.new(0, 3, 0),
         },
         ["FMove"] = {
             Size = Vector3.new(20, 20, 20),

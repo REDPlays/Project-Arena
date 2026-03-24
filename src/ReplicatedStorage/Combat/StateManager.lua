@@ -14,6 +14,7 @@ local states = {
     Invulnerable = require(States:WaitForChild("Invulnerable")),
     Silenced = require(States:WaitForChild("Silenced")),
     Knockback = require(States:WaitForChild("Knockback")),
+    Reflecting = require(States:WaitForChild("Reflecting")),
 }
 
 local StateManager = {}
@@ -27,7 +28,7 @@ function StateManager:CheckState(target: Model, currState)
 end
 
 if RunService:IsServer() then
-    function StateManager:AddTarget(target: Model, currState, stateData, additionalData)
+    function StateManager:AddTarget(target: Model, currState: string, stateData, additionalData)
         if not states[currState] then
             return
         end
@@ -41,6 +42,15 @@ if RunService:IsServer() then
         end
 
         states[currState]:RemoveTarget(target)
+    end
+
+    --Only for reflecting state at the moment
+    function StateManager:ReflectAttack(target: Model, currState: string, attacker: Model, attackName: string)
+        if not states[currState] then
+            return
+        end
+
+        states[currState]:ReflectAttack(target, attacker, attackName)
     end
 
     function StateManager:RemoveAll(target: Model)

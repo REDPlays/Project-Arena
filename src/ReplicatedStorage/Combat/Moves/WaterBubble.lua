@@ -19,10 +19,57 @@ local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):
 local IgnoreFolder = workspace.Ignore
 local ObstaclesFolder = workspace.Obstacles
 
-local Move = {}
+local WaterBubble = {}
 
-function Move:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function WaterBubble:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+    local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
+
+    local damage = classData.DamageList[moveType]
+
+    local Stats = character:FindFirstChild("Stats")
+    if not Stats then
+        return
+    end
+
+    local humanoid = character:FindFirstChild("Humanoid")
+    if not humanoid then
+        return
+    end
+
+    local hydroStacks = PassiveManager:CheckPassive(character, "HydroStack")
+    local maxStacks = false
+
+    local duration = 6
+
+    if hydroStacks and hydroStacks.stack >= 5 then
+        maxStacks = true
+        damage *= 1.5
+        duration *= 1.5
+        PassiveManager:ClearStack(character, "HydroStack")
+    end
+
+    local VFX_ID = "WaterBubble"..HttpService:GenerateGUID(false)
     
+    VisualEffectServer:SpawnEffectsInRange(
+        "WaterBubble",
+        nil,
+        character,
+        {maxStacks = maxStacks},
+        1000,
+        VFX_ID
+    )
+
+    task.delay(duration, function()
+        VisualEffectServer:TerminateVFX(
+            "WaterBubble",
+            nil,
+            character,
+            {},
+            VFX_ID
+        )
+    end)
+
+    StateManager:AddTarget(character, "Reflecting", duration, {})
 end
 
-return Move
+return WaterBubble

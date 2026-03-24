@@ -4,22 +4,22 @@ local CollectionService = game:GetService("CollectionService")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
-local Knockup = {}
-Knockup.InState = {}
+local Reflecting = {}
+Reflecting.InState = {}
 
-function Knockup:CheckState(target: Model)
-    return Knockup.InState[target]
+function Reflecting:CheckState(target: Model)
+    return Reflecting.InState[target]
 end
 
-function Knockup:AddTarget(target: Model, Force: number)
+function Reflecting:AddTarget(target: Model, duration: number)
     if not target then
         return
     end
-    
-    if Knockup.InState[target] then
+
+    if Reflecting:CheckState(target) then
         return
     end
-    
+
     local Stats = target:FindFirstChild("Stats")
     if not Stats then
         return
@@ -34,43 +34,28 @@ function Knockup:AddTarget(target: Model, Force: number)
     if not rootPart then
         return
     end
-    
-    Force = Force or 15
 
-    local duration = 0.25
-    
-    Stats:SetAttribute("Knockup", true)
+    duration = duration or 1
 
-    local knockupData = {
-        Force = Force,
-        isKnockup = true,
-        duration = duration,
-    }
+    Stats:SetAttribute("Reflecting", true)
 
-    local player = Players:GetPlayerFromCharacter(target)
-    if player then
-        Events.Server_Client.Movement:FireClient(player, target, knockupData)
-    else
-        Events.Server_Client.Movement:FireAllClients(target, knockupData)
-    end
-
-    Knockup.InState[target] = {
+    Reflecting.InState[target] = {
         target = target,
         duration = duration,
-        currTime = 0, 
+        currTime = 0,
     }
 end
 
-function Knockup:RemoveTarget(target: Model)
+function Reflecting:RemoveTarget(target: Model)
     if not target then
         return
     end
 
-    if not Knockup.InState[target] then
+    if not Reflecting:CheckState(target) then
         return
     end
 
-    local Stats = target:FindFirstChild("Stats")
+     local Stats = target:FindFirstChild("Stats")
     if not Stats then
         return
     end
@@ -80,21 +65,29 @@ function Knockup:RemoveTarget(target: Model)
         return
     end
 
-    Stats:SetAttribute("Knockup", false)
+    Stats:SetAttribute("Reflecting", false)
 
-    if Knockup.InState[target] then
-        Knockup.InState[target] = nil
+    if Reflecting.InState[target] then
+        Reflecting.InState[target] = nil
     end
 end
 
-function Knockup:Update(deltaTime)
-    for targetId, data in pairs(Knockup.InState) do
+function Reflecting:ReflectAttack(target: Model, attacker: Model, attackName: string)
+    if not Reflecting:CheckState(target) then
+        return
+    end
+
+    warn("Reflect:", attacker, attackName)
+end
+
+function Reflecting:Update(deltaTime: number)
+    for targetId, data in pairs(Reflecting.InState) do
         if not data.target then
             continue
         end
 
         if data.currTime >= data.duration then
-            Knockup:RemoveTarget(targetId)
+            Reflecting:RemoveTarget(targetId)
             continue
         end
 
@@ -102,4 +95,4 @@ function Knockup:Update(deltaTime)
     end
 end
 
-return Knockup
+return Reflecting

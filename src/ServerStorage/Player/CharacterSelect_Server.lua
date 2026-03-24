@@ -115,6 +115,7 @@ function CharacterSelectServer:DummyJoined(dummy)
     Stats:SetAttribute("Slowed", false)
     Stats:SetAttribute("Invulnerable", false)
     Stats:SetAttribute("Silenced", false)
+    Stats:SetAttribute("Reflecting", false)
     
     Stats:SetAttribute("HideUI", false)
 
@@ -368,6 +369,57 @@ function CharacterSelectServer:CheckClass(player, className)
     player:SetAttribute("CurrentClass", nil)
 
     return
+end
+
+function CharacterSelectServer:SetDummy(dummy: Model, className)
+    local classFile = CharacterModels:FindFirstChild(className)
+    if not classFile then
+        return
+    end
+
+    --Equip Appearance
+    local Folder = Instance.new("Folder")
+    Folder.Name = "Appearance"
+    Folder.Parent = dummy
+
+    for _, obj in pairs(dummy:GetChildren()) do
+        if obj:IsA("BasePart") then
+            local piece = classFile:FindFirstChild(obj.Name)
+            if not piece then continue end
+
+            piece = piece:Clone()
+            piece.PrimaryPart.Transparency = 1
+            piece.Parent = Folder
+            piece.PrimaryPart.CFrame = obj.CFrame
+
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = piece.PrimaryPart
+            weld.Part1 = obj
+            weld.Parent = weld.Part0
+        end
+    end
+
+    --Equip Gear
+    local gear = classFile.Gear:Clone()
+    gear.Handle1.CFrame = dummy:WaitForChild("Left Arm").CFrame * CFrame.new(0, -1, 0)
+    gear.Handle2.CFrame = dummy:WaitForChild("Right Arm").CFrame * CFrame.new(0, -1, 0)
+    gear.Handle1.Transparency = 1
+    gear.Handle2.Transparency = 1
+    gear.Parent = dummy
+
+    local leftHandle = Instance.new("Motor6D")
+    leftHandle.Name = "leftHandle"
+    leftHandle.Part0 = dummy:WaitForChild("Left Arm")
+    leftHandle.Part1 = gear.Handle1
+    leftHandle.C0 = CFrame.new(0, -1, 0)
+    leftHandle.Parent = leftHandle.Part0
+
+    local rightHandle = Instance.new("Motor6D")
+    rightHandle.Name = "rightHandle"
+    rightHandle.Part0 = dummy:WaitForChild("Right Arm")
+    rightHandle.Part1 = gear.Handle2
+    rightHandle.C0 = CFrame.new(0, -1, 0)
+    rightHandle.Parent = rightHandle.Part0
 end
 
 function CharacterSelectServer:SetCharacter(player, group, className)

@@ -33,19 +33,35 @@ function Engineer:Activate(target, sourceUnit, conditionalData)
 end
 
 function Engineer:DisplayVFX()
-    self.gear = self.sourceUnit:FindFirstChild("Gear")
-    if not self.gear then
+    self.rootPart = self.sourceUnit:FindFirstChild("HumanoidRootPart")
+    if not self.rootPart then
         return
     end
 
-    self.weapon = self.gear:FindFirstChild("Weapon")
-    if not self.weapon then
-        return
-    end
+    self.spawnCFrame = nil
+    self.pivotObj = nil
 
-    self.Barrel = self.weapon.PrimaryPart
-    if not self.Barrel then
-        return
+    if not self.conditionalData.isReflected then
+        self.gear = self.sourceUnit:FindFirstChild("Gear")
+        if not self.gear then
+            return
+        end
+
+        self.weapon = self.gear:FindFirstChild("Weapon")
+        if not self.weapon then
+            return
+        end
+
+        self.Barrel = self.weapon.PrimaryPart
+        if not self.Barrel then
+            return
+        end
+
+        self.spawnCFrame = self.Barrel.CFrame
+        self.pivotObj = self.Barrel
+    else
+        self.spawnCFrame = self.conditionalData.startCFrame
+        self.pivotObj = self.rootPart
     end
 
     self.Folder = Instance.new("Folder")
@@ -56,8 +72,8 @@ function Engineer:DisplayVFX()
 end
 
 function Engineer:Terminate(target, sourceUnit, conditionalData)
-    if self.Bullet then
-        self.Bullet.Anchored = true
+    if self.bullet then
+        self.bullet.Anchored = true
     end
 
     self:Hit(conditionalData.spawnCFrame)
@@ -68,33 +84,28 @@ function Engineer:Update(deltaTime)
 end
 
 function Engineer:Bullet()
-    self.rootPart = self.sourceUnit:FindFirstChild("HumanoidRootPart")
-    if not self.rootPart then
-        return
-    end
-
     if not self.conditionalData.projectile then
         return
     end
 
     self.Spread = EngineerVFX.M1s.FireSpread:Clone()
-    self.Spread.CFrame = self.Barrel.CFrame
+    self.Spread.CFrame = self.spawnCFrame
     self.Spread.Transparency = 1
     self.Spread.Parent = self.Folder
 
-    self.Bullet = EngineerVFX.M1s.Bullet:Clone()
-    self.Bullet.Transparency = 1
-    self.Bullet.CFrame = self.conditionalData.projectile.CFrame
-    self.Bullet.Parent = self.Folder
+    self.bullet = EngineerVFX.M1s.Bullet:Clone()
+    self.bullet.Transparency = 1
+    self.bullet.CFrame = self.conditionalData.projectile.CFrame
+    self.bullet.Parent = self.Folder
 
     local weld = Instance.new("WeldConstraint")
-    weld.Part0 = self.Bullet
+    weld.Part0 = self.bullet
     weld.Part1 = self.conditionalData.projectile
     weld.Parent = weld.Part0
 
     local weld2 = Instance.new("WeldConstraint")
     weld2.Part0 = self.Spread
-    weld2.Part1 = self.Barrel
+    weld2.Part1 = self.pivotObj
     weld2.Parent = weld.Part0
 
     for _, particle in pairs(self.Spread:GetDescendants()) do
@@ -114,9 +125,11 @@ function Engineer:Bullet()
 end
 
 function Engineer:Hit(spawnCFrame)
-    for _, particle in pairs(self.Bullet:GetDescendants()) do
-        if particle:IsA("ParticleEmitter") or particle:IsA("Beam") or particle:IsA("Trail") then
-            particle.Enabled = false
+    if self.bullet then
+        for _, particle in pairs(self.bullet:GetDescendants()) do
+            if particle:IsA("ParticleEmitter") or particle:IsA("Beam") or particle:IsA("Trail") then
+                particle.Enabled = false
+            end
         end
     end
 

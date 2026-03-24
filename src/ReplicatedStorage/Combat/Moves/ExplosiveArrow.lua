@@ -128,6 +128,11 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
                 HealthManager:Block(parent, damage, character)
                 continue
             end
+
+            local isReflecting = HitboxManager:CheckReflecting(character, parent, classData, moveType, nil, nil)
+            if isReflecting then
+                continue
+            end
             
             --check modifiers
             HitboxManager:CheckModifiers(
@@ -234,31 +239,20 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
                 
                 continue
             end
+
+            local isReflecting = HitboxManager:CheckReflecting(character, parent, classData, moveType, nil, nil)
+            if isReflecting then
+                TriggerExplosion()
+                continue
+            end
             
-            --apply burn
-            if classData.MoveData[moveType].Burn then
-                StateManager:AddTarget(parent, "Burn", 3)
-            end
-
-            --apply stun
-            if classData.MoveData[moveType].Stunned then
-                StateManager:AddTarget(parent, "Stunned", 2)
-            end
-
-            --apply slow
-            if classData.MoveData[moveType].Slow then
-                StateManager:AddTarget(parent, "Slow", 2)
-            end
-
-            --apply knockup
-            if classData.MoveData[moveType].Knockup then
-                StateManager:AddTarget(parent, "Knockup", 50)
-            end
-
-            --apply silence
-            if classData.MoveData[moveType].Silenced then
-                StateManager:AddTarget(parent, "Silenced", 2)
-            end
+            --check modifiers
+            HitboxManager:CheckModifiers(
+                classData.MoveData[moveType],
+                classData.MoveDataDurations[moveType],
+                parent, 
+                character
+            )
 
             StateManager:AddTarget(parent, "Attacked", 2)
 
@@ -292,9 +286,7 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
         if thread then
             task.cancel(thread)
         end
-
-
-
+        
         TriggerExplosion()
 
         Debris:AddItem(Hitbox, 1)
