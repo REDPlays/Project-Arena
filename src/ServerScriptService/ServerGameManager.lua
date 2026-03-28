@@ -45,6 +45,15 @@ function ServerGameManager:ConfigureDummies()
     ServerGameManager.dummyTimers = {}
 
     local configurations = {
+        [Dummies.AllyDummy] = {
+            Class = "AngelKnight",
+            MoveType = "LMBMove",
+            currTime = 0,
+            maxTime = 1,
+            MoveCount = 0,
+            Disabled = true,
+        },
+
         [Dummies.Dummy1] = {
             Class = "Engineer",
             MoveType = "EMove",
@@ -155,7 +164,11 @@ function ServerGameManager:ConfigureDummies()
     for _, dummy in pairs(Dummies:GetChildren()) do
         CharacterSelectServer:DummyJoined(dummy)
 
-        if configurations[dummy] then
+        if dummy.Name == "AllyDummy" then
+            dummy:SetAttribute("DummyAlly", true)
+        end
+
+        if configurations[dummy] and not configurations[dummy].Disabled then
             ServerGameManager.dummyTimers[dummy] = table.clone(configurations[dummy])
             ServerGameManager.dummyTimers[dummy].dummy = dummy
 

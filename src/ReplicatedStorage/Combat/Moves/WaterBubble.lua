@@ -3,6 +3,7 @@ local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -18,6 +19,7 @@ local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):
 
 local IgnoreFolder = workspace.Ignore
 local ObstaclesFolder = workspace.Obstacles
+local Dummies = workspace.Dummies
 
 local WaterBubble = {}
 
@@ -39,7 +41,9 @@ function WaterBubble:Activate(player, character, rootPart, placementCFrame, clas
     local hydroStacks = PassiveManager:CheckPassive(character, "HydroStack")
     local maxStacks = false
 
-    local duration = 6
+    local duration = 4
+    local TeamHeal = 0.75
+    local range = 15
 
     if hydroStacks and hydroStacks.stack >= 5 then
         maxStacks = true
@@ -48,18 +52,83 @@ function WaterBubble:Activate(player, character, rootPart, placementCFrame, clas
         PassiveManager:ClearStack(character, "HydroStack")
     end
 
+    StateManager:AddTarget(character, "HealthRegen", 5, {})
+
+    local thread = task.spawn(function()
+        if not maxStacks then return end
+
+        local currTick = 0
+        local tickRate = 0.1
+
+        while true do
+            local dt = task.wait()
+
+            currTick += dt
+            if currTick < tickRate then
+                continue
+            end
+
+            currTick = 0
+
+            local possibleTargets = {}
+
+            for _, plr in pairs(Players:GetPlayers()) do
+                if plr.Name ~= player.Name then
+                    local targetChar = plr.Character
+                    if targetChar then
+                        table.insert(possibleTargets, targetChar)
+                    end
+                end
+            end
+
+            for _, dummy in pairs(Dummies:GetChildren()) do
+                table.insert(possibleTargets, dummy)
+            end
+
+            local teammates = {}
+            for i, target in possibleTargets do
+                local myTeam = character:GetAttribute("Team")
+                local theirTeam = target:GetAttribute("Team")
+
+                if (myTeam and theirTeam) and myTeam == theirTeam then
+                    table.insert(teammates, target)
+                end
+
+                if target:GetAttribute("DummyAlly") then
+                    table.insert(teammates, target)
+                end
+            end
+
+            for i, teammate in teammates do
+                local teammateRoot = teammate:FindFirstChild("HumanoidRootPart")
+                if not teammateRoot then continue end
+
+                local distance = (teammateRoot.Position - rootPart.Position).Magnitude
+                if distance <= range then
+                    HealthManager:Heal(teammate, TeamHeal)
+                end
+            end
+        end
+    end)
+
     local VFX_ID = "WaterBubble"..HttpService:GenerateGUID(false)
     
     VisualEffectServer:SpawnEffectsInRange(
         "WaterBubble",
         nil,
         character,
-        {maxStacks = maxStacks},
+        {maxStacks = maxStacks, range = range},
         1000,
         VFX_ID
     )
 
     task.delay(duration, function()
+        if thread then
+            task.cancel(thread)
+        end
+        
+        StateManager:RemoveTarget(character, "HealthRegen")
+
         VisualEffectServer:TerminateVFX(
             "WaterBubble",
             nil,

@@ -53,5 +53,6 @@ VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChil
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))
 VisualEffectData["RunningVFX"] = require(Visuals:WaitForChild("Base"):WaitForChild("RunningVFX"))
 VisualEffectData["HydroStack"] = require(Visuals:WaitForChild("Passives"):WaitForChild("HydroStackVFX"))
+VisualEffectData["HealthRegen"] = require(Visuals:WaitForChild("Status"):WaitForChild("HealthRegen"))
 
 return VisualEffectData

@@ -58,6 +58,9 @@ function WaterBubbleVFX:AddBubble()
         self.healRange.CFrame = self.floorCFrame
         self.healRange.Parent = self.Folder
 
+        self.healRange.Attachment.A0.Position = Vector3.new(self.conditionalData.range, 3.85, 0)
+        self.healRange.Attachment.A1.Position = Vector3.new(-self.conditionalData.range, 3.85, 0)
+
         self.weld2 = Instance.new("WeldConstraint")
         self.weld2.Part0 = self.healRange
         self.weld2.Part1 = self.rootPart

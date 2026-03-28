@@ -52,7 +52,8 @@ function WaterWave:Activate(player, character, rootPart, placementCFrame, class,
 
     local distance = 3
     local duration = 1
-    local speed = 35
+    local speed = 45
+    local TeamHeal = 10
 
     local VFX_ID = "WaterWave"..HttpService:GenerateGUID(false)
 
@@ -148,6 +149,14 @@ function WaterWave:Activate(player, character, rootPart, placementCFrame, class,
                 local theirTeam = parent:GetAttribute("Team")
 
                 if (myTeam and theirTeam) and myTeam == theirTeam then
+                    alreadyHit[parent.Name] = true
+                    HealthManager:Heal(parent, TeamHeal)
+                    continue
+                end
+
+                if parent:GetAttribute("DummyAlly") then
+                    alreadyHit[parent.Name] = true
+                    HealthManager:Heal(parent, TeamHeal)
                     continue
                 end
 

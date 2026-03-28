@@ -90,6 +90,18 @@ function HealthManager:Heal(character, health)
     humanoid.Health = newHealth
     Stats:SetAttribute("Health", humanoid.Health)
     Stats:SetAttribute("MaxHealth", maxHealth)
+
+    if newHealth >= maxHealth then
+        return
+    end
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "HealthRegen",
+        nil,
+        character,
+        {},
+        1000
+    )
 end
 
 return HealthManager
