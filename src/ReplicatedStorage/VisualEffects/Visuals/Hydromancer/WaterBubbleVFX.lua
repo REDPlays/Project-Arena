@@ -81,7 +81,11 @@ function WaterBubbleVFX:Terminate()
     end
     
     if self.healRange then
-        
+        local info = TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        TweenService:Create(self.healRange.Attachment.A0, info, {Position = self.healRange.Attachment.A0.Position - Vector3.new(0, 3.85, 0)}):Play()
+        TweenService:Create(self.healRange.Attachment.A1, info, {Position = self.healRange.Attachment.A1.Position - Vector3.new(0, 3.85, 0)}):Play()
+        TweenService:Create(self.healRange.Attachment.Beam, info, {Width0 = 0, Width1 = 0}):Play()
+        TweenService:Create(self.healRange.Attachment.Beam2, info, {Width0 = 0, Width1 = 0}):Play()
     end
 
     if self.Folder then
