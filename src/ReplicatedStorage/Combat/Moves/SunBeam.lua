@@ -3,6 +3,7 @@ local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -16,8 +17,43 @@ local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitFor
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
 
 local IgnoreFolder = workspace.Ignore
+local ObstaclesFolder = workspace.Obstacles
+local Dummies = workspace.Dummies
 
 local SunBeam = {}
+
+local function findTeammates(player: Player, character: Model)
+    local possibleTargets = {}
+    local teammates = {}
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr.Name ~= player.Name then
+            local targetChar = plr.Character
+            if targetChar then
+                table.insert(possibleTargets, targetChar)
+            end
+        end
+    end
+
+    for _, dummy in pairs(Dummies:GetChildren()) do
+        table.insert(possibleTargets, dummy)
+    end
+
+    for i, target in possibleTargets do
+        local myTeam = character:GetAttribute("Team")
+        local theirTeam = target:GetAttribute("Team")
+
+        if (myTeam and theirTeam) and myTeam == theirTeam then
+            table.insert(teammates, target)
+        end
+
+        if target:GetAttribute("DummyAlly") then
+            table.insert(teammates, target)
+        end
+    end
+    
+    return teammates
+end
 
 function SunBeam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
@@ -68,6 +104,8 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     local duration = 3
     local currTime = 0
     local damageTick = .25
+    local healTick = 0.1
+    local TeamHeal = 1
 
     StateManager:AddTarget(character, "Slow", duration)
 
@@ -90,6 +128,8 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
             
             local touched = Hitbox.Touched:Connect(function() end)
             local touchedObjects = Hitbox:GetTouchingParts()
+
+            local teammates = findTeammates(player, character)
 
             if touched then
                 touched:Disconnect()
@@ -133,11 +173,19 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
                 local myTeam = character:GetAttribute("Team")
                 local theirTeam = parent:GetAttribute("Team")
 
-                if (myTeam and theirTeam) and myTeam == theirTeam then
+                alreadyHit[parent.Name] = true
+
+                if ((myTeam and theirTeam) and myTeam == theirTeam) or table.find(teammates, parent) then
+                    task.delay(healTick, function()
+                        if alreadyHit[parent.Name] then
+                            alreadyHit[parent.Name] = nil
+                        end
+                    end)
+
+                    HealthManager:Heal(parent, TeamHeal)
+
                     continue
                 end
-
-                alreadyHit[parent.Name] = true
 
                 local isBlocking = StateManager:CheckState(parent, "Blocking")
                 if isBlocking then

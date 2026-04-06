@@ -340,7 +340,7 @@ function RoundManager:UpdatePickups(deltaTime)
                 padData.UI.Enabled = true
 
                 padData.Cube.Burst.Health:Emit(8)
-                padData.Cube.Burst.Ring:Emit(3)
+                padData.Cube.Burst.Ring:Emit(2)
 
                 HealthManager:Heal(parent, 15)
             end

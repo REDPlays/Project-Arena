@@ -42,6 +42,7 @@ function WaterWallVFX:DisplayVFX()
     self.canFollow = true
 
     self.walls = {}
+    self.sounds = {}
     for i=1, #self.hitboxes do
         self:AddWall(i, self.hitboxes[i])
     end
@@ -59,6 +60,7 @@ function WaterWallVFX:AddWall(order: number, hitbox: BasePart)
     sfx2:Play()
 
     table.insert(self.walls, order, wall)
+    table.insert(self.sounds, order, sfx2)
 end
 
 function WaterWallVFX:Terminate()
@@ -71,6 +73,12 @@ function WaterWallVFX:Terminate()
                         obj.Enabled = false
                     end
                 end
+            end
+
+            local sfx: Sound = self.sounds[i]
+            if sfx then
+                local info = TweenInfo.new(1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+                TweenService:Create(sfx, info, {Volume = 0}):Play()
             end
         end
     end

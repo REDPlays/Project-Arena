@@ -38,6 +38,7 @@ VisualEffectData["QuickDash"] = require(Visuals:WaitForChild("Shinobi"):WaitForC
 VisualEffectData["ShurikenThrow"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("ShurikenThrowVFX"))
 VisualEffectData["Retreat"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("RetreatVFX"))
 
+VisualEffectData["OniM1"] = require(Visuals:WaitForChild("Oni"):WaitForChild("OniM1VFX"))
 VisualEffectData["ClubSlam"] = require(Visuals:WaitForChild("Oni"):WaitForChild("ClubSlamVFX"))
 VisualEffectData["SumoRush"] = require(Visuals:WaitForChild("Oni"):WaitForChild("SumoRushVFX"))
 VisualEffectData["Enraged"] = require(Visuals:WaitForChild("Oni"):WaitForChild("EnragedVFX"))
