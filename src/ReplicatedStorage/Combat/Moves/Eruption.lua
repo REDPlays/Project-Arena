@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
@@ -15,11 +16,31 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local IgnoreFolder = workspace.Ignore
+local ObstaclesFolder = workspace.Obstacles
+local Dummies = workspace.Dummies
+
+local StartupTime = 2
+local Range = 10
 
 local Eruption = {}
 
-local function predictPosition2(model: Model, timeInterval)
-    return model:GetPivot().Position + model.PrimaryPart.AssemblyLinearVelocity * timeInterval
+local function GetTargets(user: Player)
+    local targets = {}
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= user then
+            local character = plr.Character
+            if character then
+                table.insert(targets, character)
+            end
+        end
+    end
+
+    for _, dummy in pairs(Dummies:GetChildren()) do
+        table.insert(targets, dummy)
+    end
+
+    return targets
 end
 
 function Eruption:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
@@ -37,114 +58,114 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
         return
     end
 
-    local Hitbox: BasePart = Hitboxes.CircleHitbox:Clone()
-    Hitbox.Transparency = 1
-    if ShowHitboxes then
-        Hitbox.Transparency = .5
-    end
-
-    local position = predictPosition2(character, .35)
-
-    local newCFrame = CFrame.new(position, rootPart.CFrame.LookVector + position) * classData.Hitboxes[moveType].Offset
-
     local conditionalData = {}
-    conditionalData.spawnCFrame = newCFrame
-    conditionalData.size = classData.Hitboxes[moveType].Size
+    conditionalData.range = Range
+    conditionalData.startupTime = StartupTime
+
+    local VFX_ID = HttpService:GenerateGUID(false)
 
     VisualEffectServer:SpawnEffectsInRange(
         "Eruption",
         nil,
         character,
         conditionalData,
-        1000
+        1000,
+        VFX_ID
     )
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size
-    Hitbox.CFrame = newCFrame
-    Hitbox.Anchored = true
+    local Hitbox: BasePart = Hitboxes.CircleHitbox:Clone()
+    Hitbox.Transparency = 1
+    if ShowHitboxes then
+        Hitbox.Transparency = .5
+    end
+
+    Hitbox.Size = Vector3.new(Range * 2, Range * 2, Range * 2)
+    Hitbox.CFrame = rootPart.CFrame
+    Hitbox.Anchored = false
+    Hitbox.CanCollide = false
+    Hitbox.Massless = true
     Hitbox.Parent = IgnoreFolder
-    Debris:AddItem(Hitbox, .25)
+    Debris:AddItem(Hitbox, StartupTime + 1)
 
-    local alreadyHit = {}
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = Hitbox
+    weld.Part1 = rootPart
+    weld.Parent = weld.Part0
 
-    local touched = Hitbox.Touched:Connect(function() end)
-    local touchedObjects = Hitbox:GetTouchingParts()
+    local function DetectTargets()
+        local explosionOrigin = rootPart.Position
 
-    if touched then
-        touched:Disconnect()
+        local targets = GetTargets(player)
+        for _, target: Model in targets do
+            local targetRoot = target:FindFirstChild("HumanoidRootPart")
+            if targetRoot then
+                local distance = (targetRoot.Position - explosionOrigin).Magnitude
+                if distance < Range then
+                    --ignoreTargets
+                    if CollectionService:HasTag(target, "Ignore") then
+                        continue
+                    end
+
+                    local enemyHum = target:FindFirstChild("Humanoid")
+                    if not enemyHum then
+                        continue
+                    end
+
+                    local enemyRoot = target:FindFirstChild("HumanoidRootPart")
+                    if not enemyRoot then
+                        continue
+                    end
+
+                    if CollectionService:HasTag(target, "Invulnerable") then
+                        continue
+                    end
+
+                    local isUserStun = StateManager:CheckState(character, "Stunned")
+                    if isUserStun then
+                        return
+                    end
+
+                    local myTeam = character:GetAttribute("Team")
+                    local theirTeam = target:GetAttribute("Team")
+
+                    if (myTeam and theirTeam) and myTeam == theirTeam then
+                        continue
+                    end
+
+                    local isBlocking = StateManager:CheckState(target, "Blocking")
+                    if isBlocking then
+                        --Block Indication
+                        HealthManager:Block(target, damage, character)
+                        continue
+                    end
+
+                    --check modifiers
+                    HitboxManager:CheckModifiers(
+                        classData.MoveData[moveType],
+                        classData.MoveDataDurations[moveType],
+                        target, 
+                        character
+                    )
+
+                    StateManager:AddTarget(target, "Attacked", 1)
+
+                    HealthManager:Damage(target, damage, character)
+                end
+            end
+        end
     end
 
-    for i=1, #touchedObjects do
-        local object = touchedObjects[i]
-        local parent = object.Parent
+    task.delay(StartupTime, function()
+        DetectTargets()
 
-        if not parent:IsA("Model") then
-            continue
-        end
-
-        if parent == character then
-            continue
-        end
-
-        --ignoreTargets
-        if CollectionService:HasTag(parent, "Ignore") then
-            continue
-        end
-
-        local enemyHum = parent:FindFirstChild("Humanoid")
-        if not enemyHum then
-            continue
-        end
-
-        local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-        if not enemyRoot then
-            continue
-        end
-
-        if alreadyHit[parent.Name] then
-            continue
-        end
-
-        if CollectionService:HasTag(parent, "Invulnerable") then
-            continue
-        end
-
-        local isUserStun = StateManager:CheckState(character, "Stunned")
-        if isUserStun then
-            return
-        end
-
-        local myTeam = character:GetAttribute("Team")
-        local theirTeam = parent:GetAttribute("Team")
-
-        if (myTeam and theirTeam) and myTeam == theirTeam then
-            continue
-        end
-
-        alreadyHit[parent.Name] = true
-        task.delay(.25, function()
-            alreadyHit[parent.Name] = nil
-        end)
-
-        local isBlocking = StateManager:CheckState(parent, "Blocking")
-        if isBlocking then
-            --Block Indication
-            HealthManager:Block(parent, damage, character)
-            continue
-        end
-
-        --check modifiers
-        HitboxManager:CheckModifiers(
-            classData.MoveData[moveType],
-            classData.MoveDataDurations[moveType],
-            parent, 
-            character
+        VisualEffectServer:TerminateVFX(
+            "Eruption",
+            nil,
+            character,
+            conditionalData,
+            VFX_ID
         )
-
-        StateManager:AddTarget(parent, "Attacked", 1)
-
-        HealthManager:Damage(parent, damage, character)
-    end
+    end)
 end
 
 return Eruption

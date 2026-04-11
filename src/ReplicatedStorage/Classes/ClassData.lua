@@ -114,7 +114,7 @@ ClassData["Pyromancer"] = {
         ["LMBMove"] = {3, 3, 3},
         ["QMove"] = 4,
         ["EMove"] = 3,
-        ["FMove"] = 20,
+        ["FMove"] = 25,
     },
     Cooldowns = {
         ["LMBMove"] = .5,

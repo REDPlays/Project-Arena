@@ -127,6 +127,14 @@ function InputManager:RunInput(player, class, moveType, moveCount)
             end
         end
 
+        if typeof(cooldown) == "table" then
+            if character:GetAttribute("DoubleCooldown") == moveType then
+                cooldown = cooldown[2]
+            else
+                cooldown = cooldown[1]
+            end
+        end
+
         if workspace:GetAttribute("NoCooldowns") then
             cooldown = 1
         end
@@ -156,6 +164,14 @@ function InputManager:RunInput(player, class, moveType, moveCount)
             end
         end
 
+        if typeof(cooldown) == "table" then
+            if character:GetAttribute("DoubleCooldown") == moveType then
+                cooldown = cooldown[2]
+            else
+                cooldown = cooldown[1]
+            end
+        end
+
         if workspace:GetAttribute("NoCooldowns") then
             cooldown = 1
         end
@@ -178,6 +194,14 @@ function InputManager:RunInput(player, class, moveType, moveCount)
 
         local cooldown = currentClassData.Cooldowns.FMove
         if currentClassData.MoveData[moveType].DoubleCooldown then
+            if character:GetAttribute("DoubleCooldown") == moveType then
+                cooldown = cooldown[2]
+            else
+                cooldown = cooldown[1]
+            end
+        end
+
+        if typeof(cooldown) == "table" then
             if character:GetAttribute("DoubleCooldown") == moveType then
                 cooldown = cooldown[2]
             else

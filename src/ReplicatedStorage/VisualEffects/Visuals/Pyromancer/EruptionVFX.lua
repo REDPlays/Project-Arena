@@ -33,72 +33,88 @@ function Eruption:Activate(target, sourceUnit, conditionalData)
 end
 
 function Eruption:DisplayVFX()
-    self.Folder = Instance.new("Folder")
-    self.Folder.Name = "EruptionVFX"
-    self.Folder.Parent = workspace.VFX
-    
-    task.delay(2, function()
-        if self.Folder then
-            self.Folder:Destroy()
-        end
-    end)
-
-    self:Explosion()
-end
-
-function Eruption:Terminate()
-    
-end
-
-function Eruption:Update(deltaTime)
-    
-end
-
-function Eruption:Explosion()
     self.rootPart = self.sourceUnit:FindFirstChild("HumanoidRootPart")
     if not self.rootPart then
         return
     end
-
-    if not self.conditionalData.spawnCFrame then
+    
+    self.range = self.conditionalData.range
+    if not self.range then
         return
     end
 
-    self.size = self.conditionalData.size
-    if not self.size then
+    self.startupTime = self.conditionalData.startupTime
+    if not self.startupTime then
         return
     end
 
-    self.Bubble = PyromancerVFX.Eruption.Bubble:Clone()
-    self.Bubble.CFrame = self.conditionalData.spawnCFrame
-    self.Bubble.Size = Vector3.new(.1, .1, .1)
-    self.Bubble.Parent = self.Folder
+    self.canFollow = true
 
-    self.Fire = PyromancerVFX.Eruption.Eruption2:Clone()
-    self.Fire.CFrame = self.conditionalData.spawnCFrame
-    self.Fire.Transparency = 1
-    self.Fire.Parent = self.Folder
+    self.Folder = Instance.new("Folder")
+    self.Folder.Name = "EruptionVFX"
+    self.Folder.Parent = workspace.VFX
 
-    self.sfx1 = Sounds.Base.MagicSpawn:Clone()
-    self.sfx1.Volume = .25
-    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
-    self.sfx1.Parent = self.Bubble
-    self.sfx1:Play()
+    self.erupt = PyromancerVFX.Eruption.Eruption3:Clone()
+    self.erupt.CFrame = self.sourceUnit:GetPivot() + Vector3.new(0, .1, 0)
+    self.erupt.Transparency = 1
+    self.erupt.Anchored = true
+    self.erupt.Parent = self.Folder
 
-    self.sfx2 = Sounds.Pyromancer.Eruption:Clone()
-    self.sfx2.Volume = .25
-    self.sfx2._Pitch.Octave = math.random(95,  105) / 100
-    self.sfx2.Parent = self.Bubble
-    self.sfx2:Play()
+    local newLifetime = NumberRange.new(self.startupTime, self.startupTime)
+    self.erupt.Indicator.Floor.Lifetime = newLifetime
+    self.erupt.Indicator.Floor2.Lifetime = newLifetime
 
-    self.Fire.Attachment.Fire:Emit(50)
-    self.Fire.Attachment.Fire2:Emit(50)
-    self.Fire.Attachment.Ring:Emit(1)
+    self.erupt.Indicator.Floor:Emit(1)
+    self.erupt.Indicator.Floor2:Emit(1)
 
-    local info = TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local info2 = TweenInfo.new(.125, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, .125)
-    TweenService:Create(self.Bubble, info, {Size = self.size}):Play()
-    TweenService:Create(self.Bubble, info2, {Transparency = 1}):Play()
+    task.delay(self.startupTime, function()
+        self:Explosion()
+
+        if self.weld then
+            self.weld:Destroy()
+        end
+
+        if self.erupt then
+            self.erupt.Anchored = true
+        end
+    end)
+end
+
+function Eruption:Terminate()
+    task.delay(1, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
+end
+
+function Eruption:Update(deltaTime)
+    if self.canFollow and self.erupt and self.sourceUnit then
+        local newCFrame = self.sourceUnit:GetPivot() + Vector3.new(0, .1, 0)
+        self.erupt.Position = newCFrame.Position
+    end
+end
+
+function Eruption:Explosion()
+    if self.erupt then
+        for _, particle in pairs(self.erupt.Explosion:GetDescendants()) do
+            if particle:IsA("ParticleEmitter") then
+                particle:Emit(particle:GetAttribute("EmitCount"))
+            end
+        end
+
+        self.sfx1 = Sounds.Base.MagicSpawn:Clone()
+        self.sfx1.Volume = .25
+        self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+        self.sfx1.Parent = self.erupt
+        self.sfx1:Play()
+
+        self.sfx2 = Sounds.Pyromancer.Eruption:Clone()
+        self.sfx2.Volume = .25
+        self.sfx2._Pitch.Octave = math.random(95,  105) / 100
+        self.sfx2.Parent = self.erupt
+        self.sfx2:Play()
+    end
 end
 
 return Eruption
