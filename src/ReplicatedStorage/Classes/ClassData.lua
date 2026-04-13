@@ -666,7 +666,7 @@ ClassData["Hydromancer"] = {
         ["LMBMove"] = {7, 7, 7},
         ["QMove"] = 4,
         ["EMove"] = 3,
-        ["FMove"] = 20,
+        ["FMove"] = 3,
     }, 
     Cooldowns = {
         ["LMBMove"] = .5,
@@ -696,13 +696,13 @@ ClassData["Hydromancer"] = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "HydroStack"}),
         ["QMove"] = ClassMoveData:SetupModifiers({"Knockback"}),
         ["EMove"] = ClassMoveData:SetupModifiers({}),
-        ["FMove"] = ClassMoveData:SetupModifiers({}),
+        ["FMove"] = ClassMoveData:SetupModifiers({"Slow"}),
     },
     MoveDataDurations = {
         ["LMBMove"] = {},
         ["QMove"] = {Knockback = 50},
         ["EMove"] = {},
-        ["FMove"] = {},
+        ["FMove"] = {Slow = 1},
     },
     VisualEffects = {
         ["LMBMove"] = "WaterBall",

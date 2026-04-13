@@ -62,7 +62,7 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
     conditionalData.range = Range
     conditionalData.startupTime = StartupTime
 
-    local VFX_ID = HttpService:GenerateGUID(false)
+    local VFX_ID = "Eruption"..HttpService:GenerateGUID(false)
 
     VisualEffectServer:SpawnEffectsInRange(
         "Eruption",
