@@ -85,7 +85,7 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     weld.Part1 = rootPart
     weld.Parent = weld.Part0
 
-    local caution = Indicators.CautionLines:Clone()
+    --[==[local caution = Indicators.CautionLines:Clone()
     caution.Size = Vector3.new(Hitbox.Size.X, .1, Hitbox.Size.Z)
     caution.A0.Position = Vector3.new(0, .05, -caution.Size.Z/2)
     caution.A1.Position = Vector3.new(0, .05, caution.Size.Z/2)
@@ -97,7 +97,7 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     local weld2 = Instance.new("WeldConstraint")
     weld2.Part0 = caution
     weld2.Part1 = rootPart
-    weld2.Parent = weld2.Part0
+    weld2.Parent = weld2.Part0]==]
 
     Stats:SetAttribute("AbilityLocked", true)
 
@@ -246,7 +246,7 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     end)
 
     Debris:AddItem(Hitbox, duration)
-    Debris:AddItem(caution, duration)
+    --Debris:AddItem(caution, duration)
 
     task.delay(duration, function()
         if thread then

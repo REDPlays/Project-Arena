@@ -43,7 +43,7 @@ function WaterBubble:Activate(player, character, rootPart, placementCFrame, clas
 
     local duration = 4
     local TeamHeal = 0.75
-    local range = 15
+    local range = 16
 
     if hydroStacks and hydroStacks.stack >= 5 then
         maxStacks = true

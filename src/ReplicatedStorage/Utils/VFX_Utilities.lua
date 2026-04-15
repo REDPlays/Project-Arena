@@ -19,6 +19,21 @@ function VFX_Utilities:TweenBeams(beams: {[number]: Beam}, attachments: {[number
     end
 end
 
+function VFX_Utilities:TweenBeamTransparency(beams: {})
+    task.spawn(function()
+        for i=0.5, 1, 0.05 do
+            for _, beam: Beam in beams do
+                beam.Transparency = NumberSequence.new({
+                    NumberSequenceKeypoint.new(0, i),
+                    NumberSequenceKeypoint.new(1, i)
+                })
+            end
+
+            task.wait()
+        end
+    end)
+end
+
 function VFX_Utilities:TweenTrails()
     
 end

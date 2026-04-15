@@ -666,7 +666,7 @@ ClassData["Hydromancer"] = {
         ["LMBMove"] = {7, 7, 7},
         ["QMove"] = 4,
         ["EMove"] = 3,
-        ["FMove"] = 3,
+        ["FMove"] = 2,
     }, 
     Cooldowns = {
         ["LMBMove"] = .5,

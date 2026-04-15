@@ -45,30 +45,33 @@ end
 
 function WaterBubbleVFX:AddBubble()
     self.bubble = HydromancerVFX.WaterBubble:Clone()
-    self.bubble.CFrame = self.floorCFrame * CFrame.new(0, 3, 0)
+    self.bubble.Position = (self.sourceUnit:GetPivot() * CFrame.new(0, 2, 0)).Position
+    self.bubble.Anchored = true
     self.bubble.Parent = self.Folder
 
-    self.weld = Instance.new("WeldConstraint")
-    self.weld.Part0 = self.bubble
-    self.weld.Part1 = self.rootPart
-    self.weld.Parent = self.weld.Part0
+    self.floor = HydromancerVFX.BubbleFloor:Clone()
+    self.floor.Position = self.sourceUnit:GetPivot().Position
+    self.floor.Anchored = true
+    self.floor.Parent = self.Folder
+
+    self.sfx2 = Sounds.Hydromancer.UnderWater:Clone()
+    self.sfx2.Volume = .75
+    self.sfx2._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx2.Parent = self.bubble
+    self.sfx2:Play()
 
     if self.conditionalData.maxStacks then
-        self.healRange = HydromancerVFX.HealRange:Clone()
-        self.healRange.CFrame = self.floorCFrame
-        self.healRange.Parent = self.Folder
-
-        self.healRange.Attachment.A0.Position = Vector3.new(self.conditionalData.range, 3.85, 0)
-        self.healRange.Attachment.A1.Position = Vector3.new(-self.conditionalData.range, 3.85, 0)
-
-        self.weld2 = Instance.new("WeldConstraint")
-        self.weld2.Part0 = self.healRange
-        self.weld2.Part1 = self.rootPart
-        self.weld2.Parent = self.weld2.Part0
+        self.floor.Attachment.Floor.Rate = 3
+        self.floor.Attachment.Floor.Size = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 16),
+            NumberSequenceKeypoint.new(1, 16)
+        })
     end
 end
 
 function WaterBubbleVFX:Terminate()
+    local spinInfo = TweenInfo.new(2, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+
     if self.bubble then
         for _, obj in pairs(self.bubble:GetDescendants()) do
             if obj:IsA("ParticleEmitter") then
@@ -76,16 +79,26 @@ function WaterBubbleVFX:Terminate()
             end
         end
 
-        local info = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        TweenService:Create(self.bubble, info, {Transparency = 1}):Play()
+        TweenService:Create(self.bubble, spinInfo, {
+            Orientation = self.bubble.Orientation + Vector3.new(0, 180, 0)
+        }):Play()
     end
-    
-    if self.healRange then
-        local info = TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        TweenService:Create(self.healRange.Attachment.A0, info, {Position = self.healRange.Attachment.A0.Position - Vector3.new(0, 3.85, 0)}):Play()
-        TweenService:Create(self.healRange.Attachment.A1, info, {Position = self.healRange.Attachment.A1.Position - Vector3.new(0, 3.85, 0)}):Play()
-        TweenService:Create(self.healRange.Attachment.Beam, info, {Width0 = 0, Width1 = 0}):Play()
-        TweenService:Create(self.healRange.Attachment.Beam2, info, {Width0 = 0, Width1 = 0}):Play()
+
+    if self.floor then
+        for _, obj in pairs(self.floor:GetDescendants()) do
+            if obj:IsA("ParticleEmitter") then
+                obj.Enabled = false
+            end
+        end
+
+        TweenService:Create(self.floor, spinInfo, {
+            Orientation = self.floor.Orientation + Vector3.new(0, 180, 0)
+        }):Play()
+    end
+
+    if self.sfx2 then
+        local info = TweenInfo.new(1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+        TweenService:Create(self.sfx2, info, {Volume = 0}):Play()
     end
 
     if self.Folder then
@@ -94,7 +107,15 @@ function WaterBubbleVFX:Terminate()
 end
 
 function WaterBubbleVFX:Update(deltaTime)
-    
+    if self.bubble then
+        self.bubble.Position = (self.sourceUnit:GetPivot() * CFrame.new(0, 2, 0)).Position
+        self.bubble.Orientation += Vector3.new(0, 1, 0)
+    end
+
+    if self.floor then
+        self.floor.Position = self.sourceUnit:GetPivot().Position
+        self.floor.Orientation += Vector3.new(0, 1, 0)
+    end
 end
 
 function WaterBubbleVFX:RunFunction(target: Model, sourceUnit: Model, conditionalData: {})

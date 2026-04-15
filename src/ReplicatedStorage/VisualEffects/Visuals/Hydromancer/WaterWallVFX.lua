@@ -68,9 +68,13 @@ function WaterWallVFX:Terminate()
         for i=1, #self.walls do
             local wall = self.walls[i]
             if wall then
+                local info = TweenInfo.new(1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+
                 for _, obj in pairs(wall:GetDescendants()) do
                     if obj:IsA("ParticleEmitter") then
                         obj.Enabled = false
+                    elseif obj:IsA("Beam") then
+                        TweenService:Create(obj, info, {Width0 = 0, Width1 = 0}):Play()
                     end
                 end
             end

@@ -56,6 +56,18 @@ function WhirlpoolVFX:DisplayVFX()
     self.pool.CFrame = self.sourceUnit:GetPivot() + Vector3.new(0, .1, 0)
     self.pool.Transparency = 1
     self.pool.Parent = self.Folder
+
+    self.sfx = Sounds.Hydromancer.Whirlpool:Clone() :: Sound
+    self.sfx.Volume = .5
+    self.sfx.PlaybackSpeed = 1
+    self.sfx.Parent = self.pool
+    self.sfx:Play()
+
+    self.sfx2 = Sounds.Hydromancer.Whirlpool2:Clone() :: Sound
+    self.sfx2.Volume = .5
+    self.sfx2.PlaybackSpeed = 1
+    self.sfx2.Parent = self.pool
+    self.sfx2:Play()
 end
 
 function WhirlpoolVFX:Terminate()
@@ -67,6 +79,16 @@ function WhirlpoolVFX:Terminate()
                 particle.Enabled = false
             end
         end
+    end
+
+    if self.sfx then
+        local info = TweenInfo.new(1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+        TweenService:Create(self.sfx, info, {Volume = 0}):Play()
+    end
+
+    if self.sfx2 then
+        local info = TweenInfo.new(1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+        TweenService:Create(self.sfx2, info, {Volume = 0}):Play()
     end
 
     task.delay(2, function()

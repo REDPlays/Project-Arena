@@ -61,6 +61,20 @@ function Whirlpool:Activate(player, character, rootPart, placementCFrame, class,
 
     local duration = 5
     local damageTick = 0.25
+    local TeamHeal = 1
+    local healTick = 0.25
+
+    local hydroStacks = PassiveManager:CheckPassive(character, "HydroStack")
+    local maxStacks = false
+
+    if hydroStacks and hydroStacks.stack >= 5 then
+        maxStacks = true
+        damage *= 0.8
+        duration = 7
+        TeamHeal = 1.25
+        damageTick = 0.2
+        PassiveManager:ClearStack(character, "HydroStack")
+    end
 
     local Hitbox: BasePart = Hitboxes.CircleHitbox:Clone()
     Hitbox.Transparency = 1
@@ -131,14 +145,28 @@ function Whirlpool:Activate(player, character, rootPart, placementCFrame, class,
                             return
                         end
 
+                        if alreadyHit[target] then
+                            continue
+                        end
+
                         local myTeam = character:GetAttribute("Team")
                         local theirTeam = target:GetAttribute("Team")
 
                         if (myTeam and theirTeam) and myTeam == theirTeam then
+                            alreadyHit[target] = true
+                            task.delay(healTick, function()
+                                alreadyHit[target] = nil
+                            end)
+                            HealthManager:Heal(target, TeamHeal)
                             continue
                         end
 
-                        if alreadyHit[target] then
+                        if target:GetAttribute("DummyAlly") then
+                            alreadyHit[target] = true
+                            task.delay(healTick, function()
+                                alreadyHit[target] = nil
+                            end)
+                            HealthManager:Heal(target, TeamHeal)
                             continue
                         end
 
