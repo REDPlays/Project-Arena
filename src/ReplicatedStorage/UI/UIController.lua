@@ -76,7 +76,7 @@ function UIController:Init(player, character, animationSystem, cameraSystem, cer
 
     self.ColorUI = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI")
     self.ColorUI.Enabled = false
-    self.colorSystem = ColorSelectionSystem.new(self.ColorUI, self, self.player)
+    self.colorSystem = ColorSelectionSystem.new(self.ColorUI, self, self.player, self.ColorBoard)
 
     self.disableColor = false
     self.SelectingColor = false
@@ -1031,7 +1031,7 @@ function UIController:InColorBound()
     overlap.FilterDescendantsInstances = {self.character}
     overlap.FilterType = Enum.RaycastFilterType.Include
 
-    local partList = workspace:GetPartsInPart(self.ColorBound)
+    local partList = {} --workspace:GetPartsInPart(self.ColorBound)
 
     for _, object in partList do
         if object:IsA("BasePart") then

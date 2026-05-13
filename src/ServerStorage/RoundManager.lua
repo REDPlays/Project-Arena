@@ -75,8 +75,9 @@ function RoundManager:Init(ServerGameManager)
 
     --map selection will be needed later on
     self.availableMaps = {
-        Maps:WaitForChild("GreatSkyPlatform"),
-        Maps:WaitForChild("ShanghaiShowdown"),
+        --Maps:WaitForChild("GreatSkyPlatform"),
+        --Maps:WaitForChild("ShanghaiShowdown"),
+        Maps:WaitForChild("Seaside Docks"),
     }
 
     self.mapPool = table.clone(self.availableMaps)
@@ -293,8 +294,9 @@ function RoundManager:UpdatePickups(deltaTime)
                     padData.isActive = true
                     padData.UI.Enabled = false
                     padData.currTime = padData.cooldown
-    
+                    
                     padData.Cube.Transparency = 0
+                    padData.Cube.PointLight.Enabled = true
                 end
     
                 padData.currTime -= deltaTime
@@ -341,8 +343,9 @@ function RoundManager:UpdatePickups(deltaTime)
 
                 padData.Cube.Burst.Health:Emit(8)
                 padData.Cube.Burst.Ring:Emit(2)
+                padData.Cube.PointLight.Enabled = false
 
-                HealthManager:Heal(parent, 15)
+                HealthManager:Heal(parent, 20)
             end
         end
     end

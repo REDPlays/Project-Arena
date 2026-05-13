@@ -3,12 +3,15 @@ local UserInputService = game:GetService("UserInputService")
 local ContextAction = game:GetService("ContextActionService")
 local GuiService = game:GetService("GuiService")
 
+local Assets = ReplicatedStorage:WaitForChild("Assets")
+local UIAssets = Assets:WaitForChild("UI")
+
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
 local ColorSelectionSystem = {}
 ColorSelectionSystem.__index = ColorSelectionSystem
 
-function ColorSelectionSystem.new(ColorUI, UIController, player)
+function ColorSelectionSystem.new(ColorUI, UIController, player, ColorBoard: Model)
     local newColorSelection = {}
     setmetatable(newColorSelection, ColorSelectionSystem)
     
@@ -19,6 +22,10 @@ function ColorSelectionSystem.new(ColorUI, UIController, player)
 
     newColorSelection.UIController = UIController
     newColorSelection.Mouse = player:GetMouse()  
+
+    newColorSelection.ColorBoard = ColorBoard
+    newColorSelection.HexPivot1 = ColorBoard.HexPivot1
+    newColorSelection.HexPivot2 = ColorBoard.HexPivot2
 
     newColorSelection.isActive = false
 
@@ -262,6 +269,125 @@ function ColorSelectionSystem:Connections()
     end)
 end
 
+function ColorSelectionSystem:BuildHexColors()
+    local Colors = {}
+    local originCFrame = self.HexPivot1.CFrame
+    local startCFrame = originCFrame
+
+    local rows = 7
+    local columns = 18
+    local horizonalSpacing = 1
+
+    for row=1, rows do
+        for col=1, columns do
+            if col > 1 then
+                startCFrame *= CFrame.new(-horizonalSpacing, 0, 0)
+            end
+
+            local part = Instance.new("Part")
+            part.Anchored = true
+            part.Size = Vector3.new(1, 1, 1)
+            part.CFrame = startCFrame
+            part.Parent = workspace.Ignore
+
+            if row < 7 then
+                local hue = (col - 1) / columns
+
+                local value = 1 - ((row - 1) / 6) * 0.8
+
+                local saturation = 1 - ((row - 1) / 6) * 0.25
+
+                part.Color = Color3.fromHSV(hue, saturation, value)
+            else
+                local alpha = (col - 1) / (columns - 1)
+                local brightness = 1 - alpha
+
+                part.Color = Color3.new(brightness, brightness, brightness)
+            end
+
+            startCFrame = part.CFrame
+        end
+
+        startCFrame = originCFrame * CFrame.new(0, -(horizonalSpacing * row), 0)
+    end
+
+    --[==[
+    local Colors = {}
+    local colorCount = 1
+    for i=0, 100, 2.5 do
+        local h = i/100
+
+        table.insert(Colors, colorCount, Color3.fromHSV(h, 1, 1))
+
+        colorCount += 1
+    end
+
+    local BWcolors = {}
+    local bwCount = 1
+    for i=0, 100, 14 do
+        local v = i/100
+
+        table.insert(BWcolors, bwCount, Color3.fromHSV(0, 0, v))
+    end
+
+    local function toWorld(pivot, offset: Vector3)
+        return pivot.CFrame:PointToWorldSpace(offset)
+    end
+
+    local function buildColorHex(colors, pivot)
+        local hexSize = 1.25
+        local radius = 3
+        local index = 1
+
+        for q = -radius, radius do
+            for r = -radius, radius do
+                local s = -q - r
+                if math.abs(s) <= radius then
+                    if index > #colors then return end
+
+                    local x = hexSize * (3/2 * q)
+                    local y = hexSize * (math.sqrt(3) * (r + q/2))
+
+                    local worldPos = toWorld(pivot, Vector3.new(x, y, 0))
+
+                    local part = UIAssets.Hexagon:Clone()
+                    part.Color = colors[index]
+                    part.Size = Vector3.new(part.Size.X * 2, part.Size.Y, part.Size.Z * 2)
+                    part.CFrame = CFrame.new(worldPos, worldPos + pivot.CFrame.LookVector) * CFrame.Angles(math.rad(90), 0, 0)
+                    part.Parent = self.ColorBoard.Colors
+
+                    index += 1
+                end
+            end
+        end
+    end
+
+    local function buildBWGrid(bwColors, pivot)
+        local size = 1.2
+        local count = #bwColors
+
+        for i = 1, count do
+            local offsetIndex = i - (count + 1) / 2
+
+            local right = pivot.CFrame.RightVector
+
+            local offset = right * (offsetIndex * size * 2)
+
+            local worldPos = pivot.Position + offset
+
+            local part = UIAssets.Hexagon:Clone()
+            part.Color = bwColors[i]
+            part.Size = Vector3.new(part.Size.X * 2, part.Size.Y, part.Size.Z * 2)
+            part.CFrame = CFrame.new(worldPos, worldPos + pivot.CFrame.LookVector) * CFrame.Angles(math.rad(90), 0, 0)
+            part.Parent = workspace
+        end
+    end
+
+	buildColorHex(Colors, self.HexPivot1)
+	buildBWGrid(BWcolors, self.HexPivot2)
+    ]==]
+end
+
 function ColorSelectionSystem:SetupPresets()
     self.PresetColors = {}
 
@@ -289,6 +415,8 @@ function ColorSelectionSystem:SetupPresets()
             }
         end
     end
+
+    self:BuildHexColors()
 end
 
 function ColorSelectionSystem:SetColor(Color: Color3)
