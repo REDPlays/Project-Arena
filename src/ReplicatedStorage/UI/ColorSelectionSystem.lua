@@ -8,6 +8,12 @@ local UIAssets = Assets:WaitForChild("UI")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
+local ColorGroups = {
+    [1] = "Primary",
+    [2] = "Secondary",
+    [3] = "Energy",
+}
+
 local ColorSelectionSystem = {}
 ColorSelectionSystem.__index = ColorSelectionSystem
 
@@ -24,8 +30,7 @@ function ColorSelectionSystem.new(ColorUI, UIController, player, ColorBoard: Mod
     newColorSelection.Mouse = player:GetMouse()  
 
     newColorSelection.ColorBoard = ColorBoard
-    newColorSelection.HexPivot1 = ColorBoard.HexPivot1
-    newColorSelection.HexPivot2 = ColorBoard.HexPivot2
+    newColorSelection.ColorPivot = ColorBoard.ColorPivot
 
     newColorSelection.isActive = false
 
@@ -35,90 +40,90 @@ function ColorSelectionSystem.new(ColorUI, UIController, player, ColorBoard: Mod
 end
 
 function ColorSelectionSystem:Init()
-    self.SectionUI = self.ColorUI:WaitForChild("SectionUI")
-    self.SectionLabel = self.SectionUI.Section
-    self.SectionPrev = self.SectionUI.Prev
-    self.SectionNext = self.SectionUI.Next
-
-    self.EscapeUI = self.ColorUI:WaitForChild("EscapeUI")
-
-    self.ColorIcon = self.ColorUI.ColorIcon
-
-    self.LeftFrame = self.ColorUI:WaitForChild("LeftFrame")
-    self.PresetColorHolder = self.LeftFrame.Holder
-    self.ExampleColorBlock = self.PresetColorHolder.Example
-
-    self.RightFrame = self.ColorUI:WaitForChild("RightFrame")
-    self.RSlider = self.RightFrame.RSlider
-    self.GSlider = self.RightFrame.GSlider
-    self.BSlider = self.RightFrame.BSlider
-
-    self.RBtn = self.RSlider.RBtn
-    self.GBtn = self.GSlider.GBtn
-    self.BBtn = self.BSlider.BBtn
-
-    self.RBar = self.RSlider.Bar
-    self.GBar = self.GSlider.Bar
-    self.BBar = self.BSlider.Bar
-
-    self.R_BarSlider = self.RBar.Slider
-    self.G_BarSlider = self.GBar.Slider
-    self.B_BarSlider = self.BBar.Slider
-
-    self.rgbButtons = {
-        [self.RBtn] = self.RBtn,
-        [self.GBtn] = self.GBtn,
-        [self.BBtn] = self.BBtn,
-    }
-
-    self.rgbBars = {
-        [self.RBtn] = self.RBar,
-        [self.GBtn] = self.GBar,
-        [self.BBtn] = self.BBar,
-    }
-
-    self.rgbSliders = {
-        [self.RBtn] = self.R_BarSlider,
-        [self.GBtn] = self.G_BarSlider,
-        [self.BBtn] = self.B_BarSlider,
-    }
-
-    self.rgbValues = {
-        [self.RBtn] = 0,
-        [self.GBtn] = 0,
-        [self.BBtn] = 0,
-    }
-
-    self.currentRGB = nil
-    self.currentSlider = nil
-    self.currentBar = nil
-    self.step = 0.01
-
-    self.mousePressSlider = false
-    self.controllerPressSlider = false
-    self.Direction = nil
-
-    self.Sections = {
-        [1] = "Primary",
-        [2] = "Secondary",
-        [3] = "Energy",
-    }
-
-    self.currentSection = 1
-
-    --Resize Sliders for Mobile
-    if UserInputService.TouchEnabled then
-        for _, button: ImageButton in self.rgbSliders do
-            local xSize = button.Size.X.Scale
-            local ySize = button.Size.Y.Scale
-
-            button.Size = UDim2.new(xSize * 2, 0, ySize * 1.25, 0)
-        end
-    end
+    self.connections = {}
     
-    self:InputDetection()
-    self:Connections()
-    self:SetupPresets()
+    self.CurrentGroup = self.ColorBoard.CurrentGroup
+    self.SectionGroup = self.ColorBoard.SectionGroup
+    self.ColorGroup = self.ColorBoard.ColorGroup
+
+    self.sectionDisplay = self.SectionGroup.Board.LabelTag.Background.Label
+
+    self.groupNum = 1
+    self.currentColorGroup = string.upper(ColorGroups[self.groupNum])
+    self.sectionDisplay.Text = self.currentColorGroup
+
+    self.rgbSliderValues = {
+        ["R"] = 0,
+        ["G"] = 0,
+        ["B"] = 0,
+    }
+
+    self:BuildColorSliders()
+    self:BuildColors()
+end
+
+function ColorSelectionSystem:BuildColorSliders()
+    self.selectionSliders = {
+        ["Left"] = self.SectionGroup.Left,
+        ["Right"] = self.SectionGroup.Right,
+    }
+
+    for direction, button in pairs(self.selectionSliders) do
+        local click = Instance.new("ClickDetector")
+        click.Name = "Click"
+        click.MaxActivationDistance = 75
+        click.Parent = button
+
+        self.connections[direction] = click.MouseClick:Connect(function()
+            if direction == "Left" then
+                self.groupNum -= 1
+
+                if self.groupNum < 1 then
+                    self.groupNum = #ColorGroups
+                end
+            elseif direction == "Right" then
+                self.groupNum += 1
+
+                if self.groupNum > #ColorGroups then
+                    self.groupNum = 1
+                end
+            end
+
+            self.currentColorGroup = string.upper(ColorGroups[self.groupNum])
+            self.sectionDisplay.Text = self.currentColorGroup
+        end)
+    end
+
+    self.sliders = {
+        ["R"] = self.ColorBoard:FindFirstChild("RColor"),
+        ["G"] = self.ColorBoard:FindFirstChild("GColor"),
+        ["B"] = self.ColorBoard:FindFirstChild("BColor"),
+    }
+
+    for colorSection: "R" | "G"| "B" , colorboard in pairs(self.sliders) do
+        local Dial: Model = colorboard:FindFirstChild("Dial")
+        local Left: BasePart = colorboard:FindFirstChild("Left")
+        local Right: BasePart = colorboard:FindFirstChild("Right")
+        local Display: TextLabel = colorboard.Display.LabelTag.Background.Label
+
+        local Arrows = {
+            ["Left"] = Left,
+            ["Right"] = Right,
+        }
+
+        for direction, button in pairs(Arrows) do
+            local click = Instance.new("ClickDetector")
+            click.Name = "Click"
+            click.MaxActivationDistance = 75
+            click.Parent = button
+
+            self.connections["Slider"..direction] = click.MouseClick:Connect(function()
+                warn("direction:", direction)
+            end)
+        end
+
+
+    end
 end
 
 function ColorSelectionSystem:InputDetection()
@@ -269,15 +274,18 @@ function ColorSelectionSystem:Connections()
     end)
 end
 
-function ColorSelectionSystem:BuildHexColors()
+function ColorSelectionSystem:BuildColors()
+    self.colorConnections = {}
+
     local Colors = {}
-    local originCFrame = self.HexPivot1.CFrame
+    local originCFrame = self.ColorPivot.CFrame
     local startCFrame = originCFrame
 
     local rows = 7
     local columns = 18
     local horizonalSpacing = 1
 
+    --build color grid
     for row=1, rows do
         for col=1, columns do
             if col > 1 then
@@ -288,22 +296,29 @@ function ColorSelectionSystem:BuildHexColors()
             part.Anchored = true
             part.Size = Vector3.new(1, 1, 1)
             part.CFrame = startCFrame
-            part.Parent = workspace.Ignore
+            part.Parent = self.ColorBoard.Colors
+
+            local newColor
 
             if row < 7 then
                 local hue = (col - 1) / columns
-
                 local value = 1 - ((row - 1) / 6) * 0.8
-
                 local saturation = 1 - ((row - 1) / 6) * 0.25
 
-                part.Color = Color3.fromHSV(hue, saturation, value)
+                newColor = Color3.fromHSV(hue, saturation, value)
+                part.Color = newColor
             else
                 local alpha = (col - 1) / (columns - 1)
                 local brightness = 1 - alpha
 
-                part.Color = Color3.new(brightness, brightness, brightness)
+                newColor = Color3.new(brightness, brightness, brightness)
+                part.Color = newColor
             end
+
+            Colors[part] = {
+                color = newColor,
+                part = part,
+            }
 
             startCFrame = part.CFrame
         end
@@ -311,112 +326,32 @@ function ColorSelectionSystem:BuildHexColors()
         startCFrame = originCFrame * CFrame.new(0, -(horizonalSpacing * row), 0)
     end
 
-    --[==[
-    local Colors = {}
-    local colorCount = 1
-    for i=0, 100, 2.5 do
-        local h = i/100
+    local highlight = Instance.new("Highlight")
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.OutlineTransparency = 0
+    highlight.FillTransparency = 1
+    highlight.Parent = workspace.Ignore
 
-        table.insert(Colors, colorCount, Color3.fromHSV(h, 1, 1))
+    for colorpart, colordata in pairs(Colors) do
+        local click = Instance.new("ClickDetector")
+        click.Name = "Click"
+        click.MaxActivationDistance = 75
+        click.Parent = colorpart
 
-        colorCount += 1
+        self.colorConnections[colorpart] = {}
+
+        self.colorConnections[colorpart].Click = click.MouseClick:Connect(function()
+            warn("color:", colorpart, colordata.color)
+        end)
+
+        self.colorConnections[colorpart].Enter = click.MouseHoverEnter:Connect(function()
+            highlight.Parent = colorpart
+        end)
+
+        self.colorConnections[colorpart].Leave = click.MouseHoverLeave:Connect(function()
+            highlight.Parent = workspace.Ignore
+        end)
     end
-
-    local BWcolors = {}
-    local bwCount = 1
-    for i=0, 100, 14 do
-        local v = i/100
-
-        table.insert(BWcolors, bwCount, Color3.fromHSV(0, 0, v))
-    end
-
-    local function toWorld(pivot, offset: Vector3)
-        return pivot.CFrame:PointToWorldSpace(offset)
-    end
-
-    local function buildColorHex(colors, pivot)
-        local hexSize = 1.25
-        local radius = 3
-        local index = 1
-
-        for q = -radius, radius do
-            for r = -radius, radius do
-                local s = -q - r
-                if math.abs(s) <= radius then
-                    if index > #colors then return end
-
-                    local x = hexSize * (3/2 * q)
-                    local y = hexSize * (math.sqrt(3) * (r + q/2))
-
-                    local worldPos = toWorld(pivot, Vector3.new(x, y, 0))
-
-                    local part = UIAssets.Hexagon:Clone()
-                    part.Color = colors[index]
-                    part.Size = Vector3.new(part.Size.X * 2, part.Size.Y, part.Size.Z * 2)
-                    part.CFrame = CFrame.new(worldPos, worldPos + pivot.CFrame.LookVector) * CFrame.Angles(math.rad(90), 0, 0)
-                    part.Parent = self.ColorBoard.Colors
-
-                    index += 1
-                end
-            end
-        end
-    end
-
-    local function buildBWGrid(bwColors, pivot)
-        local size = 1.2
-        local count = #bwColors
-
-        for i = 1, count do
-            local offsetIndex = i - (count + 1) / 2
-
-            local right = pivot.CFrame.RightVector
-
-            local offset = right * (offsetIndex * size * 2)
-
-            local worldPos = pivot.Position + offset
-
-            local part = UIAssets.Hexagon:Clone()
-            part.Color = bwColors[i]
-            part.Size = Vector3.new(part.Size.X * 2, part.Size.Y, part.Size.Z * 2)
-            part.CFrame = CFrame.new(worldPos, worldPos + pivot.CFrame.LookVector) * CFrame.Angles(math.rad(90), 0, 0)
-            part.Parent = workspace
-        end
-    end
-
-	buildColorHex(Colors, self.HexPivot1)
-	buildBWGrid(BWcolors, self.HexPivot2)
-    ]==]
-end
-
-function ColorSelectionSystem:SetupPresets()
-    self.PresetColors = {}
-
-    local maxColors = 1032
-
-    for i=1, maxColors do
-        local newColor = BrickColor.new(i)
-
-        if not self.PresetColors[tostring(newColor)] then
-            local newUI: ImageButton = self.ExampleColorBlock:Clone()
-            newUI.BackgroundColor3 = newColor.Color
-            newUI.Name = tostring(newColor)
-            newUI.LayoutOrder = i
-            newUI.Visible = true
-            newUI.Parent = self.PresetColorHolder
-
-            local connection = newUI.Activated:Connect(function(inputObject, clickCount)
-                self:SetColor(newColor.Color)
-            end)
-
-            self.PresetColors[tostring(newColor)] = {
-                Color = newColor,
-                Button = newUI,
-                connection = connection
-            }
-        end
-    end
-
-    self:BuildHexColors()
 end
 
 function ColorSelectionSystem:SetColor(Color: Color3)
