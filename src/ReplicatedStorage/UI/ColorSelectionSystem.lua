@@ -317,7 +317,7 @@ end
 function ColorSelectionSystem:Update(deltaTime)
     local function HoldButton()
         local isMouseClick = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-        local isConsoleClick = UserInputService:IsKeyDown(Enum.KeyCode.ButtonR1)
+        local isConsoleClick = UserInputService:IsKeyDown(Enum.KeyCode.ButtonR2)
 
         return isMouseClick or isConsoleClick
     end
