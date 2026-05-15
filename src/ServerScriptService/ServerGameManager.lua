@@ -225,9 +225,9 @@ function ServerGameManager:PlayerJoin(player: Player)
     ServerGameManager.playerList[player.UserId] = player
     ServerGameManager.playerCount += 1
 
-    CharacterSelectServer:PlayerJoined(player)
-
     ServerGameManager.playerManager:PlayerJoin(player)
+
+    CharacterSelectServer:PlayerJoined(player)
 
     LeaderboardManager:PlayerJoin(player)
 

@@ -538,7 +538,14 @@ function UIController:Connect()
             end
         end
 
-        if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) or UserInputService:IsKeyDown(Enum.KeyCode.ButtonR1) then
+        local function HoldButton()
+            local isMouseClick = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+            local isConsoleClick = UserInputService:IsKeyDown(Enum.KeyCode.ButtonR1)
+            
+            return isMouseClick or isConsoleClick
+        end
+
+        if HoldButton() then
             self:M1()
         end
     end)

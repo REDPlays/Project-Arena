@@ -154,13 +154,17 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("Invulnerable", false)
     Stats:SetAttribute("Silenced", false)
 
-    Stats:SetAttribute("Primary", Color3.fromRGB(99, 95, 98))
-    Stats:SetAttribute("Secondary", Color3.fromRGB(163, 162, 165))
-    Stats:SetAttribute("Energy", Color3.fromRGB(255, 255, 255))
+    local PrimaryColor = CharacterSelectServer.playerManager:GetColor(player, "Primary") or Color3.fromRGB(99, 95, 98)
+    local SecondaryColor = CharacterSelectServer.playerManager:GetColor(player, "Secondary") or Color3.fromRGB(163, 162, 165)
+    local EnergyColor = CharacterSelectServer.playerManager:GetColor(player, "Energy") or Color3.fromRGB(163, 162, 165)
 
-    player:SetAttribute("Primary", Color3.fromRGB(99, 95, 98))
-    player:SetAttribute("Secondary", Color3.fromRGB(163, 162, 165))
-    player:SetAttribute("Energy", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("Primary", PrimaryColor)
+    Stats:SetAttribute("Secondary", SecondaryColor)
+    Stats:SetAttribute("Energy", EnergyColor)
+
+    player:SetAttribute("Primary", PrimaryColor)
+    player:SetAttribute("Secondary", SecondaryColor)
+    player:SetAttribute("Energy", EnergyColor)
 
     CharacterSelectServer:GiveUI(character, Stats)
 
