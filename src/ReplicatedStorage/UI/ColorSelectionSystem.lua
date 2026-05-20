@@ -22,7 +22,8 @@ function ColorSelectionSystem.new(ColorUI, UIController, player, ColorBoard: Mod
     setmetatable(newColorSelection, ColorSelectionSystem)
     
     newColorSelection.player = player
-    newColorSelection.ColorUI = ColorUI:WaitForChild("Background")
+    newColorSelection.ColorUI = ColorUI
+    newColorSelection.IndicatorText = ColorUI:FindFirstChild("TextLabel")
 
     newColorSelection.selectionColor = Color3.fromRGB(255, 203, 80)
     newColorSelection.nonSelectionColor = Color3.fromRGB(255, 255, 255)
@@ -100,6 +101,24 @@ function ColorSelectionSystem:BuildColorSliders()
         ["Right"] = self.SectionGroup.Right,
     }
 
+    self.sliders = {
+        ["R"] = self.ColorBoard:FindFirstChild("RColor"),
+        ["G"] = self.ColorBoard:FindFirstChild("GColor"),
+        ["B"] = self.ColorBoard:FindFirstChild("BColor"),
+    }
+
+    self.colorDisplays = {}
+    self.dials = {}
+    self.sliderBack = {}
+
+    self.canHoldSlider = false
+    self.holdSliderDirection = nil
+    self.holdSliderSection = nil
+    self.buttonType = ""
+    self.hoverClickDebounce = false
+    self.hoverClickCooldown = 0.25
+    self.hoverKey = ""
+
     for direction, button in pairs(self.selectionSliders) do
         local click = Instance.new("ClickDetector")
         click.Name = "Click"
@@ -131,27 +150,27 @@ function ColorSelectionSystem:BuildColorSliders()
         ]==]
 
         self.connections["Enter"..direction] = click.MouseHoverEnter:Connect(function()
+            if not self.canHoldSlider then
+                self.canHoldSlider = true
+            end
+            self.holdSliderDirection = direction
+            self.holdSliderSection = button
+            self.buttonType = "Section"
+            self.ColorUI.Visible = true
             self.highlight.Parent = button
         end)
 
         self.connections["Exit"..direction] = click.MouseHoverLeave:Connect(function()
+            if self.canHoldSlider then
+                self.canHoldSlider = false
+            end
+            self.holdSliderDirection = direction
+            self.holdSliderSection = button
+            self.buttonType = "Section"
+            self.ColorUI.Visible = false
             self.highlight.Parent = workspace.Ignore
         end)
     end
-
-    self.sliders = {
-        ["R"] = self.ColorBoard:FindFirstChild("RColor"),
-        ["G"] = self.ColorBoard:FindFirstChild("GColor"),
-        ["B"] = self.ColorBoard:FindFirstChild("BColor"),
-    }
-
-    self.colorDisplays = {}
-    self.dials = {}
-    self.sliderBack = {}
-
-    self.canHoldSlider = false
-    self.holdSliderDirection = nil
-    self.holdSliderSection = nil
 
     for colorSection: "R" | "G"| "B" , colorboard in pairs(self.sliders) do
         local Dial: Model = colorboard:FindFirstChild("Dial")
@@ -215,6 +234,8 @@ function ColorSelectionSystem:BuildColorSliders()
                 end
                 self.holdSliderDirection = direction
                 self.holdSliderSection = colorSection
+                self.buttonType = "Sliders"
+                self.ColorUI.Visible = true
                 self.highlight.Parent = button
             end)
 
@@ -224,6 +245,8 @@ function ColorSelectionSystem:BuildColorSliders()
                 end
                 self.holdSliderDirection = direction
                 self.holdSliderSection = colorSection
+                self.buttonType = "Sliders"
+                self.ColorUI.Visible = false
                 self.highlight.Parent = workspace.Ignore
             end)
         end
@@ -291,7 +314,7 @@ function ColorSelectionSystem:BuildColors()
 
         self.colorConnections[colorpart] = {}
 
-        self.colorConnections[colorpart].Click = click.MouseClick:Connect(function()
+        --[==[self.colorConnections[colorpart].Click = click.MouseClick:Connect(function()
             local section = ColorGroups[self.groupNum]
             if section then
                 local RGBColor = Color3.fromRGB(
@@ -302,60 +325,163 @@ function ColorSelectionSystem:BuildColors()
 
                 Events.Client_Server.SelectColor:FireServer(section, RGBColor)
             end
-        end)
+        end)]==]
 
         self.colorConnections[colorpart].Enter = click.MouseHoverEnter:Connect(function()
+            if not self.canHoldSlider then
+                self.canHoldSlider = true
+            end
+            self.holdSliderSection = colordata
+            self.buttonType = "Preset"
+            self.holdSliderDirection = "Center"
+            self.ColorUI.Visible = true
             self.highlight.Parent = colorpart
         end)
 
         self.colorConnections[colorpart].Leave = click.MouseHoverLeave:Connect(function()
+            if self.canHoldSlider then
+                self.canHoldSlider = false
+            end
+            self.holdSliderSection = colordata
+            self.buttonType = "Preset"
+            self.holdSliderDirection = "Center"
+            self.ColorUI.Visible = false
             self.highlight.Parent = workspace.Ignore
         end)
     end
 end
 
-function ColorSelectionSystem:Update(deltaTime)
-    local function HoldButton()
-        local isMouseClick = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-        local isConsoleClick = UserInputService:IsKeyDown(Enum.KeyCode.ButtonR2)
+function ColorSelectionSystem:HoldButton()
+    local isMouseClick = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+    local isConsoleClick = false
+    local isMobile = false
 
-        return isMouseClick or isConsoleClick
+    if self.holdSliderDirection and self.holdSliderDirection == "Left" then
+        isConsoleClick = UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.DPadLeft)
+    elseif self.holdSliderDirection and self.holdSliderDirection == "Right" then
+        isConsoleClick = UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.DPadRight)
+    elseif self.holdSliderDirection and self.holdSliderDirection == "Center" then
+        isConsoleClick = UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.DPadDown)
     end
 
-    if self.canHoldSlider then
-        if HoldButton() then
-            local section: "Primary" | "Secondary" | "Energy" = ColorGroups[self.groupNum]
-            local oldColor = self.playerColors[section]
+    return isMouseClick or isConsoleClick or isMobile
+end
 
-            local NewValues = {
-                ["R"] = oldColor.R * 255,
-                ["G"] = oldColor.G * 255,
-                ["B"] = oldColor.B * 255
-            }
+function ColorSelectionSystem:InputDetection()
+    local isMouseKey = UserInputService.KeyboardEnabled or UserInputService.MouseEnabled
+    local isGamepad = UserInputService.GamepadEnabled
+    local isTouch = UserInputService.TouchEnabled
 
-            if NewValues[self.holdSliderSection] then
-                if self.holdSliderDirection == "Left" then
-                    NewValues[self.holdSliderSection] -= 1
-                    if NewValues[self.holdSliderSection] < 0 then
-                        NewValues[self.holdSliderSection] = 255
-                    end
-                elseif self.holdSliderDirection == "Right" then
-                    NewValues[self.holdSliderSection] += 1
-                    if NewValues[self.holdSliderSection] > 255 then
-                        NewValues[self.holdSliderSection] = 0
+    if isMouseKey and not isGamepad then
+        return 1
+    elseif isGamepad then
+        return 2
+    elseif isTouch then
+        return 3
+    else
+        return 0
+    end
+end
+
+function ColorSelectionSystem:DisplayKey(visible: boolean)
+    self.hoverKey = ""
+
+    local inputType = self:InputDetection()
+
+    if inputType and inputType == 1 then
+        self.hoverKey = "Left Click"
+    elseif inputType and inputType == 2 then
+        if self.holdSliderDirection then
+            if self.holdSliderDirection == "Left" then
+                self.hoverKey = "Left DPad"
+            elseif self.holdSliderDirection == "Right" then
+                self.hoverKey = "Right DPad"
+            elseif self.holdSliderDirection == "Center" then
+                self.hoverKey = "Down DPad"
+            end
+        end
+    elseif inputType and inputType == 3 then
+        self.hoverKey = "Touch"
+    end
+
+    if self.IndicatorText then
+        self.IndicatorText.Text = "Press ["..self.hoverKey.."] to Select."
+        self.IndicatorText.Visible = visible
+    end
+end
+
+function ColorSelectionSystem:Update(deltaTime)
+    if self.canHoldSlider and self.buttonType and not self.hoverClickDebounce then
+        self:DisplayKey(true)
+        if self:HoldButton() then
+            self.hoverClickDebounce = true
+            task.delay(self.hoverClickCooldown, function()
+                self.hoverClickDebounce = false
+            end) 
+
+            if self.buttonType == "Sliders" then
+                local section: "Primary" | "Secondary" | "Energy" = ColorGroups[self.groupNum]
+                local oldColor = self.playerColors[section]
+
+                local NewValues = {
+                    ["R"] = oldColor.R * 255,
+                    ["G"] = oldColor.G * 255,
+                    ["B"] = oldColor.B * 255
+                }
+
+                if NewValues[self.holdSliderSection] then
+                    if self.holdSliderDirection == "Left" then
+                        NewValues[self.holdSliderSection] -= 1
+                        if NewValues[self.holdSliderSection] < 0 then
+                            NewValues[self.holdSliderSection] = 255
+                        end
+                    elseif self.holdSliderDirection == "Right" then
+                        NewValues[self.holdSliderSection] += 1
+                        if NewValues[self.holdSliderSection] > 255 then
+                            NewValues[self.holdSliderSection] = 0
+                        end
                     end
                 end
+
+                local RGBColor = Color3.fromRGB(
+                    NewValues.R, 
+                    NewValues.G, 
+                    NewValues.B
+                )
+
+                Events.Client_Server.SelectColor:FireServer(section, RGBColor)
+            elseif self.buttonType == "Section" then
+                if self.holdSliderDirection == "Left" then
+                    self.groupNum -= 1
+
+                    if self.groupNum < 1 then
+                        self.groupNum = #ColorGroups
+                    end
+                elseif self.holdSliderDirection == "Right" then
+                    self.groupNum += 1
+
+                    if self.groupNum > #ColorGroups then
+                        self.groupNum = 1
+                    end
+                end
+
+                self.currentColorGroup = string.upper(ColorGroups[self.groupNum])
+                self.sectionDisplay.Text = self.currentColorGroup
+
+                self.currentDisplay.Color = self.player:GetAttribute(ColorGroups[self.groupNum])
+                self.sectionDisplay.TextColor3 = self.player:GetAttribute(ColorGroups[self.groupNum])
+            elseif self.buttonType == "Preset" then
+                local section = ColorGroups[self.groupNum]
+                if section then
+                    local RGBColor = Color3.fromRGB(
+                        self.holdSliderSection.color.R * 255, 
+                        self.holdSliderSection.color.G * 255,
+                        self.holdSliderSection.color.B * 255
+                    )
+
+                    Events.Client_Server.SelectColor:FireServer(section, RGBColor)
+                end
             end
-
-            local RGBColor = Color3.fromRGB(
-                NewValues.R, 
-                NewValues.G, 
-                NewValues.B
-            )
-
-            Events.Client_Server.SelectColor:FireServer(section, RGBColor)
-        else
-            
         end
     end
 

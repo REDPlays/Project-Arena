@@ -76,7 +76,7 @@ function UIController:Init(player, character, animationSystem, cameraSystem, cer
 
     self.ColorUI = player:WaitForChild("PlayerGui"):WaitForChild("ColorUI")
     self.ColorUI.Enabled = false
-    self.colorSystem = ColorSelectionSystem.new(self.ColorUI, self, self.player, self.ColorBoard)
+    self.colorSystem = ColorSelectionSystem.new(self.HUD.ColorIndicator, self, self.player, self.ColorBoard)
 
     self.disableColor = false
     self.SelectingColor = false
@@ -515,6 +515,13 @@ function UIController:Connect()
         end
     end)
 
+    local function HoldButton()
+        local isMouseClick = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+        local isConsoleClick = UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.ButtonR1)
+
+        return isMouseClick or isConsoleClick
+    end
+
     local percentage = 0
     local min = 0
     local testCooldown = false
@@ -536,13 +543,6 @@ function UIController:Connect()
                 self.TestLeftLayer2.ImageColor3 = Color3.fromRGB(255, 255, 255)
                 --self.TestButtonsUI.ImageColor3 = Color3.fromRGB(255, 255, 255)
             end
-        end
-
-        local function HoldButton()
-            local isMouseClick = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-            local isConsoleClick = UserInputService:IsKeyDown(Enum.KeyCode.ButtonR2)
-
-            return isMouseClick or isConsoleClick
         end
 
         if HoldButton() then
