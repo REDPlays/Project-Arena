@@ -516,8 +516,19 @@ function UIController:Connect()
     end)
 
     local function HoldButton()
-        local isMouseClick = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-        local isConsoleClick = UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.ButtonR1)
+        local isMouseClick = false
+        local isConsoleClick = false
+        local isMobile = false
+
+        if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and not UserInputService.TouchEnabled then
+            isMouseClick = true
+        end
+
+        if UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.ButtonR1) and not UserInputService.TouchEnabled then
+            isConsoleClick = true
+        end
+
+
 
         return isMouseClick or isConsoleClick
     end

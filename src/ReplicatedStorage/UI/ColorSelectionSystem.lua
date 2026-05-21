@@ -364,10 +364,6 @@ function ColorSelectionSystem:HoldButton()
         isConsoleClick = UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.DPadDown)
     end
 
-    warn("isMouseClick:", isMouseClick)
-    warn("isConsoleClick:", isConsoleClick)
-    warn("isMobile:", isMobile)
-
     return isMouseClick or isConsoleClick or isMobile
 end
 
