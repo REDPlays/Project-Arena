@@ -555,7 +555,7 @@ function GameplayUI:Connect()
         end
     end)
     
-    self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType, actionType)
+    self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType: string, actionType: string)
         if actionType == "Single" then
             if moveType == "LMBMove" then
                 self.prevTime = self.currTime
@@ -605,7 +605,7 @@ function GameplayUI:Connect()
         end
     end)
 
-    self.animationEvent = Events.Server_Client.AnimationSystem.OnClientEvent:Connect(function(data, moveType)
+    self.animationEvent = Events.Server_Client.AnimationSystem.OnClientEvent:Connect(function(data, moveType: string)
         if data == "Cancel" then
             self.animationSystem:Stop(self.class, moveType)
         end
@@ -672,7 +672,11 @@ function GameplayUI:M1()
     end
 end
 
-function GameplayUI:toggleUICountdown(moveType, duration)
+function GameplayUI:MoveInput(moveType: string)
+    
+end
+
+function GameplayUI:toggleUICountdown(moveType: string, duration: number)
     if self.UICooldowns[moveType] then
         return
     end
@@ -699,7 +703,7 @@ function GameplayUI:toggleUICountdown(moveType, duration)
     self.UICooldowns[moveType].CooldownUI.Visible = true
 end
 
-function GameplayUI:removeUICountdown(moveType)
+function GameplayUI:removeUICountdown(moveType: string)
     if not self.UICooldowns[moveType] then
         return
     end
