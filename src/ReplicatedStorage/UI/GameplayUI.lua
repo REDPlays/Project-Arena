@@ -5,13 +5,13 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
-local RunService = game:GetService("RunService")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
 local InputActions = ReplicatedStorage:WaitForChild("Inputs")
 local GameplayActions: InputContext = InputActions:WaitForChild("Gameplay")
+local UIActions: InputContext = InputActions:WaitForChild("UI")
 
 local keyboardOptions = {
     [Enum.UserInputType.Keyboard] = true,
@@ -29,7 +29,7 @@ local mobileOptions = {
 }
 
 local function CurrentDevice() : "PC" | "Console" | "Mobile"
-    if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+    if UserInputService.TouchEnabled then --and not UserInputService.KeyboardEnabled then
         return "Mobile"
     end
 
@@ -245,6 +245,10 @@ function GameplayUI:Connect()
 
     for moveType: string, bind: InputBinding in pairs(self.InputActions) do
         self.IAC[moveType] = bind.Pressed:Connect(function()
+            if self.statsFolder:GetAttribute("MoveUILock") then
+                return
+            end
+            
             if not self.class then
                 return
             end
@@ -393,6 +397,10 @@ function GameplayUI:Connect()
 end
 
 function GameplayUI:M1()
+    if self.statsFolder:GetAttribute("MoveUILock") then
+        return
+    end
+
     if self.debounces.LMBMove then
         return
     end
@@ -540,11 +548,6 @@ function GameplayUI:Disconnect()
     if self.healthDisplay then
         self.healthDisplay:Disconnect()
         self.healthDisplay = nil
-    end
-
-    if self.defenseDisplay then
-        self.defenseDisplay:Disconnect()
-        self.defenseDisplay = nil
     end
 
     if self.inputChange then

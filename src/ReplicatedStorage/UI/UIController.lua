@@ -12,8 +12,13 @@ local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChil
 
 local ColorSelectionSystem = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("ColorSelectionSystem"))
 local GameplayUI = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("GameplayUI"))
+local SettingsUI = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("SettingsUI"))
 
 local TestState = workspace:GetAttribute("TestState")
+
+local InputActions = ReplicatedStorage:WaitForChild("Inputs")
+local GameplayActions: InputContext = InputActions:WaitForChild("Gameplay")
+local UIActions: InputContext = InputActions:WaitForChild("UI")
 
 local UIController = {}
 UIController.__index = UIController
@@ -38,9 +43,14 @@ function UIController:Init(player, character, animationSystem, cameraSystem, cer
     self.HUD = self.player:WaitForChild("PlayerGui"):WaitForChild("HUD")
     self.HUD.Enabled = true
 
-    self.gameplayUI = GameplayUI.new(player, character, self, self.HUD, animationSystem, cameraSystem)
-
     self.Indicator = self.HUD:WaitForChild("Indicator")
+    self.Leaderboard = self.HUD:WaitForChild("Leaderboard")
+    self.Settings = self.HUD:WaitForChild("Settings")
+    self.GameplayMobile = self.HUD:WaitForChild("GameplayMobile")
+
+    self.gameplayUI = GameplayUI.new(player, character, self, self.HUD, animationSystem, cameraSystem)
+    self.settingsUI = SettingsUI.new(player, character, self.Settings, self.GameplayMobile)
+
     self.IndicatorMenu = self.Indicator:WaitForChild("Menu")
     self.IndicatorContext = self.IndicatorMenu:WaitForChild("Context")
     self.IndicatorTimer = self.IndicatorMenu:WaitForChild("Timer")
@@ -49,10 +59,17 @@ function UIController:Init(player, character, animationSystem, cameraSystem, cer
     self.IndicatorRedCount = self.IndicatorTeam:WaitForChild("RedCount")
     self.IndicatorBlueCount = self.IndicatorTeam:WaitForChild("BlueCount")
 
-    self.Leaderboard = self.HUD:WaitForChild("Leaderboard")
     self.HolderFrame = self.Leaderboard:WaitForChild("Holder")
+    self.LeaderClose = self.Leaderboard:WaitForChild("CloseButton")
     self.hideLeaderboard = false
     self.hideTween = nil
+    self.hideTween2 = nil
+
+    self.SettingsHolder = self.Settings:WaitForChild("Background")
+    self.hideSettings = false
+    self.hideSetTween = nil
+    self.SettingsHolder.Position = UDim2.fromScale(-2, 0.65)
+    self.SettingsHolder.Visible = true
 
     self.Winnerboard = self.HUD:WaitForChild("Winnerboard")
     self.Winnerboard.Visible = false
@@ -132,35 +149,60 @@ function UIController:StatConnect()
 end
 
 function UIController:HideLeaderboard()
-    local info = TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local info = TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
 
-    if not self.hideLeaderboard then
-        self.hideLeaderboard = true
+    self.hideLeaderboard = not self.hideLeaderboard
 
-        if self.hideTween then
-            self.hideTween:Pause()
-        end
-
+    local Goal1, Goal2 = {}, {}
+    if self.hideLeaderboard then
         if TestState then
             self.Debugger.Visible = false
         end
 
-        self.hideTween = TweenService:Create(self.Leaderboard, info, {Position = UDim2.new(1.25, 0, .5, 0)})
-        self.hideTween:Play()
-    elseif self.hideLeaderboard then
-        self.hideLeaderboard = false
-
-        if self.hideTween then
-            self.hideTween:Pause()
-        end
-
+        Goal1 = {Position = UDim2.fromScale(2, 0.5)}
+        Goal2 = {Position = UDim2.fromScale(1, 0)}
+    elseif not self.hideLeaderboard then
         if TestState then
             self.Debugger.Visible = true
         end
 
-        self.hideTween = TweenService:Create(self.Leaderboard, info, {Position = UDim2.new(1, 0, .5, 0)})
-        self.hideTween:Play()
+        Goal1 = {Position = UDim2.fromScale(0.5, 0.5)}
+        Goal2 = {Position = UDim2.fromScale(0.02, 0)}
     end
+
+    if self.hideTween then
+        self.hideTween:Pause()
+    end
+
+    if self.hideTween2 then
+        self.hideTween2:Pause()
+    end
+
+    self.hideTween = TweenService:Create(self.HolderFrame, info, Goal1)
+    self.hideTween:Play()
+
+    self.hideTween2 = TweenService:Create(self.LeaderClose, info, Goal2)
+    self.hideTween2:Play()
+end
+
+function UIController:HideSettings()
+    local info = TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+
+    self.hideSettings = not self.hideSettings
+
+    local Goal1 = {}
+    if self.hideSettings then
+        Goal1 = {Position = UDim2.fromScale(0, 0.65)}
+        elseif not self.hideSettings then
+        Goal1 = {Position = UDim2.fromScale(-2, 0.65)}
+    end
+
+    if self.hideSetTween then
+        self.hideSetTween:Pause()
+    end
+
+    self.hideSetTween = TweenService:Create(self.SettingsHolder, info, Goal1)
+    self.hideSetTween:Play()
 end
 
 function UIController:DisplayWinners(rewardData, rewardCount)
@@ -242,14 +284,12 @@ function UIController:ShowInputButtons(inputType: string)
 end
 
 function UIController:Connect()
-    self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-        if gameProcessedEvent then
-            return
-        end
+    self.input = UIActions.Leaderboard.Pressed:Connect(function()
+        self:HideLeaderboard()
+    end)
 
-        if input.KeyCode == Enum.KeyCode.Tab then
-            self:HideLeaderboard()
-        end
+    self.input2 = UIActions.Settings.Pressed:Connect(function()
+        self:HideSettings()
     end)
 
     self.countDownEvent = Events.Server_Client.CountDown.OnClientEvent:Connect(function(context, countDown)
@@ -316,6 +356,10 @@ function UIController:Disconnect()
         self.gameplayUI:Disconnect()
     end
 
+    if self.settingsUI then
+        self.settingsUI:Disconnect()
+    end
+
     if self.colorSystem then
         self.colorSystem:Disconnect()
     end
@@ -323,6 +367,11 @@ function UIController:Disconnect()
     if self.input then
         self.input:Disconnect()
         self.input = nil
+    end
+
+    if self.input2 then
+        self.input2:Disconnect()
+        self.input2 = nil
     end
 
     if self.cooldownEvent then
@@ -346,6 +395,7 @@ end
 
 function UIController:Update(deltaTime)
     self.gameplayUI:Update(deltaTime)
+    self.settingsUI:Update(deltaTime)
     self.colorSystem:Update(deltaTime)
 
     --constant check for new players

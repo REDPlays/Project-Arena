@@ -4,6 +4,24 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Assets = ReplicatedStorage.Assets
 local UI = Assets.UI
 
+local function createPlayerFrame(currPlayer: Player, player: Player, playerData, otherLeader)
+    local newUI = UI.FrameBase:Clone()
+    newUI.Name = currPlayer.UserId
+    newUI.Background.PlayerName.Display.Text = currPlayer.Name
+    newUI.Background.Kills.Display.Text = playerData.Kills
+    newUI.Background.Tokens.Display.Text = playerData.Tokens
+    newUI.Background.Wins.Display.Text = playerData.Wins
+    newUI.Visible = true
+
+    if player == currPlayer then
+        newUI.LayoutOrder = 1
+    else
+        newUI.LayoutOrder = 2
+    end
+
+    newUI.Parent = otherLeader.Holder
+end
+
 local LeaderboardManager = {}
 LeaderboardManager.playerList = {}
 
@@ -34,38 +52,14 @@ function LeaderboardManager:PlayerJoin(currPlayer: Player)
             continue
         end
 
-        local newUI = UI.FrameBase:Clone()
-        newUI.Name = currPlayer.UserId
-        newUI.PlayerName.Text = currPlayer.Name
-        newUI.KillCount.Text = playerData.Kills
-        newUI.Tokens.Text = playerData.Tokens
-        newUI.Wins.Text = playerData.Wins
-        newUI.Visible = true
-        if player == currPlayer then
-            newUI.LayoutOrder = 1
-        else
-            newUI.LayoutOrder = 2
-        end
-        newUI.Parent = otherLeader.Holder
+        createPlayerFrame(currPlayer, player, playerData, otherLeader)
     end
 
     LeaderboardManager.playerList[currPlayer.UserId] = currPlayer
 end
 
 function LeaderboardManager:SudoPlayerJoin(player: Player, LeaderUI, currPlayer: Player, playerData)
-    local newUI = UI.FrameBase:Clone()
-    newUI.Name = currPlayer.UserId
-    newUI.PlayerName.Text = currPlayer.Name
-    newUI.KillCount.Text = playerData.Kills
-    newUI.Tokens.Text = playerData.Tokens
-    newUI.Wins.Text = playerData.Wins
-    newUI.Visible = true
-    if player == currPlayer then
-        newUI.LayoutOrder = 1
-    else
-        newUI.LayoutOrder = 2
-    end
-    newUI.Parent = LeaderUI.Holder
+    createPlayerFrame(currPlayer, player, playerData, LeaderUI)
 end
 
 function LeaderboardManager:PlayerLeave(currPlayer: Player)
@@ -127,10 +121,10 @@ function LeaderboardManager:Update(deltaTime)
                 continue
             end
 
-            theirUI.PlayerName.Text = currPlayer.Name
-            theirUI.KillCount.Text = theirPlayerData.Kills
-            theirUI.Tokens.Text = theirPlayerData.Tokens
-            theirUI.Wins.Text = theirPlayerData.Wins
+            theirUI.Background.PlayerName.Display.Text = currPlayer.Name
+            theirUI.Background.Kills.Display.Text = theirPlayerData.Kills
+            theirUI.Background.Tokens.Display.Text = theirPlayerData.Tokens
+            theirUI.Background.Wins.Display.Text = theirPlayerData.Wins
         end
     end
 end
