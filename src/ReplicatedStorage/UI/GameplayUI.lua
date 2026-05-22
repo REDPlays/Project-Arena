@@ -10,6 +10,9 @@ local RunService = game:GetService("RunService")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
+local InputActions = ReplicatedStorage:WaitForChild("Inputs")
+local GameplayActions: InputContext = InputActions:WaitForChild("Gameplay")
+
 local keyboardOptions = {
     [Enum.UserInputType.Keyboard] = true,
     [Enum.UserInputType.MouseMovement] = true,
@@ -35,24 +38,6 @@ local function CurrentDevice() : "PC" | "Console" | "Mobile"
     end
 
     return "PC"
-end
-
-local function HoldButton()
-    local isMouseClick = false
-    local isConsoleClick = false
-    local isMobile = false
-
-    if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) and not UserInputService.TouchEnabled then
-        isMouseClick = true
-    end
-
-    if UserInputService:IsGamepadButtonDown(Enum.UserInputType.Gamepad1, Enum.KeyCode.ButtonR1) and not UserInputService.TouchEnabled then
-        isConsoleClick = true
-    end
-
-
-
-    return isMouseClick or isConsoleClick
 end
 
 local GameplayUI = {}
@@ -96,7 +81,6 @@ function GameplayUI.new(player: Player, character: Model, UIController, HUD: Scr
     }
 
     self.HealthBar = self.Stats:WaitForChild("Health")
-    self.DefenseBar = self.Stats:WaitForChild("Defense")
 
     self.Gameplay.Visible = true
     
@@ -107,7 +91,6 @@ function GameplayUI.new(player: Player, character: Model, UIController, HUD: Scr
     
     self.UICooldowns = {}
     self.debounces = {
-        Block = false,
         LMBMove = false,
         QMove = false, 
         EMove = false,
@@ -210,11 +193,6 @@ function GameplayUI:StatConnect()
     local HealthLeft = self.HealthBar:FindFirstChild("Left")
     local HealthRight = self.HealthBar:FindFirstChild("Right")
 
-    local DefenseDisplay = self.DefenseBar:FindFirstChild("DisplayTop")
-    local DefenseDisplay2 = self.DefenseBar:FindFirstChild("DisplayBot")
-    local DefenseLeft = self.DefenseBar:FindFirstChild("Left")
-    local DefenseRight = self.DefenseBar:FindFirstChild("Right")
-
     if HealthDisplay and HealthDisplay2 and HealthLeft and HealthRight then
         local health = self.statsFolder:GetAttribute("Health")
         local maxHealth = self.statsFolder:GetAttribute("MaxHealth")
@@ -242,34 +220,6 @@ function GameplayUI:StatConnect()
             HealthRight.Layer.UIGradient.Rotation = math.clamp(rotation, 180, 360)
         end)
     end
-
-    if DefenseDisplay and DefenseDisplay2 and DefenseLeft and DefenseRight then
-        local defense = self.statsFolder:GetAttribute("Defense")
-        local maxDefense = self.statsFolder:GetAttribute("MaxDefense")
-
-        DefenseDisplay.Text = defense
-        DefenseDisplay2.Text = maxDefense
-
-        self.defenseDisplay = self.statsFolder:GetAttributeChangedSignal("Defense"):Connect(function()
-            defense = self.statsFolder:GetAttribute("Defense")
-            maxDefense = self.statsFolder:GetAttribute("MaxDefense")
-
-            DefenseDisplay.Text = math.floor(defense)
-            DefenseDisplay2.Text = math.floor(maxDefense)
-
-            local percentage = 1 - (defense / maxDefense)
-            
-            local rotation = percentage * 360
-            if rotation > 180 then
-                DefenseLeft.Visible = false
-            else
-                DefenseLeft.Visible = true
-            end
-
-            DefenseLeft.Layer.UIGradient.Rotation = math.clamp(rotation, 0, 180)
-            DefenseRight.Layer.UIGradient.Rotation = math.clamp(rotation, 180, 360)
-        end)
-    end
 end
 
 function GameplayUI:Connect()
@@ -283,83 +233,69 @@ function GameplayUI:Connect()
         end
     end)
 
-    self.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-        if gameProcessedEvent then
-            return
-        end
-        
-        if not self.class then
-            return
-        end
+    self.InputActions = {
+        ["QMove"] = GameplayActions.QMove,
+        ["EMove"] = GameplayActions.EMove,
+        ["FMove"] = GameplayActions.FMove,
 
-        if self.statsFolder:GetAttribute("Stunned") and self.statsFolder:GetAttribute("Stunned") == true then
-            return
-        end
+    } :: {[string]: InputBinding}
 
-        if self.statsFolder:GetAttribute("Blocking") and self.statsFolder:GetAttribute("Blocking") == true then
-            return
-        end
+    --Input Action Connections
+    self.IAC = {}
 
-        local isAwakened = self.statsFolder:GetAttribute("Awakened")
-
-        if input.KeyCode == Enum.KeyCode.C or input.KeyCode == Enum.KeyCode.ButtonL1 then
-            if self.debounces.Block then
+    for moveType: string, bind: InputBinding in pairs(self.InputActions) do
+        self.IAC[moveType] = bind.Pressed:Connect(function()
+            if not self.class then
                 return
             end
 
-            local canBlock = Events.Client_Server.Input:InvokeServer(self.class, "Block")
-            if canBlock then
-                self.debounces.Block = true
-
-                --self.cameraSystem:OutsideToggle(true)
-
-                local conditionalData = {
-                    priority = Enum.AnimationPriority.Action,
-                    isAttack = false,
-                    loop = true
-                }
-                self.animationSystem:Play(self.class, "Block", nil, conditionalData)
-            end
-        end
-
-        if input.KeyCode == Enum.KeyCode.Q or input.KeyCode == Enum.KeyCode.ButtonX then
-            if self.debounces.QMove then
+            if self.statsFolder:GetAttribute("Stunned") and self.statsFolder:GetAttribute("Stunned") == true then
                 return
             end
 
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "QMove")
+            if self.statsFolder:GetAttribute("Blocking") and self.statsFolder:GetAttribute("Blocking") == true then
+                return
+            end
+
+            local isAwakened = self.statsFolder:GetAttribute("Awakened")
+            
+            if self.debounces[moveType] then
+                return
+            end
+
+            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, moveType)
             if canAttack then
-                self.debounces.QMove = true
+                self.debounces[moveType] = true
                 local currentClassData = ClassData[self.class]
 
-                local animationName = "QMove"
+                local animationName = moveType
                 
-                local cooldownDuration = currentClassData.Cooldowns["QMove"]
+                local cooldownDuration = currentClassData.Cooldowns[moveType]
                 local DoubleCooldown
 
                 local hasEvent
-                if currentClassData.MoveData["QMove"][1] then
+                if currentClassData.MoveData[moveType][1] then
                     if isAwakened then
-                        hasEvent = currentClassData.MoveData.QMove[2].hasEvent
-                        DoubleCooldown = currentClassData.MoveData.QMove[2].DoubleCooldown
+                        hasEvent = currentClassData.MoveData[moveType][2].hasEvent
+                        DoubleCooldown = currentClassData.MoveData[moveType][2].DoubleCooldown
                     else
-                        hasEvent = currentClassData.MoveData.QMove[1].hasEvent
-                        DoubleCooldown = currentClassData.MoveData.QMove[1].DoubleCooldown
+                        hasEvent = currentClassData.MoveData[moveType][1].hasEvent
+                        DoubleCooldown = currentClassData.MoveData[moveType][1].DoubleCooldown
                     end
                 else
-                    hasEvent = currentClassData.MoveData.QMove.hasEvent
-                    DoubleCooldown = currentClassData.MoveData.QMove.DoubleCooldown
+                    hasEvent = currentClassData.MoveData[moveType].hasEvent
+                    DoubleCooldown = currentClassData.MoveData[moveType].DoubleCooldown
                 end
 
                 if DoubleCooldown then
-                    if self.character:GetAttribute("DoubleCooldown") == "QMove" then
+                    if self.character:GetAttribute("DoubleCooldown") == moveType then
                         cooldownDuration = cooldownDuration[2]
                     else
                         cooldownDuration = cooldownDuration[1]
                     end
 
                     if isAwakened then
-                        animationName = "QMove2"
+                        animationName = moveType.."2"
                     end
                 end
 
@@ -367,7 +303,7 @@ function GameplayUI:Connect()
                     cooldownDuration = 1
                 end
 
-                self:toggleUICountdown("QMove", cooldownDuration)
+                self:toggleUICountdown(moveType, cooldownDuration)
 
                 local conditionalData = {
                     priority = Enum.AnimationPriority.Action,
@@ -381,178 +317,26 @@ function GameplayUI:Connect()
 
                     local moveData = currentClassData.MoveData
 
-                    local currentMoveData = moveData.QMove
+                    local currentMoveData = moveData[moveType]
 
-                    Events.Client_Server.Moves:FireServer(self.class, "QMove", currentMoveData)
+                    Events.Client_Server.Moves:FireServer(self.class, moveType, currentMoveData)
                 end
 
-                local noMovement = currentClassData.MoveData.QMove.noMovement
-                self:LockInPlace(noMovement, "QMove")
+                local noMovement = currentClassData.MoveData[moveType].noMovement
+                self:LockInPlace(noMovement, moveType)
 
                 self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
             end
-        end
+        end)
+    end
 
-        if input.KeyCode == Enum.KeyCode.E or input.KeyCode == Enum.KeyCode.ButtonY then
-            if self.debounces.EMove then
-                return
-            end
-
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "EMove")
-            if canAttack then
-                self.debounces.EMove = true
-                local currentClassData = ClassData[self.class]
-                
-                local animationName = "EMove"
-
-                local cooldownDuration = currentClassData.Cooldowns["EMove"]
-                local DoubleCooldown
-                
-                local hasEvent
-                if currentClassData.MoveData["EMove"][1] then
-                    if isAwakened then
-                        hasEvent = currentClassData.MoveData.EMove[2].hasEvent
-                        DoubleCooldown = currentClassData.MoveData.EMove[2].DoubleCooldown
-                    else
-                        hasEvent = currentClassData.MoveData.EMove[1].hasEvent
-                        DoubleCooldown = currentClassData.MoveData.EMove[1].DoubleCooldown
-                    end
-                else
-                    hasEvent = currentClassData.MoveData.EMove.hasEvent
-                    DoubleCooldown = currentClassData.MoveData.EMove.DoubleCooldown
-                end
-                
-                if DoubleCooldown then
-                    if self.character:GetAttribute("DoubleCooldown") == "EMove" then
-                        cooldownDuration = cooldownDuration[2]
-                    else
-                        cooldownDuration = cooldownDuration[1]
-                    end
-                    
-                    if isAwakened then
-                        animationName = "EMove2"
-                    end
-                end
-
-                if workspace:GetAttribute("NoCooldowns") then
-                    cooldownDuration = 1
-                end
-
-                self:toggleUICountdown("EMove", cooldownDuration)
-
-                local conditionalData = {
-                    priority = Enum.AnimationPriority.Action,
-                    isAttack = true,
-                }
-
-                local function hitBoxCallBack()
-                    if not currentClassData then
-                        return
-                    end
-
-                    local moveData = currentClassData.MoveData
-
-                    local currentMoveData = moveData.EMove
-
-                    Events.Client_Server.Moves:FireServer(self.class, "EMove", currentMoveData)
-                end
-
-                local noMovement = currentClassData.MoveData.EMove.noMovement
-                self:LockInPlace(noMovement, "EMove")
-
-                self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
-            end
-        end
-
-        if input.KeyCode == Enum.KeyCode.F or input.KeyCode == Enum.KeyCode.ButtonB then
-            if self.debounces.FMove then
-                return
-            end
-
-            local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "FMove")
-            if canAttack then
-                self.debounces.FMove = true
-                local currentClassData = ClassData[self.class]
-
-                local animationName = "FMove"
-                
-                local cooldownDuration = currentClassData.Cooldowns["FMove"]
-                local DoubleCooldown
-
-                local hasEvent
-                if currentClassData.MoveData["FMove"][1] then
-                    if isAwakened then
-                        hasEvent = currentClassData.MoveData.FMove[2].hasEvent
-                        DoubleCooldown = currentClassData.MoveData.FMove[2].DoubleCooldown
-                    else
-                        hasEvent = currentClassData.MoveData.FMove[1].hasEvent
-                        DoubleCooldown = currentClassData.MoveData.FMove[1].DoubleCooldown
-                    end
-                else
-                    hasEvent = currentClassData.MoveData.FMove.hasEvent
-                    DoubleCooldown = currentClassData.MoveData.FMove.DoubleCooldown
-                end
-
-                if DoubleCooldown then
-                    if self.character:GetAttribute("DoubleCooldown") == "FMove" then
-                        cooldownDuration = cooldownDuration[2]
-                    else
-                        cooldownDuration = cooldownDuration[1]
-                    end
-
-                    if isAwakened then
-                        animationName = "FMove2"
-                    end
-                end
-
-                if workspace:GetAttribute("NoCooldowns") then
-                    cooldownDuration = 1
-                end
-                
-                self:toggleUICountdown("FMove", cooldownDuration)
-
-                local conditionalData = {
-                    priority = Enum.AnimationPriority.Action,
-                    isAttack = true,
-                }
-
-                local function hitBoxCallBack()
-                    if not currentClassData then
-                        return
-                    end
-
-                    local moveData = currentClassData.MoveData
-
-                    local currentMoveData = moveData.FMove
-
-                    Events.Client_Server.Moves:FireServer(self.class, "FMove", currentMoveData)
-                end
-
-                local noMovement = currentClassData.MoveData.FMove.noMovement
-                self:LockInPlace(noMovement, "FMove")
-
-                self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
-            end
-        end
+    self.LMBHeld = false
+    self.IAC["LMB_Pressed"] = GameplayActions.LMBMove.Pressed:Connect(function()
+        self.LMBHeld = true
     end)
 
-    self.input2 = UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
-        if not self.class then
-            return
-        end
-
-        if input.KeyCode == Enum.KeyCode.C or input.KeyCode == Enum.KeyCode.ButtonL1 then
-            if not self.debounces.Block then
-                return
-            end
-    
-            local canBlock = Events.Client_Server.Input:InvokeServer(self.class, "Block")
-            if canBlock then
-                self.debounces.Block = false
-
-                self.animationSystem:Stop(self.class, "Block")
-            end
-        end
+    self.IAC["LMB_Released"] = GameplayActions.LMBMove.Released:Connect(function()
+        self.LMBHeld = false
     end)
     
     self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType: string, actionType: string)
@@ -560,10 +344,6 @@ function GameplayUI:Connect()
             if moveType == "LMBMove" then
                 self.prevTime = self.currTime
                 self.debounces.LMBMove = false
-            end
-
-            if moveType == "Block" then
-                self.animationSystem:Stop(self.class, "Block")
             end
 
             if moveType == "QMove" then
@@ -672,10 +452,6 @@ function GameplayUI:M1()
     end
 end
 
-function GameplayUI:MoveInput(moveType: string)
-    
-end
-
 function GameplayUI:toggleUICountdown(moveType: string, duration: number)
     if self.UICooldowns[moveType] then
         return
@@ -776,16 +552,6 @@ function GameplayUI:Disconnect()
         self.inputChange = nil
     end
 
-    if self.input then
-        self.input:Disconnect()
-        self.input = nil
-    end
-
-    if self.input2 then
-        self.input2:Disconnect()
-        self.input2 = nil
-    end
-
     if self.cooldownEvent then
         self.cooldownEvent:Disconnect()
         self.cooldownEvent = nil
@@ -799,7 +565,7 @@ end
 function GameplayUI:Update(deltaTime: number)
     self:UpdateUI()
 
-    if HoldButton() then
+    if self.LMBHeld then
         self:M1()
     end
 

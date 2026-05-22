@@ -8,7 +8,6 @@ local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForC
 
 local InputManager = {}
 
-InputManager.ServerBlockDebounces = {}
 InputManager.ServerLMBDebounces = {}
 InputManager.ServerQDebounces = {}
 InputManager.ServerEDebounces = {}
@@ -75,18 +74,6 @@ function InputManager:RunInput(player, class, moveType, moveCount)
     if Stats:GetAttribute("AbilityLocked") and Stats:GetAttribute("AbilityLocked") == true then
         warn("Ability is locked due to using an ability")
         return
-    end
-
-    if moveType == "Block" then
-        if InputManager.ServerBlockDebounces[player.UserId] then
-            InputManager.ServerBlockDebounces[player.UserId] = nil
-
-            StateManager:RemoveTarget(character, "Blocking")
-        elseif not InputManager.ServerBlockDebounces[player.UserId] then
-            InputManager.ServerBlockDebounces[player.UserId] = true
-
-            StateManager:AddTarget(character, "Blocking")
-        end
     end
 
     if moveType == "LMBMove" then
