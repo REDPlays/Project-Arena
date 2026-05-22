@@ -410,6 +410,10 @@ function ColorSelectionSystem:DisplayKey(visible: boolean)
     end
 end
 
+function ColorSelectionSystem:Disconnect()
+    
+end
+
 function ColorSelectionSystem:Update(deltaTime)
     if self.canHoldSlider and self.buttonType and not self.hoverClickDebounce then
         self:DisplayKey(true)
