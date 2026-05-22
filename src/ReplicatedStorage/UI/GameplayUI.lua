@@ -29,7 +29,7 @@ local mobileOptions = {
 }
 
 local function CurrentDevice() : "PC" | "Console" | "Mobile"
-    if UserInputService.TouchEnabled then --and not UserInputService.KeyboardEnabled then
+    if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
         return "Mobile"
     end
 

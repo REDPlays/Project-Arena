@@ -68,7 +68,7 @@ function UIController:Init(player, character, animationSystem, cameraSystem, cer
     self.SettingsHolder = self.Settings:WaitForChild("Background")
     self.hideSettings = false
     self.hideSetTween = nil
-    self.SettingsHolder.Position = UDim2.fromScale(-2, 0.65)
+    self.SettingsHolder.Position = UDim2.fromScale(-2, 1)
     self.SettingsHolder.Visible = true
 
     self.Winnerboard = self.HUD:WaitForChild("Winnerboard")
@@ -192,9 +192,9 @@ function UIController:HideSettings()
 
     local Goal1 = {}
     if self.hideSettings then
-        Goal1 = {Position = UDim2.fromScale(0, 0.65)}
+        Goal1 = {Position = UDim2.fromScale(0, 1)}
         elseif not self.hideSettings then
-        Goal1 = {Position = UDim2.fromScale(-2, 0.65)}
+        Goal1 = {Position = UDim2.fromScale(-2, 1)}
     end
 
     if self.hideSetTween then

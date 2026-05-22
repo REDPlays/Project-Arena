@@ -16,6 +16,15 @@ local TogglePositions = {
     ["Disabled"] = UDim2.fromScale(0.25, 0.5),
 }
 
+local MIN_SLIDER_SCALE = -0.5
+local MAX_SLIDER_SCALE = 0.5
+local MIN_VALUE = 0.5
+local MAX_VALUE = 2
+
+local function roundNumber(num, numPlaces)
+    return math.floor(num * (10^numPlaces))/(10^numPlaces)
+end
+
 local SettingsUI = {}
 SettingsUI.__index = SettingsUI
 
@@ -40,6 +49,7 @@ function SettingsUI.new(player: Player, character: Model, settingsUI: Frame, gam
     self.Background = self.settings.Background.Background2.Background3
 
     self.MoveUI = self.Background.MoveUI
+    self.ButtonScale = self.Background.ButtonScale
 
     self.Debounces = {
         ["MoveUI"] = false,
@@ -50,9 +60,19 @@ function SettingsUI.new(player: Player, character: Model, settingsUI: Frame, gam
         
     }
 
+    self.DragUIs = {
+        ["Scale"] = self.ButtonScale
+    }
+
     self.tweens = {
         ["MoveUI"] = nil
     }
+
+    self.DragValues = {
+        ["Scale"] = 1,
+    }
+
+    self.UIScales = {}
 
     self:Init()
 
@@ -66,6 +86,15 @@ function SettingsUI:Init()
 
     self:Connects()
     self:SetupToggleUI()
+    self:SetupDragUI()
+    self:SetupScales()
+end
+
+function SettingsUI:SetupScales()
+    for _, btn in ipairs(self.mobileButtons) do
+        local UIScale = btn.UIScale
+        table.insert(self.UIScales, UIScale)
+    end
 end
 
 function SettingsUI:SetupToggleUI()
@@ -108,6 +137,52 @@ function SettingsUI:SetupToggleUI()
 
             self.tweens[id] = TweenService:Create(Button, Info, {Position = TogglePositions[toggle]})
             self.tweens[id]:Play()
+        end)
+    end
+end
+
+function SettingsUI:SetupDragUI()
+    for id, frame: Frame in pairs(self.DragUIs) do
+        local Slider = frame.Slider
+        local Button = Slider.Button
+        local UIDrag: UIDragDetector = Button.UIDragDetector
+        local TextBox: TextBox = frame.TextBox
+
+        local startValue = self.DragValues.Scale
+        local startScale = ((startValue - MIN_VALUE) / (MAX_VALUE - MIN_VALUE)) * (MAX_SLIDER_SCALE - MIN_SLIDER_SCALE) + MIN_SLIDER_SCALE
+        
+        UIDrag.DragUDim2 = UDim2.fromScale(startScale, 0)
+
+        self.connections[id.."Drag"] = UIDrag.DragContinue:Connect(function()
+            local dragX = UIDrag.DragUDim2.X.Scale
+            
+            local scale = math.clamp(dragX, MIN_SLIDER_SCALE, MAX_SLIDER_SCALE)
+
+            local value = ((scale - MIN_SLIDER_SCALE) / (MAX_SLIDER_SCALE - MIN_SLIDER_SCALE)) * (MAX_VALUE - MIN_VALUE) + MIN_VALUE
+            TextBox.Text = roundNumber(value, 1)
+
+            self.DragValues[id] = value
+        end)
+
+        self.connections[id.."Text"] = TextBox.FocusLost:Connect(function(enterPressed)
+            if enterPressed then
+                local newValue = tonumber(TextBox.Text)
+                if newValue then
+                    if newValue < MIN_VALUE then
+                        newValue = MIN_VALUE
+                    elseif newValue > MAX_VALUE then
+                        newValue = MAX_VALUE
+                    end
+
+                    TextBox.Text = newValue
+
+                    local newScale = ((newValue - MIN_VALUE) / (MAX_VALUE - MIN_VALUE)) * (MAX_SLIDER_SCALE - MIN_SLIDER_SCALE) + MIN_SLIDER_SCALE
+
+                    UIDrag.DragUDim2 = UDim2.fromScale(newScale, 0)
+
+                    self.DragValues[id] = newValue
+                end
+            end
         end)
     end
 end
@@ -162,6 +237,13 @@ function SettingsUI:Disconnect()
 end
 
 function SettingsUI:Update(deltaTime: number)
+    local Scale = self.DragValues.Scale
+    if Scale then
+        for _, UIScale: UIScale in ipairs(self.UIScales) do
+            UIScale.Scale = Scale
+        end
+    end
+
     if self.isDragging and self.DragUI then
         local mousePos = UserInputService:GetMouseLocation()
 
