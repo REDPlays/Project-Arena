@@ -54,53 +54,12 @@ function CameraManager:OutsideToggle(bool)
     end
 end
 
-function CameraManager:ToggleColorCamera(toggle: boolean, cameraPivot: BasePart)
-    if toggle then
-        self.Camera.CameraType = Enum.CameraType.Scriptable
-
-        self.Camera.CFrame = cameraPivot.CFrame
-        self.Camera.Focus = cameraPivot.CFrame * CFrame.new(0, 0, -1)
-
-    elseif not toggle then
-        self.Camera.CameraType = Enum.CameraType.Custom
-
-    end
-end
-
 function CameraManager:Connections()
-    CameraManager.input = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-        if not gameProcessedEvent then
-            if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.ButtonR3 then
-                if self.lockCamera then
-                    return
-                end
-
-                if not self.isActive then
-                    self.isActive = true
-
-                    self.activeMouseLock:DoMouseLockSwitch(
-                        "MouseLockSwitchAction",
-                        Enum.UserInputState.Begin,
-                        Enum.KeyCode.LeftControl
-                    )
-                elseif self.isActive then
-                    self.isActive = false
-
-                    self.activeMouseLock:DoMouseLockSwitch(
-                        "MouseLockSwitchAction",
-                        Enum.UserInputState.Begin,
-                        Enum.KeyCode.LeftControl
-                    )
-                end
-            end
-        end
-    end)
+    
 end
 
 function CameraManager:Disconnect()
-    if CameraManager.input then
-        CameraManager.input:Disconnect()
-    end
+    
 end
 
 function CameraManager:SetCeremony(enable)

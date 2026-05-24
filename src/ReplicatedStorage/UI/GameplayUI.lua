@@ -28,6 +28,11 @@ local mobileOptions = {
     [Enum.UserInputType.Touch] = true,
 }
 
+local Colors = {
+    ["Enabled"] = Color3.fromRGB(104, 229, 154),
+    ["Disabled"] = Color3.fromRGB(255, 90, 90),
+}
+
 local function CurrentDevice() : "PC" | "Console" | "Mobile"
     if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
         return "Mobile"
@@ -82,12 +87,20 @@ function GameplayUI.new(player: Player, character: Model, UIController, HUD: Scr
 
     self.HealthBar = self.Stats:WaitForChild("Health")
 
+    --mobile only
+    self.shiftLockFrame = self.Stats:FindFirstChild("ShiftLock")
+    if self.shiftLockFrame then
+        self.shiftLockFrame.TouchButton.ImageColor3 = Colors.Disabled
+    end
+    --mobile only
+
     self.Gameplay.Visible = true
     
     self.LMBs = 0
     self.maxCount = 3
     self.currTime = 0
     self.prevTime = 0
+    self.ShiftLock = false
     
     self.UICooldowns = {}
     self.debounces = {
@@ -341,6 +354,16 @@ function GameplayUI:Connect()
 
     self.IAC["LMB_Released"] = GameplayActions.LMBMove.Released:Connect(function()
         self.LMBHeld = false
+    end)
+
+    self.IAC["ShiftLock"] = UIActions.ShiftLock.Pressed:Connect(function()
+        self.ShiftLock = not self.ShiftLock
+
+        if self.shiftLockFrame then
+            self.shiftLockFrame.TouchButton.ImageColor3 = self.ShiftLock and Colors.Enabled or not self.ShiftLock and Colors.Disabled
+        end
+
+        self.cameraSystem:OutsideToggle(self.ShiftLock)
     end)
     
     self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType: string, actionType: string)

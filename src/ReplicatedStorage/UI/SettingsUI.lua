@@ -211,6 +211,8 @@ function SettingsUI:SetupDragUI()
                     UIDrag.DragUDim2 = UDim2.fromScale(newScale, 0)
 
                     self.DragValues[id] = newValue
+
+                    Events.Client_Server.SetUI:FireServer("UIScale", newValue)
                 end
             end
         end)
