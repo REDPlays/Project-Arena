@@ -26,6 +26,16 @@ local DataTemplate = {
         ["Judge"] = false,
         ["Hydromancer"] = true,
 	},
+
+    Settings = {
+        ["UIScale"] = 1,
+        ["UIPositions"] = {
+            ["LMB_Btn"] = {0.125, 0, 0.65, 0},
+            ["Q_Btn"] = {0.375, 0, 0.65, 0},
+            ["E_Btn"] = {0.625, 0, 0.65, 0},
+            ["F_Btn"] = {0.875, 0, 0.65, 0},
+        }
+    }
 }
 
 local ProfileStore = ProfileService.GetProfileStore("Test28", DataTemplate)
@@ -68,6 +78,10 @@ function PlayerDataManager:onPlayerAdded(player: Player)
 
             if not Profiles[player].Data["Energy"] then
                 Profiles[player].Data["Energy"] = DataTemplate["Energy"]
+            end
+
+            if not Profiles[player].Data.Settings then
+                Profiles[player].Data.Settings = DataTemplate.Settings
             end
 		else
 			profile:Release()
@@ -189,6 +203,68 @@ function PlayerDataManager:SetColor(player: Player, section, Color)
     end
 
     profile.Data[section] = {Color.R, Color.G, Color.B}
+end
+
+function PlayerDataManager:SetUIScale(player: Player, scale: number)
+    local profile = Profiles[player]
+    if not profile then
+        return
+    end
+    
+    local Settings = profile.Data.Settings
+    if not Settings then return end
+    
+    local UIScale = profile.Data.Settings.UIScale
+    if not UIScale then return end
+    
+    profile.Data.Settings.UIScale = scale
+end
+
+function PlayerDataManager:GetUIScale(player: Player)
+    local profile = Profiles[player]
+    if not profile then
+        return
+    end
+
+    local Settings = profile.Data.Settings
+    if not Settings then return end
+
+    local UIScale = profile.Data.Settings.UIScale
+    if not UIScale then return end
+
+    return UIScale
+end
+
+function PlayerDataManager:SetUIPosition(player: Player, btnName: string, position: UDim2)
+    local profile = Profiles[player]
+    if not profile then
+        return
+    end
+
+    local Settings = profile.Data.Settings
+    if not Settings then return end
+
+    local UIPositions = profile.Data.Settings.UIPositions
+    if not UIPositions then return end
+
+    if profile.Data.Settings.UIPositions[btnName] then
+        profile.Data.Settings.UIPositions[btnName] = {position.X.Scale, position.X.Offset, position.Y.Scale, position.Y.Offset}
+    end
+end
+
+function PlayerDataManager:GetUIPosition(player: Player, btnName: string)
+    local profile = Profiles[player]
+    if not profile then
+        return
+    end
+    
+    local Settings = profile.Data.Settings
+    if not Settings then return end
+    
+    local UIPositions = profile.Data.Settings.UIPositions
+    if not UIPositions then return end
+    
+    return profile.Data.Settings.UIPositions[btnName]
 end
 
 return PlayerDataManager

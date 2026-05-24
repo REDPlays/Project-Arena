@@ -568,8 +568,6 @@ function CharacterSelectServer:SendToTraining(character)
 end
 
 function CharacterSelectServer:SendToWaiting(character)
-    
-
     character:PivotTo(CharacterSelectServer.Teleporter.CFrame * CFrame.new(0, 1, 0))
 end
 
@@ -808,7 +806,38 @@ local function SelectCharacter(player, className, ID)
     return CharacterSelectServer:SelectCharacter(player, className, ID)
 end
 
+local function SetUI(player: Player, UIType: string, ...)
+    local args = {...}
+
+    if UIType == "UIPosition" then
+        local btnName = args[1]
+        local position = args[2]
+
+        CharacterSelectServer.playerManager:SetUIPosition(player, btnName, position)
+    elseif UIType == "UIScale" then
+        local scale = args[1]
+
+        CharacterSelectServer.playerManager:SetUIScale(player, scale)
+    end
+end
+
+local function GetUI(player: Player, UIType: string, ...)
+    local args = {...}
+
+    if UIType == "UIPosition" then
+        local btnName = args[1]
+
+        return CharacterSelectServer.playerManager:GetUIPosition(player, btnName)
+    elseif UIType == "UIScale" then
+        return CharacterSelectServer.playerManager:GetUIScale(player)
+    else
+        return
+    end
+end
+
 Events.Client_Server.CharacterSelect.OnServerInvoke = SelectCharacter
 Events.Client_Server.SelectColor.OnServerEvent:Connect(SelectColor)
+Events.Client_Server.SetUI.OnServerEvent:Connect(SetUI)
+Events.Client_Server.GetUI.OnServerInvoke = GetUI
 
 return CharacterSelectServer

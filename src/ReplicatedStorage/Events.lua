@@ -20,6 +20,8 @@ Events.Client_Server = {
     ProjectileTarget = Client_Server:WaitForChild("ProjectileTarget"),
     Debugger = Client_Server:WaitForChild("Debugger"),
     SelectColor = Client_Server:WaitForChild("SelectColor"),
+    SetUI = Client_Server:WaitForChild("SetUI") :: RemoteEvent,
+    GetUI = Client_Server:WaitForChild("GetUI") :: RemoteFunction,
 }
 
 Events.Server_Client = {

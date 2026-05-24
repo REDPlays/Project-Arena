@@ -6,6 +6,8 @@ local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 
+local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
+
 local Colors = {
     ["Enabled"] = Color3.fromRGB(104, 229, 154),
     ["Disabled"] = Color3.fromRGB(255, 90, 90),
@@ -14,6 +16,13 @@ local Colors = {
 local TogglePositions = {
     ["Enabled"] = UDim2.fromScale(0.75, 0.5),
     ["Disabled"] = UDim2.fromScale(0.25, 0.5),
+}
+
+local DefaultMoveUIPos = {
+    ["LMB_Btn"] = UDim2.fromScale(0.125, 0.65),
+    ["Q_Btn"] = UDim2.fromScale(0.375, 0.65),
+    ["E_Btn"] = UDim2.fromScale(0.625, 0.65),
+    ["F_Btn"] = UDim2.fromScale(0.875, 0.65),
 }
 
 local MIN_SLIDER_SCALE = -0.5
@@ -69,7 +78,7 @@ function SettingsUI.new(player: Player, character: Model, settingsUI: Frame, gam
     }
 
     self.DragValues = {
-        ["Scale"] = 1,
+        ["Scale"] = Events.Client_Server.GetUI:InvokeServer("UIScale") or 1,
     }
 
     self.UIScales = {}
@@ -103,6 +112,7 @@ function SettingsUI:SetupToggleUI()
     for id, frame: Frame in pairs(self.ToggleUIs) do
         local Container: ImageLabel = frame.Container
         local Button: ImageButton = Container.Button
+        local Reset: ImageButton = frame.Reset
 
         Container.ImageColor3 = Colors.Disabled
         Button.ImageColor3 = Colors.Disabled
@@ -114,8 +124,6 @@ function SettingsUI:SetupToggleUI()
             if id == "MoveUI" then
                 self.statsFolder:SetAttribute("MoveUILock", self.Debounces[id])
                 self:ToggleMobileUIMovement(self.Debounces[id])
-            else
-
             end
 
             local colorToSet = nil
@@ -138,6 +146,17 @@ function SettingsUI:SetupToggleUI()
             self.tweens[id] = TweenService:Create(Button, Info, {Position = TogglePositions[toggle]})
             self.tweens[id]:Play()
         end)
+
+        self.connections[id.."Reset"] = Reset.MouseButton1Click:Connect(function()
+            if id == "MoveUI" then
+                for _, btn in ipairs(self.mobileButtons) do
+                    if DefaultMoveUIPos[btn.Name] then
+                        btn.Position = DefaultMoveUIPos[btn.Name]
+                        Events.Client_Server.SetUI:FireServer("UIPosition", btn.Name, btn.Position)
+                    end
+                end
+            end
+        end)
     end
 end
 
@@ -152,6 +171,7 @@ function SettingsUI:SetupDragUI()
         local startScale = ((startValue - MIN_VALUE) / (MAX_VALUE - MIN_VALUE)) * (MAX_SLIDER_SCALE - MIN_SLIDER_SCALE) + MIN_SLIDER_SCALE
         
         UIDrag.DragUDim2 = UDim2.fromScale(startScale, 0)
+        TextBox.Text = roundNumber(startValue, 1)
 
         self.connections[id.."Drag"] = UIDrag.DragContinue:Connect(function()
             local dragX = UIDrag.DragUDim2.X.Scale
@@ -162,6 +182,16 @@ function SettingsUI:SetupDragUI()
             TextBox.Text = roundNumber(value, 1)
 
             self.DragValues[id] = value
+        end)
+
+        self.connections[id.."Released"] = UIDrag.DragEnd:Connect(function()
+            local dragX = UIDrag.DragUDim2.X.Scale
+            
+            local scale = math.clamp(dragX, MIN_SLIDER_SCALE, MAX_SLIDER_SCALE)
+
+            local value = ((scale - MIN_SLIDER_SCALE) / (MAX_SLIDER_SCALE - MIN_SLIDER_SCALE)) * (MAX_VALUE - MIN_VALUE) + MIN_VALUE
+
+            Events.Client_Server.SetUI:FireServer("UIScale", value)
         end)
 
         self.connections[id.."Text"] = TextBox.FocusLost:Connect(function(enterPressed)
@@ -192,8 +222,18 @@ function SettingsUI:Connects()
     self.DragUI = nil
     self.dragOffset = Vector2.zero
 
-    for i, btn in ipairs(self.mobileButtons) do
+    for i, btn: Frame in ipairs(self.mobileButtons) do
         local touchButton: ImageButton = btn.TouchButton
+
+        local startPos = Events.Client_Server.GetUI:InvokeServer("UIPosition", btn.Name)
+        if startPos then
+            local xScale = startPos[1]
+            local xOffset = startPos[2]
+            local yScale = startPos[3]
+            local yOffset = startPos[4]
+
+            btn.Position = UDim2.new(xScale, xOffset, yScale, yOffset)
+        end
         
         self.connections[tostring(i).."Pressed"] = touchButton.MouseButton1Down:Connect(function(x, y)
             if not self.Debounces["MoveUI"] then
@@ -217,6 +257,8 @@ function SettingsUI:Connects()
             if not self.Debounces["MoveUI"] then
                 return
             end
+
+            Events.Client_Server.SetUI:FireServer("UIPosition", btn.Name, self.DragUI.Position)
             
             self.isDragging = false
             self.DragUI = nil
