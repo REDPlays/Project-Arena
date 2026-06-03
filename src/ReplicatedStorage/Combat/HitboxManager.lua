@@ -47,12 +47,24 @@ function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, targe
             local isPassive = PassiveFiles:FindFirstChild(mod)
 
             if isStatus then
-                StateManager:AddTarget(
-                    target, 
-                    mod, 
-                    moveDataDurations[mod] or 1,
-                    additionalData
-                )
+                if mod == "LifeSteal" then
+                    local modAdditional = additionalData and additionalData[mod] or {}
+                    modAdditional.target = target
+
+                    StateManager:AddTarget(
+                        attacker,
+                        mod,
+                        moveDataDurations[mod],
+                        modAdditional
+                    )
+                else
+                    StateManager:AddTarget(
+                        target, 
+                        mod, 
+                        moveDataDurations[mod] or 1,
+                        additionalData
+                    )
+                end
             end
 
             if isPassive then
@@ -100,158 +112,6 @@ function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerC
     end
 
     return canReflect
-end
-
-function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnockup, isSilenced)
-    local currentClassData = ClassData["Base"]
-    if not currentClassData then
-        return
-    end
-
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
-    if not rootPart then
-        return
-    end
-
-    local damage = 2
-    if character.Name == "DummyAttacker" then
-        damage = 10
-    end
-
-    local placementCFrame = character:GetPivot() * currentClassData.Hitboxes["LMBMove"].Offset
-
-    local hitboxLifeTime = .5
-
-    local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
-    Hitbox.Transparency = 1
-    if ShowHitboxes then
-        Hitbox.Transparency = .5
-    end
-
-    Hitbox.Size = currentClassData.Hitboxes["LMBMove"].Size
-    Hitbox.CFrame = placementCFrame
-    Hitbox.Parent = IgnoreFolder
-    Debris:AddItem(Hitbox, .25)
-
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = Hitbox
-    weld.Part1 = rootPart
-    weld.Parent = weld.Part0
-
-    local alreadyHit = {}
-
-    local hitDetect = coroutine.create(function()
-        while true do
-            if not Hitbox then
-                break
-            end
-
-            local touched = Hitbox.Touched:Connect(function() end)
-            local touchedObjects = Hitbox:GetTouchingParts()
-
-            if touched then
-                touched:Disconnect()
-            end
-
-            for i=1, #touchedObjects do
-                local object = touchedObjects[i]
-                local parent = object.Parent
-
-                if not parent:IsA("Model") then
-                    continue
-                end
-
-                if parent == character then
-                    continue
-                end
-
-                --ignoreTargets
-                if CollectionService:HasTag(parent, "Ignore") or CollectionService:HasTag(parent, "Dummies") then
-                    continue
-                end
-
-                if CollectionService:HasTag(parent, "Invulnerable") then
-                    continue
-                end
-
-                local enemyHum = parent:FindFirstChild("Humanoid")
-                if not enemyHum then
-                    continue
-                end
-
-                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-                if not enemyRoot then
-                    continue
-                end
-
-                if alreadyHit[parent.Name] then
-                    continue
-                end
-
-                local Stats = parent:FindFirstChild("Stats")
-                if not Stats then
-                    continue
-                end
-
-                local isUserStun = StateManager:CheckState(character, "Stunned")
-                if isUserStun then
-                    return
-                end
-
-                local myTeam = character:GetAttribute("Team")
-                local theirTeam = parent:GetAttribute("Team")
-
-                if (myTeam and theirTeam) and myTeam == theirTeam then
-                    continue
-                end
-
-                alreadyHit[parent.Name] = true
-
-                local isBlocking = StateManager:CheckState(parent, "Blocking")
-                if isBlocking then
-                    --Block Indication
-                    HealthManager:Block(parent, damage, character)
-                    continue
-                end
-
-                --[==[
-                if isStun then
-                    StateManager:AddTarget(parent, "Stunned", 1)
-                end
-
-                if isBurn then
-                    StateManager:AddTarget(parent, "Burn", 3)
-                end
-
-                if isSlow then
-                    StateManager:AddTarget(parent, "Slow", 2)
-                end
-
-                if isKnockup then
-                    StateManager:AddTarget(parent, "Knockup", 50)
-                end
-
-                if isSilenced then
-                    StateManager:AddTarget(parent, "Silenced", 2)
-                end
-                ]==]
-
-                StateManager:AddTarget(parent, "Attacked", 1)
-
-                HealthManager:Damage(parent, damage, character)
-            end
-
-            task.wait()
-        end
-    end)
-
-    coroutine.resume(hitDetect)
-
-    task.delay(hitboxLifeTime, function()
-        if hitDetect then
-            coroutine.close(hitDetect)
-        end
-    end)
 end
 
 function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType, moveCount, conditionalData)
@@ -439,7 +299,8 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
                     currentClassData.MoveData[moveType],
                     currentClassData.MoveDataDurations[moveType],
                     parent, 
-                    character
+                    character,
+                    currentClassData.MoveDataAdditional and currentClassData.MoveDataAdditional[moveType]
                 )
         
                 VisualEffectServer:SpawnEffectsInRange(
@@ -606,7 +467,8 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
         classData.MoveData[moveType],
         classData.MoveDataDurations[moveType],
         target, 
-        character
+        character,
+        classData.MoveDataAdditional and classData.MoveDataAdditional[moveType]
     )
 
     StateManager:AddTarget(target, "Attacked", 1)

@@ -84,6 +84,12 @@ ClassData["AngelKnight"] = {
         ["EMove"] = {Slow = 2},
         ["FMove"] = {},
     },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "AngelKnightM1",
         ["QMove"] = "HolyBeam",
@@ -152,6 +158,12 @@ ClassData["Pyromancer"] = {
         ["EMove"] = {Burn = 3},
         ["FMove"] = {Burn = 3},
     },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "FireBall",
         ["QMove"] = "FireBall",
@@ -214,6 +226,12 @@ ClassData["ShieldWarrior"] = {
         ["LMBMove"] = {},
         ["QMove"] = {Knockup = 50},
         ["EMove"] = {Stunned = 3},
+        ["FMove"] = {},
+    },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
         ["FMove"] = {},
     },
     VisualEffects = {
@@ -280,6 +298,12 @@ ClassData["Samurai"] = {
         ["QMove"] = {},
         ["EMove"] = {Slow = 2},
         ["FMove"] = {Knockup = 50, Slow = 2},
+    },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "SamuraiM1",
@@ -357,6 +381,12 @@ ClassData["Engineer"] = {
         ["EMove"] = {},
         ["FMove"] = {Stunned = 2},
     },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "EngineerM1",
         ["QMove"] = "ConcussiveBomb",
@@ -431,6 +461,12 @@ ClassData["Ranger"] = {
         ["EMove"] = {Stunned = 3},
         ["FMove"] = {Burn = 3},
     },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "RangerM1",
         ["QMove"] = "PiercingArrow",
@@ -493,6 +529,12 @@ ClassData["Shinobi"] = {
     MoveDataDurations = {
         ["LMBMove"] = {},
         ["QMove"] = {Slow = 2},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
         ["EMove"] = {},
         ["FMove"] = {},
     },
@@ -569,6 +611,12 @@ ClassData["Oni"] = {
         ["EMove"] = {{Knockup = 35}, {Knockup = 70}},
         ["FMove"] = {},
     },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "OniM1",
         ["QMove"] = "ClubSlam",
@@ -631,6 +679,12 @@ ClassData["Judge"] = {
         ["FMove"] = ClassMoveData:SetupModifiers({}),
     },
     MoveDataDurations = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
+    MoveDataAdditional = {
         ["LMBMove"] = {},
         ["QMove"] = {},
         ["EMove"] = {},
@@ -704,6 +758,12 @@ ClassData["Hydromancer"] = {
         ["EMove"] = {},
         ["FMove"] = {Slow = 1},
     },
+    MoveDataAdditional = {
+        ["LMBMove"] = {},
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
     VisualEffects = {
         ["LMBMove"] = "WaterBall",
         ["QMove"] = "FireBall",
@@ -718,5 +778,77 @@ ClassData["Hydromancer"] = {
     },
 }
 
+ClassData["Reaper"] = {
+    ClassName = "Reaper",
+    ignoreLMBMoveCD = false,
+    Health = 150,
+    Defense = 100,
+    Speed = WalkSpeeds.Summoner,
+    Role = "Summoner",
+    Cost = 200,
+    Description = "Bringer of Death",
+    DamageList = {
+        ["LMBMove"] = {4, 4, 4},
+        ["QMove"] = 15,
+        ["EMove"] = 1,
+        ["FMove"] = 25,
+    },
+    Cooldowns = {
+        ["LMBMove"] = .5,
+        ["QMove"] = 10,
+        ["EMove"] = 7,
+        ["FMove"] = 15,
+    },
+    Hitboxes = {
+        ["LMBMove"] = {
+            Size = Vector3.new(8, 6, 6),
+            Offset = CFrame.new(0, 4, -3),
+        },
+        ["QMove"] = {
+            Size = Vector3.new(6, 6, 6),
+            Offset = CFrame.new(0, 3, -6),
+        },
+        ["EMove"] = {
+            Size = Vector3.new(12, 8, 12),
+            Offset = CFrame.new(0, 4, -6),
+        },
+        ["FMove"] = {
+            Size = Vector3.new(10, 15, 10),
+            Offset = CFrame.new(0, 7.5, 0),
+        },
+    },
+    MoveData = {
+        ["LMBMove"] = ClassMoveData:SetupModifiers({"LifeSteal"}),
+        ["QMove"] = ClassMoveData:SetupModifiers({}),
+        ["EMove"] = ClassMoveData:SetupModifiers({"Slow", "noMovement"}),
+        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Slow", "Knockup"}),
+    },
+    MoveDataDurations = {
+        ["LMBMove"] = {LifeSteal = 0},
+        ["QMove"] = {},
+        ["EMove"] = {Slow = 2},
+        ["FMove"] = {Knockup = 50, Slow = 2},
+    },
+    MoveDataAdditional = {
+        ["LMBMove"] = {
+            LifeSteal = {heal = 5}
+        },
+        ["QMove"] = {},
+        ["EMove"] = {},
+        ["FMove"] = {},
+    },
+    VisualEffects = {
+        ["LMBMove"] = "OniM1",
+        ["QMove"] = "ShadowStep",
+        ["EMove"] = "RapidSlashes",
+        ["FMove"] = "WindTornado",
+    },
+    MoveName = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Shadow Step",
+        ["EMove"] = "Rapid Slashes",
+        ["FMove"] = "Wind Tornado",
+    },
+}
 
 return ClassData

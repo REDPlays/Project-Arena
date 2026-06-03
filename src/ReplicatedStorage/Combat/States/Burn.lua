@@ -134,7 +134,7 @@ function Burn:RemoveTarget(target: Model)
     end
 end
 
-function Burn:Update(deltaTime)
+function Burn:Update(deltaTime: number)
     currTick += deltaTime
     if currTick < maxTick then
         return

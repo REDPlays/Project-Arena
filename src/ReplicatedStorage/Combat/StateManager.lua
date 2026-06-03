@@ -3,19 +3,11 @@ local RunService = game:GetService("RunService")
 
 local States = ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("States")
 
-local states = {
-    HealthRegen = require(States:WaitForChild("HealthRegen")),
-    Stunned = require(States:WaitForChild("Stunned")),
-    Blocking = require(States:WaitForChild("Blocking")),
-    Attacked = require(States:WaitForChild("Attacked")),
-    Burn = require(States:WaitForChild("Burn")),
-    Slow = require(States:WaitForChild("Slow")),
-    Knockup = require(States:WaitForChild("Knockup")),
-    Invulnerable = require(States:WaitForChild("Invulnerable")),
-    Silenced = require(States:WaitForChild("Silenced")),
-    Knockback = require(States:WaitForChild("Knockback")),
-    Reflecting = require(States:WaitForChild("Reflecting")),
-}
+local states = {}
+
+for _, stateModule in ipairs(States:GetChildren()) do
+    states[stateModule.Name] = require(stateModule)
+end
 
 local StateManager = {}
 

@@ -64,45 +64,6 @@ function HealthRegen:Update(deltaTime: number)
     end
 
     currTime = 0
-    --regenerate health (players)
-    --[==[for _, player in pairs(Players:GetChildren()) do
-        local character = player.Character
-        if not character then
-            continue
-        end
-
-        if HealthRegen.InState[character] then
-            continue
-        end
-
-        local humanoid: Humanoid = character:FindFirstChild("Humanoid")
-        if not humanoid then
-            continue
-        end
-
-        if humanoid.Health <= 0 then
-            continue
-        end
-
-        local Stats = character:FindFirstChild("Stats")
-        if not Stats then
-            continue
-        end
-
-        if Stats:GetAttribute("Stunned") and Stats:GetAttribute("Stunned") == true then
-            continue
-        end
-
-        if Stats:GetAttribute("Attacked") and Stats:GetAttribute("Attacked") == true then
-            continue
-        end
-
-        if Stats:GetAttribute("Burn") and Stats:GetAttribute("Burn") == true then
-            continue
-        end
-
-        HealthManager:Heal(character, HealthRegen.rateRegen * deltaTime)
-    end]==]
 
     --regenerate health (dummy)
     for _, dummy in pairs(Dummies:GetChildren()) do

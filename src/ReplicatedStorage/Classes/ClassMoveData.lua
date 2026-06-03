@@ -16,6 +16,7 @@ local Modifiers = {
     ["Burn"] = false,
     ["Slow"] = false,
     ["Silenced"] = false,
+    ["LifeSteal"] = false,
 
     --passives
     ["HydroStack"] = false,

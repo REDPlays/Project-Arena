@@ -25,6 +25,7 @@ local DataTemplate = {
         ["Oni"] = true,
         ["Judge"] = false,
         ["Hydromancer"] = true,
+        ["Reaper"] = true,
 	},
 
     Settings = {
@@ -38,7 +39,7 @@ local DataTemplate = {
     }
 }
 
-local ProfileStore = ProfileService.GetProfileStore("Test28", DataTemplate)
+local ProfileStore = ProfileService.GetProfileStore("Test29", DataTemplate)
 
 local Profiles = {}
 
