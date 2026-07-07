@@ -780,6 +780,7 @@ ClassData["Hydromancer"] = {
 
 ClassData["Reaper"] = {
     ClassName = "Reaper",
+    HasCompanion = true,
     ignoreLMBMoveCD = false,
     Health = 150,
     Defense = 100,
@@ -789,15 +790,15 @@ ClassData["Reaper"] = {
     Description = "Bringer of Death",
     DamageList = {
         ["LMBMove"] = {4, 4, 4},
-        ["QMove"] = 15,
+        ["QMove"] = {15, 15},
         ["EMove"] = 1,
         ["FMove"] = 25,
     },
     Cooldowns = {
         ["LMBMove"] = .5,
-        ["QMove"] = 10,
-        ["EMove"] = 7,
-        ["FMove"] = 15,
+        ["QMove"] = {5, 10},
+        ["EMove"] = 2,
+        ["FMove"] = {5, 10},
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -805,8 +806,8 @@ ClassData["Reaper"] = {
             Offset = CFrame.new(0, 4, -3),
         },
         ["QMove"] = {
-            Size = Vector3.new(6, 6, 6),
-            Offset = CFrame.new(0, 3, -6),
+            Size = Vector3.new(18, 6, 10),
+            Offset = CFrame.new(0, 3, -4),
         },
         ["EMove"] = {
             Size = Vector3.new(12, 8, 12),
@@ -819,35 +820,44 @@ ClassData["Reaper"] = {
     },
     MoveData = {
         ["LMBMove"] = ClassMoveData:SetupModifiers({"LifeSteal"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"Slow", "noMovement"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Slow", "Knockup"}),
+        ["QMove"] = {
+            ClassMoveData:SetupModifiers({"DoubleCooldown", "LifeSteal", "hasEvent"}),
+            ClassMoveData:SetupModifiers({"DoubleCooldown", "Burn"})
+        },
+        ["EMove"] = ClassMoveData:SetupModifiers({}),
+        ["FMove"] = {
+            ClassMoveData:SetupModifiers({"DoubleCooldown"}),
+            ClassMoveData:SetupModifiers({"DoubleCooldown"})
+        },
     },
     MoveDataDurations = {
         ["LMBMove"] = {LifeSteal = 0},
-        ["QMove"] = {},
-        ["EMove"] = {Slow = 2},
-        ["FMove"] = {Knockup = 50, Slow = 2},
+        ["QMove"] = {{LifeSteal = 0}, {Burn = 3}},
+        ["EMove"] = {},
+        ["FMove"] = {{}, {}},
     },
     MoveDataAdditional = {
         ["LMBMove"] = {
-            LifeSteal = {heal = 5}
+            LifeSteal = {heal = 0.5},
         },
-        ["QMove"] = {},
+        ["QMove"] = {
+            {LifeSteal = {heal = 10},},
+            {}
+        },
         ["EMove"] = {},
         ["FMove"] = {},
     },
     VisualEffects = {
-        ["LMBMove"] = "OniM1",
-        ["QMove"] = "ShadowStep",
-        ["EMove"] = "RapidSlashes",
-        ["FMove"] = "WindTornado",
+        ["LMBMove"] = "ReaperM1",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
     MoveName = {
         ["LMBMove"] = "M1",
-        ["QMove"] = "Shadow Step",
-        ["EMove"] = "Rapid Slashes",
-        ["FMove"] = "Wind Tornado",
+        ["QMove"] = {"Soul Slice", "Reaper's Blight"},
+        ["EMove"] = "Reaper's Calling",
+        ["FMove"] = {"Grim Reaping", "Enshroud"},
     },
 }
 

@@ -17,6 +17,7 @@ local ServerInfo = require(ServerStorage:WaitForChild("ServerFiles"):WaitForChil
 
 local TestState = workspace:GetAttribute("TestState")
 local Training = workspace:GetAttribute("Training")
+local IgnoreLimit = workspace:GetAttribute("IgnoreLimit")
 
 local GamemodesList = {
     --["FreeForAll"] = require(ServerStorage.ServerFiles.gamemodes.FreeForAll),
@@ -48,7 +49,7 @@ function RoundManager:Init(ServerGameManager)
 
     self.belowLimit = 1
 
-    if TestState then
+    if IgnoreLimit then
         self.belowLimit = 0
     end
 

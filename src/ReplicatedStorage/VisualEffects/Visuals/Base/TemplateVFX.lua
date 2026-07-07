@@ -32,10 +32,25 @@ function TemplateVFX:Activate(target: Model, sourceUnit: Model, conditionalData:
 end
 
 function TemplateVFX:DisplayVFX()
+    self.rootPart = self.sourceUnit:FindFirstChild("HumanoidRootPart")
+    if not self.rootPart then
+        return
+    end
+
+    self.Stats = self.sourceUnit:FindFirstChild("Stats")
+    if not self.Stats then
+        return
+    end
+
     self.Folder = Instance.new("Folder")
     self.Folder.Name = "TemplateVFX"
     self.Folder.Parent = workspace.VFX
 
+    task.delay(2, function()
+        if self.Folder then
+            self.Folder:Destroy()
+        end
+    end)
     
 end
 

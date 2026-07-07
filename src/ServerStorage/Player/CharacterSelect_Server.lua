@@ -5,8 +5,11 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local Assets = ReplicatedStorage.Assets
 local CharacterModels = Assets.CharacterModels
+local CharacterCompanionModels = Assets.CharacterCompanions
 local UI = Assets.UI
 local ColorCode = Assets.ColorCode
+
+local CachedCompanions = workspace.CachedCompanions
 
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 
@@ -85,6 +88,89 @@ function CharacterSelectServer:Setup()
                 end
             end
 
+        end
+    end
+end
+
+function CharacterSelectServer:SetupCompanion(player, className)
+    if not player then
+        return
+    end
+
+    local currentClassData = ClassData[className]
+    if not currentClassData then
+        return
+    end
+
+    if not currentClassData.HasCompanion then
+        return
+    end
+
+    local companionFile = CharacterCompanionModels:FindFirstChild(className)
+    if not companionFile then
+        return
+    end
+
+    local rigName = player.Name.." Companion"
+
+    local oldCompanion = CachedCompanions:FindFirstChild(rigName)
+    if oldCompanion then
+        oldCompanion:Destroy()
+    end
+
+    local newCompanion: Model = ReplicatedStorage.CompanionRig:Clone()
+    newCompanion.Name = rigName
+    newCompanion:PivotTo(CFrame.new(0, 0, 0))
+    newCompanion.PrimaryPart.Anchored = true
+    newCompanion.Parent = CachedCompanions
+
+    --Equip Appearance
+    local Folder = Instance.new("Folder")
+    Folder.Name = "Appearance"
+    Folder.Parent = newCompanion
+
+    for _, obj in pairs(newCompanion:GetChildren()) do
+        if obj:IsA("BasePart") then
+            local piece = companionFile:FindFirstChild(obj.Name)
+            if not piece then continue end
+
+            piece = piece:Clone()
+            piece.PrimaryPart.Transparency = 1
+            piece.Parent = Folder
+            piece.PrimaryPart.CFrame = obj.CFrame
+
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = piece.PrimaryPart
+            weld.Part1 = obj
+            weld.Parent = weld.Part0
+        end
+    end
+
+    --Equip Gear
+    local gear = companionFile.Gear:Clone()
+    gear.Handle1.CFrame = newCompanion:WaitForChild("Left Arm").CFrame * CFrame.new(0, -1, 0)
+    gear.Handle2.CFrame = newCompanion:WaitForChild("Right Arm").CFrame * CFrame.new(0, -1, 0)
+    gear.Handle1.Transparency = 1
+    gear.Handle2.Transparency = 1
+    gear.Parent = newCompanion
+
+    local leftHandle = Instance.new("Motor6D")
+    leftHandle.Name = "leftHandle"
+    leftHandle.Part0 = newCompanion:WaitForChild("Left Arm")
+    leftHandle.Part1 = gear.Handle1
+    leftHandle.C0 = CFrame.new(0, -1, 0)
+    leftHandle.Parent = leftHandle.Part0
+
+    local rightHandle = Instance.new("Motor6D")
+    rightHandle.Name = "rightHandle"
+    rightHandle.Part0 = newCompanion:WaitForChild("Right Arm")
+    rightHandle.Part1 = gear.Handle2
+    rightHandle.C0 = CFrame.new(0, -1, 0)
+    rightHandle.Parent = rightHandle.Part0
+
+    for _, obj in pairs(newCompanion:GetDescendants()) do
+        if obj:IsA("BasePart") then
+            obj.Massless = true
         end
     end
 end
@@ -497,6 +583,9 @@ function CharacterSelectServer:SetCharacter(player, group, className)
 
         --Set Stats
         CharacterSelectServer:SetStats(player, className)
+
+        --Set Companion(if class has one)
+        CharacterSelectServer:SetupCompanion(player, className)
 
         Events.Server_Client.Movement:FireClient(player, character, {isNoFalling = true})
 
