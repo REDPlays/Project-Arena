@@ -3,6 +3,7 @@ local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
 
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Hitboxes = Assets:WaitForChild("Hitboxes")
@@ -16,11 +17,14 @@ local CombatTags = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):Wai
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
 local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
+local ReaperCompanionHelper = require(ReplicatedStorage.RepFiles.Combat.Companions.ReaperCompanion)
+
 local IgnoreFolder = workspace.Ignore
 local ObstaclesFolder = workspace.Obstacles
 local CachedCompanions = workspace.CachedCompanions
 
 local ReapersCalling = {}
+local CurrentReapers = {}
 
 function ReapersCalling:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
@@ -29,9 +33,9 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
 
     local rigName = player.Name.." Companion"
 
-    local shouldDistance = 5
+    local shouldDistance = 4
     local backDistance = 3
-    local upDistance = 2
+    local upDistance = 1
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -55,6 +59,15 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
 
     local ignoreList = {"Left Arm", "Right Arm", "Torso"}
 
+    local baseTransparency = {
+        ["Group1"] = 0,
+        ["Group2"] = 0,
+        ["Group3"] = 0,
+        ["Left Arm"] = 0,
+        ["Right Arm"] = 0,
+        ["Torso"] = 0,
+    }
+
     for _, object in ipairs(currentCompanion:GetChildren()) do
         if object:IsA("BasePart") and not table.find(ignoreList, object.Name) then
             object.Transparency = 1
@@ -71,55 +84,103 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
 
     local isAwakened = Stats:GetAttribute("Awakened")
 
+    VisualEffectServer:SpawnEffectsInRange(
+        "ReapersCalling",
+        nil,
+        character,
+        {companion = currentCompanion},
+        1000
+    )
+
     if not isAwakened then
+        if CurrentReapers[player] then return end
+
+        local restOffset = CFrame.new(shouldDistance, upDistance, backDistance)
+        local originOffset = CFrame.new(0, 0, 0)
+
+        local team = character:GetAttribute("Team")
+
+        CurrentReapers[player] = ReaperCompanionHelper.new(player, currentCompanion, restOffset, classData.MoveData, team)
+        CurrentReapers[player]:Init()
+
         Stats:SetAttribute("Awakened", true)
 
-        local restOffset = rootPart.CFrame * CFrame.new(shouldDistance, upDistance, backDistance)
+        local tweenTime = 0.25
 
-        currentCompanion:PivotTo(restOffset)
+        for _, object in ipairs(currentCompanion:GetDescendants()) do
+            if object:IsA("BasePart") then
+                object.Transparency = 1
+            end
+        end
+
+        currentCompanion:PivotTo(rootPart.CFrame)
         companionRoot.Anchored = false
 
-        local attachment = Instance.new("Attachment")
-        attachment.Parent = companionRoot
+        local weld = Instance.new("Weld")
+        weld.Name = "CompanionWeld"
+        weld.Part0 = rootPart
+        weld.Part1 = companionRoot
+        weld.C0 = originOffset
+        weld.Parent = weld.Part0
 
-        local AlignPos: AlignPosition = Instance.new("AlignPosition")
-        AlignPos.MaxForce = 100000
-        AlignPos.MaxVelocity = 100000
-        AlignPos.Mode = Enum.PositionAlignmentMode.OneAttachment
-        AlignPos.RigidityEnabled = true
-        AlignPos.Position = restOffset.Position
-        AlignPos.Attachment0 = attachment
-        AlignPos.Parent = companionRoot
+        local info = TweenInfo.new(tweenTime, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+        TweenService:Create(weld, info, {C0 = restOffset}):Play()
 
-        local AlignOri: AlignOrientation = Instance.new("AlignOrientation")
-        AlignOri.MaxTorque = 100000
-        AlignOri.MaxAngularVelocity = 100000
-        AlignOri.Mode = Enum.OrientationAlignmentMode.OneAttachment
-        AlignOri.Attachment0 = attachment
-        AlignOri.RigidityEnabled = true
-        AlignOri.Parent = companionRoot
-        
-        task.spawn(function()
-            while true do
-                if not character then break end
-                if not Stats then break end
-                if not currentCompanion then break end
-
-                local deltaTime = task.wait()
-
-                restOffset = rootPart.CFrame * CFrame.new(shouldDistance, upDistance, backDistance)
-                local lookVector = rootPart.CFrame.LookVector
-                local facingCFrame = CFrame.new(restOffset.Position, restOffset.Position + lookVector)
-
-                AlignPos.Position = restOffset.Position
-                AlignOri.CFrame = facingCFrame
+        for _, object in ipairs(currentCompanion:GetDescendants()) do
+            if object:IsA("BasePart") then
+                if baseTransparency[object.Name] then
+                    TweenService:Create(object, info, {Transparency = baseTransparency[object.Name]}):Play()
+                end
             end
+        end
+
+        task.delay(tweenTime, function()
+            Stats:SetAttribute("AbilityLocked", false)
         end)
-        
     elseif isAwakened then
+        if not CurrentReapers[player] then return end
+
         Stats:SetAttribute("Awakened", false)
 
+        local tweenTime = 0.25
 
+        local CompanionWeld = rootPart:FindFirstChild("CompanionWeld")
+        if CompanionWeld then
+            local info = TweenInfo.new(tweenTime, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+            TweenService:Create(CompanionWeld, info, {C0 = CFrame.new(0, 0, 0)}):Play()
+
+            for _, object in ipairs(currentCompanion:GetDescendants()) do
+                if object:IsA("BasePart") then
+                    TweenService:Create(object, info, {Transparency = 1}):Play()
+                end
+            end
+
+            task.delay(tweenTime, function()
+                Stats:SetAttribute("AbilityLocked", false)
+
+                CurrentReapers[player]:Destroy()
+                CurrentReapers[player] = nil
+
+                CompanionWeld:Destroy()
+                companionRoot.Anchored = true
+                currentCompanion:PivotTo(CFrame.new(0, 0, 0))
+
+                for _, object in ipairs(currentCompanion:GetDescendants()) do
+                    if object:IsA("BasePart") then
+                        if baseTransparency[object.Name] then
+                            object.Transparency = baseTransparency[object.Name]
+                        end
+                    end
+                end
+            end)
+
+        end
+    end
+end
+
+function ReapersCalling:Update(deltaTime: number)
+    for player, reaperCompanion in pairs(CurrentReapers) do
+        reaperCompanion:Update(deltaTime)
     end
 end
 

@@ -114,9 +114,11 @@ function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerC
     return canReflect
 end
 
-function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType, moveCount, conditionalData)
+function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType, moveCount, conditionalData, ignoreList)
     conditionalData = conditionalData or {}
     conditionalData.conditionalData = conditionalData.conditionalData or {}
+
+    ignoreList = ignoreList or {}
 
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class and not conditionalData.reflecting then
@@ -154,8 +156,12 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
     local damage = 1
     if not moveCount then
         damage = currentClassData.DamageList[moveType]
+
+        Stats:SetAttribute("M1", 0)
     else
         damage = currentClassData.DamageList[moveType][moveCount]
+
+        Stats:SetAttribute("M1", moveCount)
     end
 
     local VisualID = character.Name.." "..HttpService:GenerateGUID(false)
@@ -195,7 +201,7 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
 
     local placementCFrame = character:GetPivot() * Offset
 
-    local hitboxLifeTime = .5
+    local hitboxLifeTime = .35
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
@@ -237,6 +243,11 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
                 end
         
                 if parent == character then
+                    continue
+                end
+
+                --ignore Targets in IgnoreList
+                if table.find(ignoreList, parent) then
                     continue
                 end
         
@@ -331,8 +342,10 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
     end)
 end
 
-function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType, moveCount, offSet, conditionalData)
+function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType, moveCount, offSet, conditionalData, ignoreList)
     conditionalData = conditionalData or {}
+
+    ignoreList = ignoreList or {}
     
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class and not conditionalData.reflecting then
@@ -372,6 +385,7 @@ function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType,
         moveCount = moveCount,
         offSet = offSet,
         conditionalData = conditionalData,
+        ignoreList = ignoreList,
     }
 
     HitboxManager.projectiles[projectileId] = projectileData
@@ -415,6 +429,11 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
 
     local character = player.Character == target and projectileData.character or player.Character
     if not character then
+        return
+    end
+
+    --ignore Targets in IgnoreList
+    if table.find(projectileData.ignoreList, target) then
         return
     end
     

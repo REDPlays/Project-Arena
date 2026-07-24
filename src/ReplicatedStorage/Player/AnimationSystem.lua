@@ -22,6 +22,7 @@ function AnimationSystem:Init(player, character)
     self.player = player
     self.character = character
     self.humanoid = self.character:FindFirstChild("Humanoid")
+    self.rootPart = self.character:FindFirstChild("HumanoidRootPart")
     self.animator = self.humanoid:FindFirstChild("Animator")
 
     self.currentAnimations = {}
@@ -169,6 +170,7 @@ function AnimationSystem:Update(deltaTime)
     end
 
     local moveDir = self.humanoid.MoveDirection.Magnitude
+    local noMovement = self.rootPart:FindFirstChild("noMovement")
 
     if moveDir <= 0.5 then
         if not self.currentAnimations.Idle.IsPlaying then
@@ -179,6 +181,13 @@ function AnimationSystem:Update(deltaTime)
             self.currentAnimations.Walk:Stop()
         end
     elseif moveDir > 0.5 then
+        if noMovement then
+            if self.currentAnimations.Walk.IsPlaying then
+                self.currentAnimations.Walk:Stop()
+            end
+            return 
+        end
+
         if self.currentAnimations.Idle.IsPlaying then
             self.currentAnimations.Idle:Stop()
         end
