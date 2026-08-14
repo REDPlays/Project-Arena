@@ -52,6 +52,9 @@ function GameplayUI.new(player: Player, character: Model, UIController, HUD: Scr
     local self = setmetatable({}, GameplayUI)
 
     self.player = player
+    self.mouse = player:GetMouse()
+    self.camera = workspace.CurrentCamera
+
     self.character = character
     self.humanoid = character:WaitForChild("Humanoid")
     self.rootPart = character:WaitForChild("HumanoidRootPart")
@@ -417,6 +420,44 @@ function GameplayUI:Connect()
             self.animationSystem:Stop(self.class, moveType)
         end
     end)
+
+    local function getTarget() : Model
+        local Closest = {math.huge, nil}
+        local MousePos = Vector2.new(self.mouse.X, self.mouse.Y)
+
+        --Players
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr == self.player then continue end
+            local char = plr.Character
+            if not char then continue end
+            local humRoot = char:FindFirstChild("HumanoidRootPart")
+            if not humRoot then continue end
+            local vector, onScreen = self.camera:WorldToScreenPoint(humRoot.Position)
+            if not onScreen then continue end
+            local distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+            if distance < Closest[1] then
+                Closest = {distance, char}
+            end
+        end
+
+        --dummies
+        if not Closest[2] then
+            for _, dummy in ipairs(workspace.Dummies:GetChildren()) do
+                local humRoot = dummy:FindFirstChild("HumanoidRootPart")
+                if not humRoot then continue end
+                local vector, onScreen = self.camera:WorldToScreenPoint(humRoot.Position)
+                if not onScreen then continue end
+                local distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+                if distance < Closest[1] then
+                    Closest = {distance, dummy}
+                end
+            end
+        end
+
+        return Closest[2]
+    end
+
+    Events.Server_Client.GetTarget.OnClientInvoke = getTarget
 end
 
 function GameplayUI:M1()

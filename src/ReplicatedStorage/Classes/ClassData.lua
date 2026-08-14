@@ -797,7 +797,7 @@ ClassData["Reaper"] = {
     Cooldowns = {
         ["LMBMove"] = .5,
         ["QMove"] = {5, 10},
-        ["EMove"] = 1,
+        ["EMove"] = {1, 1},
         ["FMove"] = {5, 10},
     },
     Hitboxes = {
@@ -826,7 +826,7 @@ ClassData["Reaper"] = {
             ClassMoveData:SetupModifiers({"DoubleCooldown", "LifeSteal", "hasEvent"}),
             ClassMoveData:SetupModifiers({"DoubleCooldown", "Burn"})
         },
-        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement"}),
+        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "DoubleCooldown"}),
         ["FMove"] = {
             ClassMoveData:SetupModifiers({"DoubleCooldown"}),
             ClassMoveData:SetupModifiers({"DoubleCooldown"})

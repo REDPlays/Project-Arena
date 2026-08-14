@@ -192,8 +192,9 @@ AnimationData["Reaper"] = {
     Block = Animations:WaitForChild("Reaper"):WaitForChild("Block"),
 
     QMove = Animations:WaitForChild("Reaper"):WaitForChild("QMove"),
-    QMove2 = Animations:WaitForChild("Reaper"):WaitForChild("QMove"),
+    QMove2 = Animations:WaitForChild("Reaper"):WaitForChild("QMove2"),
     EMove = Animations:WaitForChild("Reaper"):WaitForChild("EMove"),
+    EMove2 = Animations:WaitForChild("Reaper"):WaitForChild("EMove2"),
     FMove = Animations:WaitForChild("Reaper"):WaitForChild("FMove"),
     FMove2 = Animations:WaitForChild("Reaper"):WaitForChild("FMove"),
 

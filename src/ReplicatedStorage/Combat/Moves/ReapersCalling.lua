@@ -18,13 +18,13 @@ local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.Visu
 local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local ReaperCompanionHelper = require(ReplicatedStorage.RepFiles.Combat.Companions.ReaperCompanion)
+local CompanionLibrary = require(ReplicatedStorage.RepFiles.Player.CompanionLibrary)
 
 local IgnoreFolder = workspace.Ignore
 local ObstaclesFolder = workspace.Obstacles
 local CachedCompanions = workspace.CachedCompanions
 
 local ReapersCalling = {}
-local CurrentReapers = {}
 
 function ReapersCalling:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
@@ -93,15 +93,15 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
     )
 
     if not isAwakened then
-        if CurrentReapers[player] then return end
+        if CompanionLibrary.CurrentReapers[player] then return end
 
         local restOffset = CFrame.new(shouldDistance, upDistance, backDistance)
         local originOffset = CFrame.new(0, 0, 0)
 
         local team = character:GetAttribute("Team")
 
-        CurrentReapers[player] = ReaperCompanionHelper.new(player, currentCompanion, restOffset, classData.MoveData, team)
-        CurrentReapers[player]:Init()
+        CompanionLibrary.CurrentReapers[player] = ReaperCompanionHelper.new(player, currentCompanion, restOffset, classData.MoveData, team)
+        CompanionLibrary.CurrentReapers[player]:Init()
 
         Stats:SetAttribute("Awakened", true)
 
@@ -138,7 +138,7 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
             Stats:SetAttribute("AbilityLocked", false)
         end)
     elseif isAwakened then
-        if not CurrentReapers[player] then return end
+        if not CompanionLibrary.CurrentReapers[player] then return end
 
         Stats:SetAttribute("Awakened", false)
 
@@ -158,8 +158,8 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
             task.delay(tweenTime, function()
                 Stats:SetAttribute("AbilityLocked", false)
 
-                CurrentReapers[player]:Destroy()
-                CurrentReapers[player] = nil
+                CompanionLibrary.CurrentReapers[player]:Destroy()
+                CompanionLibrary.CurrentReapers[player] = nil
 
                 CompanionWeld:Destroy()
                 companionRoot.Anchored = true
@@ -173,13 +173,12 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
                     end
                 end
             end)
-
         end
     end
 end
 
 function ReapersCalling:Update(deltaTime: number)
-    for player, reaperCompanion in pairs(CurrentReapers) do
+    for player, reaperCompanion in pairs(CompanionLibrary.CurrentReapers) do
         reaperCompanion:Update(deltaTime)
     end
 end
