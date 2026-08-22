@@ -12,6 +12,7 @@ local ColorCode = Assets.ColorCode
 local CachedCompanions = workspace.CachedCompanions
 
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local tick = 0
 local maxTick = 0.5
@@ -483,6 +484,13 @@ function CharacterSelectServer:SetCharacter(player, group, className)
     if not classFile then
         return
     end
+
+    CharacterMoveLibrary.Movesets[player] = {
+        ["QMove"] = 1,
+        ["EMove"] = 1,
+        ["FMove"] = 1,
+    }
+    Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
     --This way because if someone is somehow stuck but has their class they can step on and teleport still!
     if not isSameClass then

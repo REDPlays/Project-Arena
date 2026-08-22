@@ -76,8 +76,6 @@ function Reflecting:ReflectAttack(target: Model, attacker: Model, attackName: st
     if not Reflecting:CheckState(target) then
         return
     end
-
-    warn("Reflect:", attacker, attackName)
 end
 
 function Reflecting:Update(deltaTime: number)

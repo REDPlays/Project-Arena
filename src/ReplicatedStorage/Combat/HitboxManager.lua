@@ -164,6 +164,11 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
         Stats:SetAttribute("M1", moveCount)
     end
 
+    local damageBoost = Stats:GetAttribute("DamageBoost")
+    if damageBoost then
+        damage = damage * damageBoost
+    end
+
     local VisualID = character.Name.." "..HttpService:GenerateGUID(false)
 
     VisualEffectServer:SpawnEffectsInRange(
@@ -460,6 +465,11 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     
     if CollectionService:HasTag(target, "Invulnerable") then
         return
+    end
+
+    local damageBoost = Stats:GetAttribute("DamageBoost")
+    if damageBoost then
+        damage = damage * damageBoost
     end
     
     local isBlocking = StateManager:CheckState(target, "Blocking")

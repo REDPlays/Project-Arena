@@ -57,6 +57,11 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
         return
     end
 
+    local isEnshroud = Stats:GetAttribute("Enshroud")
+    if isEnshroud then
+        return
+    end
+
     local ignoreList = {"Left Arm", "Right Arm", "Torso"}
 
     local baseTransparency = {

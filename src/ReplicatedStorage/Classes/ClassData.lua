@@ -792,13 +792,13 @@ ClassData["Reaper"] = {
         ["LMBMove"] = {4, 4, 4},
         ["QMove"] = {15, 15},
         ["EMove"] = 1,
-        ["FMove"] = 25,
+        ["FMove"] = {25, 1},
     },
     Cooldowns = {
         ["LMBMove"] = .5,
         ["QMove"] = {5, 10},
         ["EMove"] = {1, 1},
-        ["FMove"] = {5, 10},
+        ["FMove"] = {2, 10},
     },
     Hitboxes = {
         ["LMBMove"] = {
@@ -816,8 +816,8 @@ ClassData["Reaper"] = {
             Offset = CFrame.new(0, 4, -6),
         },
         ["FMove"] = {
-            Size = Vector3.new(10, 15, 10),
-            Offset = CFrame.new(0, 7.5, 0),
+            Size = Vector3.new(14, 6, 14),
+            Offset = CFrame.new(0, 3, 0),
         },
     },
     MoveData = {
@@ -829,7 +829,7 @@ ClassData["Reaper"] = {
         ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "DoubleCooldown"}),
         ["FMove"] = {
             ClassMoveData:SetupModifiers({"DoubleCooldown"}),
-            ClassMoveData:SetupModifiers({"DoubleCooldown"})
+            ClassMoveData:SetupModifiers({"DoubleCooldown", "noMovement", "hasEvent"})
         },
     },
     MoveDataDurations = {

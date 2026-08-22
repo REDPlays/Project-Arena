@@ -43,6 +43,11 @@ function SoulSlice:Activate(player, character, rootPart, placementCFrame, class,
         damage = damage[1]
     end
 
+    local damageBoost = Stats:GetAttribute("DamageBoost")
+    if damageBoost then
+        damage = damage * damageBoost
+    end
+
     --local Heal = classData.MoveDataAdditional[moveType].LifeSteal.heal or 1
     local alreadyHit = {}
     local lifeTime = .1

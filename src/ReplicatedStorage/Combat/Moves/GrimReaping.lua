@@ -10,19 +10,22 @@ local Hitboxes = Assets:WaitForChild("Hitboxes")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
 local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
+local PassiveManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("PassiveManager"))
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
-
+local CombatTags = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("Constants"):WaitForChild("CombatTags"))
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
 local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local IgnoreFolder = workspace.Ignore
+local ObstaclesFolder = workspace.Obstacles
 
-local AngelicCharge = {}
+local GrimReaping = {}
 
-function AngelicCharge:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function GrimReaping:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[moveType][1]
+    local maxDistance = 50
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -33,6 +36,21 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
     if not humanoid then
         return
     end
+
+    local dashDuration = 25/60
+    local duration = .25
+    local currTime = 0
+    local alreadyHit = {}
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "GrimReaping",
+        nil,
+        character,
+        {dashDuration = dashDuration},
+        1000
+    )
+
+    Stats:SetAttribute("AbilityLocked", true)
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
@@ -49,25 +67,7 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
     weld.Part1 = rootPart
     weld.Parent = weld.Part0
 
-    Stats:SetAttribute("AbilityLocked", true)
-    
-    local VFX_ID = "AngelicCharge"..HttpService:GenerateGUID(false)
-
-    VisualEffectServer:SpawnEffectsInRange(
-        "AngelicCharge",
-        nil,
-        character,
-        {},
-        1000,
-        VFX_ID
-    )
-
-    local duration = .25
-    local currTime = 0
-
-    local alreadyHit = {}
-
-    local thread = coroutine.create(function()
+    task.delay(dashDuration, function()
         while currTime < duration * 2 do
             local dt = task.wait()
             currTime += dt
@@ -141,46 +141,23 @@ function AngelicCharge:Activate(player, character, rootPart, placementCFrame, cl
                 StateManager:AddTarget(parent, "Attacked", 1)
 
                 HealthManager:Damage(parent, damage, character)
-
-                VisualEffectServer:SpawnEffectsInRange(
-                    "AngelicCharge",
-                    parent,
-                    character,
-                    {isHit = true},
-                    1000,
-                    VFX_ID,
-                    true
-                )
             end
         end
+
+        Debris:AddItem(Hitbox, duration * 2)
     end)
 
-    Debris:AddItem(Hitbox, duration * 2)
-
-    task.delay(duration * 2 , function()
-        if thread then
-            task.cancel(thread)
-        end
+    task.delay(dashDuration + duration, function()
         Stats:SetAttribute("AbilityLocked", false)
-
-        VisualEffectServer:TerminateVFX(
-            "AngelicCharge",
-            nil,
-            character,
-            {},
-            VFX_ID
-        )
     end)
-
-    coroutine.resume(thread)
 
     local dashData = {
-        duration = duration,
-        speed = 75,
+        duration = dashDuration,
+        speed = 50,
         isDash = true,
         allowPass = true,
     }
     Events.Server_Client.Movement:FireAllClients(character, dashData)
 end
 
-return AngelicCharge
+return GrimReaping

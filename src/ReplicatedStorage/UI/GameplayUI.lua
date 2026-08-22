@@ -8,6 +8,7 @@ local Debris = game:GetService("Debris")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local InputActions = ReplicatedStorage:WaitForChild("Inputs")
 local GameplayActions: InputContext = InputActions:WaitForChild("Gameplay")
@@ -31,6 +32,13 @@ local mobileOptions = {
 local Colors = {
     ["Enabled"] = Color3.fromRGB(104, 229, 154),
     ["Disabled"] = Color3.fromRGB(255, 90, 90),
+}
+
+
+export type Moveset = {
+    ["QMove"]: number, -- 1 or 2
+    ["EMove"]: number, -- 1 or 2
+    ["FMove"]: number, -- 1 or 2
 }
 
 local function CurrentDevice() : "PC" | "Console" | "Mobile"
@@ -319,6 +327,14 @@ function GameplayUI:Connect()
                     end
                 end
 
+                local moveNumbers: Moveset = CharacterMoveLibrary.Movesets[self.player]
+                if moveNumbers then
+                    local currentMoveNumber = moveNumbers[moveType]
+                    if currentMoveNumber and currentMoveNumber ~= 1 then
+                        animationName = moveType..tostring(moveNumbers[moveType])
+                    end
+                end
+
                 if workspace:GetAttribute("NoCooldowns") then
                     cooldownDuration = 1
                 end
@@ -419,6 +435,10 @@ function GameplayUI:Connect()
         if data == "Cancel" then
             self.animationSystem:Stop(self.class, moveType)
         end
+    end)
+
+    self.updateNumbers = Events.Server_Client.UpdateMoveNumber.OnClientEvent:Connect(function(moveNumbers: Moveset)
+        CharacterMoveLibrary.Movesets[self.player] = moveNumbers
     end)
 
     local function getTarget() : Model
@@ -591,6 +611,11 @@ function GameplayUI:UpdateUI()
             return
         end
 
+        local moveNumbers: Moveset = CharacterMoveLibrary.Movesets[self.player]
+        if not moveNumbers then
+            return
+        end
+
         for btnName, btn in pairs(self.Btns) do
             local MoveName = btn:FindFirstChild("MoveName")
             if MoveName then
@@ -598,6 +623,10 @@ function GameplayUI:UpdateUI()
                 if typeof(moveText) == "table" then
                     if not isAwakened then
                         moveText = moveText[1]
+
+                        if moveNumbers[btnName] then
+                            moveText = currentClassData.MoveName[btnName][moveNumbers[btnName]]
+                        end
                     elseif isAwakened then
                         moveText = moveText[2]
                     end

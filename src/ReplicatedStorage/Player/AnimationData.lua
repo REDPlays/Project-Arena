@@ -196,7 +196,7 @@ AnimationData["Reaper"] = {
     EMove = Animations:WaitForChild("Reaper"):WaitForChild("EMove"),
     EMove2 = Animations:WaitForChild("Reaper"):WaitForChild("EMove2"),
     FMove = Animations:WaitForChild("Reaper"):WaitForChild("FMove"),
-    FMove2 = Animations:WaitForChild("Reaper"):WaitForChild("FMove"),
+    FMove2 = Animations:WaitForChild("Reaper"):WaitForChild("FMove2"),
 
     Idle = Animations:WaitForChild("Reaper"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Reaper"):WaitForChild("Run"),
