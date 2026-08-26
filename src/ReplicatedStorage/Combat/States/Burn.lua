@@ -157,7 +157,7 @@ function Burn:Update(deltaTime: number)
 
         local humanoid = data.target:FindFirstChild("Humanoid")
         if humanoid and humanoid.Health > 0 then
-            HealthManager:Damage(data.target, burnDamage * data.burnCount, nil)
+            HealthManager:Damage(data.target, burnDamage * data.burnCount, nil, {isBurn = true})
         end
     end
 end

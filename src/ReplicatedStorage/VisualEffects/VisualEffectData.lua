@@ -56,6 +56,7 @@ VisualEffectData["ReapersBlight"] = require(Visuals:WaitForChild("Reaper"):WaitF
 VisualEffectData["GrimReaping"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("GrimReapingVFX"))
 VisualEffectData["Enshroud"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("EnshroudVFX"))
 
+VisualEffectData["IndicatorNumber"] = require(Visuals:WaitForChild("Base"):WaitForChild("IndicatorNumberVFX"))
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))
