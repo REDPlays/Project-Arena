@@ -19,10 +19,10 @@ local IgnoreFolder = workspace.Ignore
 
 local RapidSlashes = {}
 
-function RapidSlashes:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function RapidSlashes:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -46,7 +46,7 @@ function RapidSlashes:Activate(player, character, rootPart, placementCFrame, cla
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size
+    Hitbox.Size = classData.Hitboxes[currentMove].Size
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
 
@@ -138,8 +138,8 @@ function RapidSlashes:Activate(player, character, rootPart, placementCFrame, cla
 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType],
-                    classData.MoveDataDurations[moveType],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     parent, 
                     character
                 )

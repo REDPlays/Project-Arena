@@ -15,6 +15,7 @@ local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForC
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):WaitForChild("HitboxManager"))
 
 local IgnoreFolder = workspace.Ignore
 local ObstaclesFolder = workspace.Obstacles
@@ -55,10 +56,10 @@ local function findTeammates(player: Player, character: Model)
     return teammates
 end
 
-function SunBeam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function SunBeam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -76,7 +77,7 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size
+    Hitbox.Size = classData.Hitboxes[currentMove].Size
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
 
@@ -84,20 +85,6 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     weld.Part0 = Hitbox
     weld.Part1 = rootPart
     weld.Parent = weld.Part0
-
-    --[==[local caution = Indicators.CautionLines:Clone()
-    caution.Size = Vector3.new(Hitbox.Size.X, .1, Hitbox.Size.Z)
-    caution.A0.Position = Vector3.new(0, .05, -caution.Size.Z/2)
-    caution.A1.Position = Vector3.new(0, .05, caution.Size.Z/2)
-    caution.Beam.Width0 = caution.Size.X
-    caution.Beam.Width1 = caution.Size.X
-    caution.CFrame = placementCFrame * CFrame.new(0, -Hitbox.Size.Y/2 + 0.05, 0)
-    caution.Parent = IgnoreFolder
-
-    local weld2 = Instance.new("WeldConstraint")
-    weld2.Part0 = caution
-    weld2.Part1 = rootPart
-    weld2.Parent = weld2.Part0]==]
 
     Stats:SetAttribute("AbilityLocked", true)
 
@@ -200,25 +187,13 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
                     continue
                 end
 
-                --apply burn
-                if classData.MoveData[moveType].Burn then
-                    StateManager:AddTarget(parent, "Burn", 3)
-                end
-
-                --apply stun
-                if classData.MoveData[moveType].Stunned then
-                    StateManager:AddTarget(parent, "Stunned", 2)
-                end
-
-                --apply slow
-                if classData.MoveData[moveType].Slow then
-                    StateManager:AddTarget(parent, "Slow", 1)
-                end
-
-                --apply silence
-                if classData.MoveData[moveType].Silenced then
-                    StateManager:AddTarget(parent, "Silenced", 2)
-                end
+                --check modifiers
+                HitboxManager:CheckModifiers(
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
+                    parent, 
+                    character
+                )
 
                 StateManager:AddTarget(parent, "Attacked", 1)
 
@@ -246,7 +221,6 @@ function SunBeam:Activate(player, character, rootPart, placementCFrame, class, c
     end)
 
     Debris:AddItem(Hitbox, duration)
-    --Debris:AddItem(caution, duration)
 
     task.delay(duration, function()
         if thread then

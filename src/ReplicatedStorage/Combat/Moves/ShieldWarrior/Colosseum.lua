@@ -20,10 +20,10 @@ local IgnoreFolder = workspace.Ignore
 
 local Colosseum = {}
 
-function Colosseum:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function Colosseum:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local duration = 10
     local collideDelay = .25

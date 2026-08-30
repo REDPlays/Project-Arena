@@ -485,10 +485,16 @@ function CharacterSelectServer:SetCharacter(player, group, className)
         return
     end
 
+    if not CharacterMoveLibrary.BaseMovesets[className] then
+        warn(className, "does not have an associated base moveset!!!")
+        return
+    end
+
     CharacterMoveLibrary.Movesets[player] = {
-        ["QMove"] = 1,
-        ["EMove"] = 1,
-        ["FMove"] = 1,
+        ["LMBMove"] = "M1",
+        ["QMove"] = CharacterMoveLibrary.BaseMovesets[className].QMove,
+        ["EMove"] = CharacterMoveLibrary.BaseMovesets[className].EMove,
+        ["FMove"] = CharacterMoveLibrary.BaseMovesets[className].FMove,
     }
     Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
@@ -593,6 +599,14 @@ function CharacterSelectServer:SelectCharacter(player, className, ID)
     end
 
     CharacterSelectServer:SetCharacter(player, group, currentClass)
+
+    CharacterMoveLibrary.Movesets[player] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = CharacterMoveLibrary.BaseMovesets[className].QMove,
+        ["EMove"] = CharacterMoveLibrary.BaseMovesets[className].EMove,
+        ["FMove"] = CharacterMoveLibrary.BaseMovesets[className].FMove,
+    }
+    Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
     if currentClass then
         return true

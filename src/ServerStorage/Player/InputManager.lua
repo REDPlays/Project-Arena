@@ -3,8 +3,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
-
-local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("StateManager"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local InputManager = {}
 
@@ -12,6 +11,8 @@ InputManager.ServerLMBDebounces = {}
 InputManager.ServerQDebounces = {}
 InputManager.ServerEDebounces = {}
 InputManager.ServerFDebounces = {}
+
+InputManager.ServerDebounces = {}
 
 Events.Server_Server.ResetCooldowns.Event:Connect(function(player: Player, moves: {})
     if not player then return end
@@ -55,6 +56,10 @@ function InputManager:RunInput(player, class, moveType, moveCount)
         return
     end
 
+    if not CharacterMoveLibrary.Movesets[player] then
+        return
+    end
+
     local character = player.Character
     if not character then
         return
@@ -62,6 +67,12 @@ function InputManager:RunInput(player, class, moveType, moveCount)
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
+        return
+    end
+
+    local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
+    if not currentMove then
+        warn("no current move for:", moveType)
         return
     end
 
@@ -76,6 +87,42 @@ function InputManager:RunInput(player, class, moveType, moveCount)
         return
     end
 
+    local key = player.UserId..currentMove
+
+    if InputManager.ServerDebounces[key] then
+        return
+    end
+
+    InputManager.ServerDebounces[key] = true
+
+    local cooldown = currentClassData.Cooldowns[currentMove]
+    if moveType == "LMBMove" then
+        if moveCount and moveCount >= 3 and not currentClassData.MoveData["M1"].ignoreLMBMoveCD then
+            cooldown = 1
+        end
+    else
+        if typeof(cooldown) == "table" then
+            if character:GetAttribute("DoubleCooldown") == moveType then
+                cooldown = cooldown[2]
+            else
+                cooldown = cooldown[1]
+            end
+        end
+
+        if workspace:GetAttribute("NoCooldowns") then
+            cooldown = 1
+        end
+    end
+
+    task.delay(cooldown, function()
+        if InputManager.ServerDebounces[key] then
+            InputManager.ServerDebounces[key] = nil
+        end
+
+        Events.Server_Client.Cooldown:FireClient(player, moveType, "Single")
+    end)
+
+    --[==[
     if moveType == "LMBMove" then
         if InputManager.ServerLMBDebounces[player.UserId] then
             return
@@ -208,6 +255,7 @@ function InputManager:RunInput(player, class, moveType, moveCount)
             Events.Server_Client.Cooldown:FireClient(player, "FMove", "Single")
         end)
     end
+    ]==]
 
     return true
 end

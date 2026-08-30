@@ -20,10 +20,10 @@ local IgnoreFolder = workspace.Ignore
 
 local SumoRush = {}
 
-function SumoRush:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function SumoRush:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType][1]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then

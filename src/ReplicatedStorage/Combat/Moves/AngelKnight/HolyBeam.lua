@@ -52,10 +52,10 @@ local function findTeammates(player: Player, character: Model)
     return teammates
 end
 
-function HolyBeam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function HolyBeam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local healing = classData.DamageList[moveType]
+    local healing = classData.DamageList[currentMove]
     local TeamHeal = 15
     local range = 10
 
@@ -68,6 +68,8 @@ function HolyBeam:Activate(player, character, rootPart, placementCFrame, class, 
     if not humanoid then
         return
     end
+
+    Stats:SetAttribute("AbilityLocked", true)
 
     local teammates = findTeammates(player, character)
 
@@ -90,6 +92,8 @@ function HolyBeam:Activate(player, character, rootPart, placementCFrame, class, 
     )
 
     HealthManager:Heal(character, healing)
+
+    Stats:SetAttribute("AbilityLocked", false)
 end
 
 return HolyBeam

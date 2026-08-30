@@ -35,9 +35,10 @@ local Colors = {
 }
 
 export type Moveset = {
-    ["QMove"]: number, -- 1 or 2
-    ["EMove"]: number, -- 1 or 2
-    ["FMove"]: number, -- 1 or 2
+    ["LMBMove"]: string,
+    ["QMove"]: string,
+    ["EMove"]: string,
+    ["FMove"]: string,
 }
 
 local function CurrentDevice() : "PC" | "Console" | "Mobile"
@@ -138,17 +139,6 @@ function GameplayUI:LoadCharacter(class)
     self.animationSystem:ChangeClass(class)
 
     local currentClassData = ClassData[self.class]
-
-    for btnName, btn in pairs(self.Btns) do
-        local MoveName = btn:FindFirstChild("MoveName")
-        if MoveName then
-            local moveText = currentClassData.MoveName[btnName]
-            if typeof(moveText) == "table" then
-                moveText = moveText[1]
-            end
-            MoveName.Text = moveText
-        end
-    end
 end
 
 function GameplayUI:Setup()
@@ -191,9 +181,9 @@ function GameplayUI:ShowInputButtons(inputType: string)
     end
 end
 
-function GameplayUI:LockInPlace(noMovement, moveType)
+function GameplayUI:LockInPlace(noMovement, currentMove)
     if noMovement then
-        local animationLength = self.animationSystem:animInfo(self.class, moveType)
+        local animationLength = self.animationSystem:animInfo(self.class, currentMove)
 
         if self.rootPart:FindFirstChild("noMovement") then
             self.rootPart:FindFirstChild("noMovement"):Destroy()
@@ -288,47 +278,41 @@ function GameplayUI:Connect()
                 return
             end
 
+            local currentMove: string = CharacterMoveLibrary.Movesets[self.player][moveType]
+            if not currentMove then
+                return
+            end
+
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, moveType)
             if canAttack then
                 self.debounces[moveType] = true
                 local currentClassData = ClassData[self.class]
+                local currentMoveData = currentClassData.MoveData[currentMove]
 
-                local animationName = moveType
+                local animationName = currentMove
                 
-                local cooldownDuration = currentClassData.Cooldowns[moveType]
-                local DoubleCooldown
+                local cooldownDuration = currentClassData.Cooldowns[currentMove]
+                local hasEvent = currentMoveData.hasEvent
+                local DoubleCooldown = currentMoveData.DoubleCooldown
+                local noMovement = currentMoveData.noMovement
 
-                local hasEvent
-                if currentClassData.MoveData[moveType][1] then
+                if currentMoveData[1] then
                     if isAwakened then
-                        hasEvent = currentClassData.MoveData[moveType][2].hasEvent
-                        DoubleCooldown = currentClassData.MoveData[moveType][2].DoubleCooldown
+                        hasEvent = currentMoveData[2].hasEvent
+                        DoubleCooldown = currentMoveData[2].DoubleCooldown
+                        noMovement = currentMoveData[2].noMovement
                     else
-                        hasEvent = currentClassData.MoveData[moveType][1].hasEvent
-                        DoubleCooldown = currentClassData.MoveData[moveType][1].DoubleCooldown
+                        hasEvent = currentMoveData[1].hasEvent
+                        DoubleCooldown = currentMoveData[1].DoubleCooldown
+                        noMovement = currentMoveData[1].noMovement
                     end
-                else
-                    hasEvent = currentClassData.MoveData[moveType].hasEvent
-                    DoubleCooldown = currentClassData.MoveData[moveType].DoubleCooldown
                 end
 
-                if DoubleCooldown then
+                if typeof(DoubleCooldown) == "table" and DoubleCooldown[1] then
                     if self.character:GetAttribute("DoubleCooldown") == moveType then
                         cooldownDuration = cooldownDuration[2]
                     else
                         cooldownDuration = cooldownDuration[1]
-                    end
-
-                    if isAwakened then
-                        animationName = moveType.."2"
-                    end
-                end
-
-                local moveNumbers: Moveset = CharacterMoveLibrary.Movesets[self.player]
-                if moveNumbers then
-                    local currentMoveNumber = moveNumbers[moveType]
-                    if currentMoveNumber and currentMoveNumber ~= 1 then
-                        animationName = moveType..tostring(moveNumbers[moveType])
                     end
                 end
 
@@ -348,15 +332,10 @@ function GameplayUI:Connect()
                         return
                     end
 
-                    local moveData = currentClassData.MoveData
-
-                    local currentMoveData = moveData[moveType]
-
                     Events.Client_Server.Moves:FireServer(self.class, moveType, currentMoveData)
                 end
 
-                local noMovement = currentClassData.MoveData[moveType].noMovement
-                self:LockInPlace(noMovement, moveType)
+                self:LockInPlace(noMovement, currentMove)
 
                 self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
             end
@@ -424,8 +403,8 @@ function GameplayUI:Connect()
         end
     end)
 
-    self.updateNumbers = Events.Server_Client.UpdateMoveNumber.OnClientEvent:Connect(function(moveNumbers: Moveset)
-        CharacterMoveLibrary.Movesets[self.player] = moveNumbers
+    self.updateNumbers = Events.Server_Client.UpdateMoveNumber.OnClientEvent:Connect(function(moveNames: Moveset)
+        CharacterMoveLibrary.Movesets[self.player] = moveNames
     end)
 
     local function getTarget() : Model
@@ -492,10 +471,15 @@ function GameplayUI:M1()
     local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "LMBMove", self.LMBs)
     if canAttack then
         local currentClassData = ClassData[self.class]
-        
-        local cooldownDuration = currentClassData.Cooldowns["LMBMove"]
 
-        if self.LMBs >= 3 and not currentClassData.MoveData.LMBMove.ignoreLMBMoveCD then
+        local currentMove: string = CharacterMoveLibrary.Movesets[self.player]["LMBMove"]
+        if not currentMove then
+            return
+        end
+        
+        local cooldownDuration = currentClassData.Cooldowns[currentMove]
+
+        if self.LMBs >= 3 and not currentClassData.MoveData["M1"].ignoreLMBMoveCD then
             cooldownDuration = 1
         end
         
@@ -514,7 +498,7 @@ function GameplayUI:M1()
 
             local moveData = currentClassData.MoveData
 
-            local currentMoveData = moveData.LMBMove
+            local currentMoveData = moveData["M1"]
 
             if currentMoveData.CameraLock then
                 self.cameraSystem:OutsideToggle(true)
@@ -532,6 +516,15 @@ function GameplayUI:M1()
 end
 
 function GameplayUI:toggleUICountdown(moveType: string, duration: number)
+    if not moveType then
+        return
+    end
+    
+    local moveset = CharacterMoveLibrary.Movesets[self.player]
+    if not moveset then
+        return
+    end
+
     if self.UICooldowns[moveType] then
         return
     end
@@ -591,8 +584,6 @@ function GameplayUI:UpdateUI()
     end
     
     if self.statsFolder then
-        local isAwakened =  self.statsFolder:GetAttribute("Awakened")
-
         if not self.class then
             return
         end
@@ -602,27 +593,15 @@ function GameplayUI:UpdateUI()
             return
         end
 
-        local moveNumbers: Moveset = CharacterMoveLibrary.Movesets[self.player]
-        if not moveNumbers then
+        local moveset: Moveset = CharacterMoveLibrary.Movesets[self.player]
+        if not moveset then
             return
         end
 
         for btnName, btn in pairs(self.Btns) do
             local MoveName = btn:FindFirstChild("MoveName")
             if MoveName then
-                local moveText = currentClassData.MoveName[btnName]
-                if typeof(moveText) == "table" then
-                    if not isAwakened then
-                        moveText = moveText[1]
-
-                        if moveNumbers[btnName] then
-                            moveText = currentClassData.MoveName[btnName][moveNumbers[btnName]]
-                        end
-                    elseif isAwakened then
-                        moveText = moveText[2]
-                    end
-                end
-                MoveName.Text = moveText
+                MoveName.Text = moveset[btnName]
             end
         end
     end
@@ -646,6 +625,10 @@ function GameplayUI:Disconnect()
 
     if self.animationEvent then
         self.animationEvent:Disconnect()
+    end
+
+    if self.updateNumbers then
+        self.updateNumbers:Disconnect()
     end
 end
 

@@ -15,6 +15,7 @@ local StateManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForC
 local HealthManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("HealthManager"))
 
 local VisualEffectServer = require(ReplicatedStorage.RepFiles.VisualEffects.VisualEffectServer)
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local IgnoreFolder = workspace.Ignore
 
@@ -44,10 +45,10 @@ local function TweenScale(model: Model, startScale: number, endScale: number, du
     end)
 end
 
-function Enraged:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function Enraged:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -63,6 +64,14 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
 
     Stats:SetAttribute("AbilityLocked", true)
     Stats:SetAttribute("Awakened", true)
+
+    CharacterMoveLibrary.Movesets[player] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Club Slam",
+        ["EMove"] = "Sumo Stance",
+        ["FMove"] = "Enraged",
+    }
+    Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
     local resetList = {
         "QMove",
@@ -92,6 +101,14 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
     task.delay(lifeTime, function()
         Stats:SetAttribute("AbilityLocked", true)
         Stats:SetAttribute("Awakened", nil)
+
+        CharacterMoveLibrary.Movesets[player] = {
+            ["LMBMove"] = "M1",
+            ["QMove"] = "Club Slam",
+            ["EMove"] = "Sumo Rush",
+            ["FMove"] = "Enraged",
+        }
+        Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
         Events.Server_Server.ResetCooldowns:Fire(player, resetList)
 

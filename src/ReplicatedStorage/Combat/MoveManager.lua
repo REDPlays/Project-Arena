@@ -10,7 +10,7 @@ local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.Character
 
 local MoveManager = {}
 
-function MoveManager:Ability(player: Player | Model, class, moveType, moveData)
+function MoveManager:Ability(player: Player | Model, class, moveType, moveData, currentMove)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -22,7 +22,7 @@ function MoveManager:Ability(player: Player | Model, class, moveType, moveData)
         return
     end
 
-    local currentMoveData = MoveData[class][moveType]
+    local currentMoveData = MoveData[class][currentMove]
     if not currentMoveData then
         return
     end
@@ -49,6 +49,7 @@ function MoveManager:Ability(player: Player | Model, class, moveType, moveData)
 
     local isAwakened = Stats:GetAttribute("Awakened")
 
+    --[==[
     if typeof(currentMoveData) == "table" and currentMoveData[1] and currentMoveData[2] then
         if not isAwakened then
             currentMoveData = currentMoveData[1]
@@ -64,20 +65,13 @@ function MoveManager:Ability(player: Player | Model, class, moveType, moveData)
             currentMoveData = currentMoveData[2]
         end
     end
+    ]==]
 
-    local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[moveType].Offset
-    currentMoveData:Activate(player, character, rootPart, placementCFrame, class, currentClassData, moveType)
+    local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[currentMove].Offset
+    currentMoveData:Activate(player, character, rootPart, placementCFrame, class, currentClassData, moveType, currentMove)
 end
 
-function MoveManager:ProjectileAbility(player, class, moveType, moveData)
-    local currentClass = player:GetAttribute("CurrentClass")
-    if currentClass ~= class then
-        warn("Wrong Class Equipped")
-        return
-    end
-end
-
-function MoveManager:AOEAbility(player, class, moveType, moveData)
+function MoveManager:ProjectileAbility(player, class, moveType, moveData, currentMove)
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class then
         warn("Wrong Class Equipped")
@@ -86,12 +80,16 @@ function MoveManager:AOEAbility(player, class, moveType, moveData)
 end
 
 local function Ability(player, class, moveType, moveData)
+    local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
+    if not currentMove then
+        warn("no ability move for:", moveType)
+        return
+    end
+
     if moveData.isProjectile and moveType == "LMBMove" then
-        MoveManager:ProjectileAbility(player, class, moveType, moveData)
-    elseif moveData.isAOE then
-        MoveManager:AOEAbility(player, class, moveType, moveData)
+        MoveManager:ProjectileAbility(player, class, moveType, moveData, currentMove)
     else
-        MoveManager:Ability(player, class, moveType, moveData)
+        MoveManager:Ability(player, class, moveType, moveData, currentMove)
     end
 end
 

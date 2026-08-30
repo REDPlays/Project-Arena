@@ -13,6 +13,7 @@ local StateManager
 local HealthManager
 local PassiveManager
 local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectServer"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local CombatFiles = ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat")
 local PassiveFiles = CombatFiles:WaitForChild("Passives")
@@ -151,15 +152,20 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
         return
     end
 
+    local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
+    if not currentMove then
+        return
+    end
+
     local isAwakened = Stats:GetAttribute("Awakened")
 
     local damage = 1
     if not moveCount then
-        damage = currentClassData.DamageList[moveType]
+        damage = currentClassData.DamageList[currentMove]
 
         Stats:SetAttribute("M1", 0)
     else
-        damage = currentClassData.DamageList[moveType][moveCount]
+        damage = currentClassData.DamageList[currentMove][moveCount]
 
         Stats:SetAttribute("M1", moveCount)
     end
@@ -184,19 +190,19 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
     local HitboxSize
 
     if not isAwakened then
-        Offset = currentClassData.Hitboxes[moveType].Offset
-        HitboxSize = currentClassData.Hitboxes[moveType].Size
+        Offset = currentClassData.Hitboxes[currentMove].Offset
+        HitboxSize = currentClassData.Hitboxes[currentMove].Size
     elseif isAwakened then
-        if currentClassData.Hitboxes[moveType].Offset2 then
-            Offset = currentClassData.Hitboxes[moveType].Offset2
+        if currentClassData.Hitboxes[currentMove].Offset2 then
+            Offset = currentClassData.Hitboxes[currentMove].Offset2
         else
-            Offset = currentClassData.Hitboxes[moveType].Offset
+            Offset = currentClassData.Hitboxes[currentMove].Offset
         end
 
-        if currentClassData.Hitboxes[moveType].Size2 then
-            HitboxSize = currentClassData.Hitboxes[moveType].Size2
+        if currentClassData.Hitboxes[currentMove].Size2 then
+            HitboxSize = currentClassData.Hitboxes[currentMove].Size2
         else
-            HitboxSize = currentClassData.Hitboxes[moveType].Size
+            HitboxSize = currentClassData.Hitboxes[currentMove].Size
         end
     end
 
@@ -312,11 +318,11 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    currentClassData.MoveData[moveType],
-                    currentClassData.MoveDataDurations[moveType],
+                    currentClassData.MoveData[currentMove],
+                    currentClassData.MoveDataDurations[currentMove],
                     parent, 
                     character,
-                    currentClassData.MoveDataAdditional and currentClassData.MoveDataAdditional[moveType]
+                    currentClassData.MoveDataAdditional and currentClassData.MoveDataAdditional[currentMove]
                 )
         
                 VisualEffectServer:SpawnEffectsInRange(
@@ -378,15 +384,22 @@ function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType,
         return
     end
 
+    local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
+    if not currentMove then
+        return
+    end
+
     local projectileId = player.Name..HttpService:GenerateGUID(false)
 
     local projectileData = {
+        player = player,
         ID = projectileId,
         character = character,
         speed = currentClassData.ProjectileSpeed or 50,
         duration = currentClassData.ProjectileDuration or 1,
         classData = currentClassData,
         moveType = moveType,
+        currentMove = currentMove,
         moveCount = moveCount,
         offSet = offSet,
         conditionalData = conditionalData,
@@ -416,14 +429,12 @@ local function HitboxCreateMove(player, class, moveType, moveCount, moveData, co
                 task.wait(currentClassData.ShotDelay)
             end
         end
-    elseif moveData.isAOE then
-        warn("AOE")
     else
         HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, conditionalData)
     end
 end
 
-local function ProjectileHitboxTarget(player, target, classData, moveType, moveCount, projectileId, projectileData)
+local function ProjectileHitboxTarget(player, target, classData, moveType, currentMove, moveCount, projectileId, projectileData)
     if not HitboxManager.projectiles[projectileId] then
         return
     end
@@ -448,9 +459,9 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
     
     local damage = 1
     if not moveCount then
-        damage = classData.DamageList[moveType]
+        damage = classData.DamageList[currentMove]
     else
-        damage = classData.DamageList[moveType][moveCount]
+        damage = classData.DamageList[currentMove][moveCount]
     end
 
     local Stats = target:FindFirstChild("Stats")
@@ -493,11 +504,11 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
 
     --check modifiers
     HitboxManager:CheckModifiers(
-        classData.MoveData[moveType],
-        classData.MoveDataDurations[moveType],
+        classData.MoveData[currentMove],
+        classData.MoveDataDurations[currentMove],
         target, 
         character,
-        classData.MoveDataAdditional and classData.MoveDataAdditional[moveType]
+        classData.MoveDataAdditional and classData.MoveDataAdditional[currentMove]
     )
 
     StateManager:AddTarget(target, "Attacked", 1)

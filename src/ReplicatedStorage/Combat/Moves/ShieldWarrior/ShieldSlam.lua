@@ -20,10 +20,10 @@ local IgnoreFolder = workspace.Ignore
 
 local ShieldSlam = {}
 
-function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -44,8 +44,8 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
-    local size = classData.Hitboxes[moveType].Size
-    local startCFrame = character:GetPivot() * classData.Hitboxes[moveType].Offset
+    local size = classData.Hitboxes[currentMove].Size
+    local startCFrame = character:GetPivot() * classData.Hitboxes[currentMove].Offset
 
     local VFX_ID = HttpService:GenerateGUID(false)
 
@@ -91,7 +91,7 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
                 Hitbox.Transparency = .5
             end
 
-            Hitbox.Size = classData.Hitboxes[moveType].Size
+            Hitbox.Size = classData.Hitboxes[currentMove].Size
             Hitbox.Anchored = true
             Hitbox.CFrame = startCFrame
             Hitbox.Position = newPosition + Vector3.new(0, Hitbox.Size.Y/2, 0)
@@ -174,8 +174,8 @@ function ShieldSlam:Activate(player, character, rootPart, placementCFrame, class
 
                         --check modifiers
                         HitboxManager:CheckModifiers(
-                            classData.MoveData[moveType],
-                            classData.MoveDataDurations[moveType],
+                            classData.MoveData[currentMove],
+                            classData.MoveDataDurations[currentMove],
                             parent, 
                             character
                         )

@@ -17,10 +17,10 @@ local IgnoreFolder = workspace.Ignore
 
 local TripleFireBall = {}
 
-function TripleFireBall:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function TripleFireBall:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then

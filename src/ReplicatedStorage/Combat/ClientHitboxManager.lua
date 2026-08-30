@@ -8,6 +8,7 @@ local Hitboxes = Assets:WaitForChild("Hitboxes")
 
 local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Events"))
 local VisualEffectClient = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectClient"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local IgnoreFolder = workspace.Ignore
 
@@ -31,17 +32,22 @@ function ClientHitboxManager:HitboxProjectile(projectileData: {})
         return
     end
 
+    local currentMove: string = projectileData.currentMove
+    if not currentMove then
+        return
+    end
+
     projectileData.offSet = projectileData.offSet or CFrame.new(0, 0, 0)
 
     local damage = 1
     if not projectileData.moveCount then
-        damage = projectileData.classData.DamageList[projectileData.moveType]
+        damage = projectileData.classData.DamageList[currentMove]
     else
-        damage = projectileData.classData.DamageList[projectileData.moveType][projectileData.moveCount]
+        damage = projectileData.classData.DamageList[currentMove][projectileData.moveCount]
     end
 
     if projectileData.moveType == "LMBMove" then
-        projectileData.offSet = projectileData.classData.Hitboxes[projectileData.moveType].Offset
+        projectileData.offSet = projectileData.classData.Hitboxes[currentMove].Offset
         if typeof(projectileData.offSet) == "table" then
             projectileData.offSet = projectileData.offSet[projectileData.moveCount]
         end
@@ -63,7 +69,7 @@ function ClientHitboxManager:HitboxProjectile(projectileData: {})
         startCFrame = CFrame.new(position, rootPart.CFrame.LookVector + position) * projectileData.offSet
     end
 
-    Hitbox.Size = projectileData.classData.Hitboxes[projectileData.moveType].Size
+    Hitbox.Size = projectileData.classData.Hitboxes[currentMove].Size
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
@@ -89,6 +95,7 @@ function ClientHitboxManager:HitboxProjectile(projectileData: {})
                     target, 
                     projectileData.classData, 
                     projectileData.moveType, 
+                    projectileData.currentMove,
                     projectileData.moveCount,
                     projectileData.ID,
                     projectileData
@@ -149,6 +156,7 @@ function ClientHitboxManager:HitboxProjectile(projectileData: {})
                 target, 
                 projectileData.classData, 
                 projectileData.moveType, 
+                projectileData.currentMove,
                 projectileData.moveCount,
                 projectileData.ID,
                 projectileData

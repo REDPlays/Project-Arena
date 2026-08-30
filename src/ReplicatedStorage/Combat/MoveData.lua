@@ -1,29 +1,32 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RepFiles = ReplicatedStorage:WaitForChild("RepFiles")
+local CombatFiles = RepFiles:WaitForChild("Combat")
+local Moves = CombatFiles:WaitForChild("Moves")
 
 local MoveData = {}
 
 MoveData["AngelKnight"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").AngelKnight:WaitForChild("HolyBeam")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").AngelKnight:WaitForChild("AngelicCharge")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").AngelKnight:WaitForChild("SunBeam")),
+    ["Holy Beam"] = require(Moves.AngelKnight.HolyBeam),
+    ["Angelic Charge"] = require(Moves.AngelKnight.AngelicCharge),
+    ["Sun Beam"] = require(Moves.AngelKnight.SunBeam),
 }
 
 MoveData["Pyromancer"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Pyromancer:WaitForChild("TripleFireBall")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Pyromancer:WaitForChild("Flamethrower")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Pyromancer:WaitForChild("Eruption")),
+    ["Triple Fire Ball"] = require(Moves.Pyromancer.TripleFireBall),
+    ["Flame thrower"] = require(Moves.Pyromancer.Flamethrower),
+    ["Eruption"] = require(Moves.Pyromancer.Eruption),
 }
 
 MoveData["ShieldWarrior"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").ShieldWarrior:WaitForChild("ShieldSlam")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").ShieldWarrior:WaitForChild("ShieldJump")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").ShieldWarrior:WaitForChild("Colosseum")),
+    ["Shield Slam"] = require(Moves.ShieldWarrior.ShieldSlam),
+    ["Shield Jump"] = require(Moves.ShieldWarrior.ShieldJump),
+    ["Colosseum"] = require(Moves.ShieldWarrior.Colosseum),
 }
 
 MoveData["Samurai"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Samurai:WaitForChild("ShadowStep")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Samurai:WaitForChild("RapidSlashes")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Samurai:WaitForChild("WindTornado")),
+    ["Shadow Step"] = require(Moves.Samurai.ShadowStep),
+    ["Rapid Slashes"] = require(Moves.Samurai.RapidSlashes),
+    ["Wind Tornado"] = require(Moves.Samurai.WindTornado),
 }
 
 MoveData["Engineer"] = {
@@ -45,12 +48,10 @@ MoveData["Shinobi"] = {
 }
 
 MoveData["Oni"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("ClubSlam")),
-    ["EMove"] = {
-        [1] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("SumoRush")),
-        [2] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("SumoStance")),
-    },
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("Enraged")),
+    ["Club Slam"] = require(Moves.Oni.ClubSlam),
+    ["Sumo Rush"] = require(Moves.Oni.SumoRush),
+    ["Sumo Stance"] = require(Moves.Oni.SumoStance),
+    ["Enraged"] = require(Moves.Oni.Enraged),
 }
 
 MoveData["Judge"] = {

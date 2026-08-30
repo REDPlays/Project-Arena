@@ -43,10 +43,10 @@ local function GetTargets(user: Player)
     return targets
 end
 
-function Eruption:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function Eruption:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -141,8 +141,8 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
 
                     --check modifiers
                     HitboxManager:CheckModifiers(
-                        classData.MoveData[moveType],
-                        classData.MoveDataDurations[moveType],
+                        classData.MoveData[currentMove],
+                        classData.MoveDataDurations[currentMove],
                         target, 
                         character
                     )

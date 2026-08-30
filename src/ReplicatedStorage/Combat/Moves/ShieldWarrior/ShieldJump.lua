@@ -20,10 +20,10 @@ local IgnoreFolder = workspace.Ignore
 
 local ShieldJump = {}
 
-function ShieldJump:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ShieldJump:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -102,9 +102,9 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
                 Hitbox.Transparency = .5
             end
     
-            Hitbox.Size = classData.Hitboxes[moveType].Size
+            Hitbox.Size = classData.Hitboxes[currentMove].Size
             Hitbox.Anchored = true
-            Hitbox.CFrame = endCFrame * classData.Hitboxes[moveType].Offset
+            Hitbox.CFrame = endCFrame * classData.Hitboxes[currentMove].Offset
             Hitbox.Parent = IgnoreFolder
     
             local touched = Hitbox.Touched:Connect(function() end)
@@ -167,8 +167,8 @@ function ShieldJump:Activate(player, character, rootPart, placementCFrame, class
     
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType],
-                    classData.MoveDataDurations[moveType],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     parent, 
                     character
                 )

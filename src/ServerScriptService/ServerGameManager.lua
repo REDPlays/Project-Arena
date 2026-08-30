@@ -38,12 +38,11 @@ function ServerGameManager:Init()
 
     LeaderboardManager:Init(ServerGameManager.playerManager)
 
-    ServerGameManager:ConfigureDummies()
+    ServerGameManager.dummyTimers = {}
+    --ServerGameManager:ConfigureDummies()
 end
 
 function ServerGameManager:ConfigureDummies()
-    ServerGameManager.dummyTimers = {}
-
     local configurations = {
         [Dummies.AllyDummy] = {
             Class = "AngelKnight",

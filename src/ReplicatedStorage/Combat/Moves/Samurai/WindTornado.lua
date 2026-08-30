@@ -19,10 +19,10 @@ local IgnoreFolder = workspace.Ignore
 
 local WindTornado = {}
 
-function WindTornado:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function WindTornado:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -54,7 +54,7 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size
+    Hitbox.Size = classData.Hitboxes[currentMove].Size
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
@@ -132,8 +132,8 @@ function WindTornado:Activate(player, character, rootPart, placementCFrame, clas
             
             --check modifiers
             HitboxManager:CheckModifiers(
-                classData.MoveData[moveType],
-                classData.MoveDataDurations[moveType],
+                classData.MoveData[currentMove],
+                classData.MoveDataDurations[currentMove],
                 parent, 
                 character
             )

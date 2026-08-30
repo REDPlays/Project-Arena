@@ -19,10 +19,10 @@ local IgnoreFolder = workspace.Ignore
 
 local ClubSlam = {}
 
-function ClubSlam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ClubSlam:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -45,8 +45,8 @@ function ClubSlam:Activate(player, character, rootPart, placementCFrame, class, 
         Stats:SetAttribute("AbilityLocked", false)
     end)
 
-    local size = classData.Hitboxes[moveType].Size
-    local startCFrame = character:GetPivot() * classData.Hitboxes[moveType].Offset
+    local size = classData.Hitboxes[currentMove].Size
+    local startCFrame = character:GetPivot() * classData.Hitboxes[currentMove].Offset
 
     if not isAwakened then
         damage = damage[1]

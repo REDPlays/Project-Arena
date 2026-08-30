@@ -32,9 +32,10 @@ local mobileOptions = {
 }
 
 export type Moveset = {
-    ["QMove"]: number, -- 1 or 2
-    ["EMove"]: number, -- 1 or 2
-    ["FMove"]: number, -- 1 or 2
+    ["LMBMove"]: string,
+    ["QMove"]: string,
+    ["EMove"]: string,
+    ["FMove"]: string,
 }
 
 local ReaperGameplayUI = {}
@@ -50,7 +51,7 @@ function ReaperGameplayUI.new(player: Player, character: Model, UIController, HU
     return self
 end
 
-function ReaperGameplayUI:Connect()
+function GameplayUI:Connect()
     self.inputChange = UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
         if keyboardOptions[input.UserInputType] then
             self:ShowInputButtons("Keyboard")
@@ -95,47 +96,41 @@ function ReaperGameplayUI:Connect()
                 return
             end
 
+            local currentMove: string = CharacterMoveLibrary.Movesets[self.player][moveType]
+            if not currentMove then
+                return
+            end
+
             local canAttack = Events.Client_Server.Input:InvokeServer(self.class, moveType)
             if canAttack then
                 self.debounces[moveType] = true
                 local currentClassData = ClassData[self.class]
+                local currentMoveData = currentClassData.MoveData[currentMove]
 
-                local animationName = moveType
+                local animationName = currentMove
                 
-                local cooldownDuration = currentClassData.Cooldowns[moveType]
-                local DoubleCooldown
+                local cooldownDuration = currentClassData.Cooldowns[currentMove]
+                local hasEvent = currentMoveData.hasEvent
+                local DoubleCooldown = currentMoveData.DoubleCooldown
+                local noMovement = currentMoveData.noMovement
 
-                local hasEvent
-                if currentClassData.MoveData[moveType][1] then
+                if currentMoveData[1] then
                     if isAwakened then
-                        hasEvent = currentClassData.MoveData[moveType][2].hasEvent
-                        DoubleCooldown = currentClassData.MoveData[moveType][2].DoubleCooldown
+                        hasEvent = currentMoveData[2].hasEvent
+                        DoubleCooldown = currentMoveData[2].DoubleCooldown
+                        noMovement = currentMoveData[2].noMovement
                     else
-                        hasEvent = currentClassData.MoveData[moveType][1].hasEvent
-                        DoubleCooldown = currentClassData.MoveData[moveType][1].DoubleCooldown
+                        hasEvent = currentMoveData[1].hasEvent
+                        DoubleCooldown = currentMoveData[1].DoubleCooldown
+                        noMovement = currentMoveData[1].noMovement
                     end
-                else
-                    hasEvent = currentClassData.MoveData[moveType].hasEvent
-                    DoubleCooldown = currentClassData.MoveData[moveType].DoubleCooldown
                 end
 
-                if DoubleCooldown then
+                if typeof(DoubleCooldown) == "table" and DoubleCooldown[1] then
                     if self.character:GetAttribute("DoubleCooldown") == moveType then
                         cooldownDuration = cooldownDuration[2]
                     else
                         cooldownDuration = cooldownDuration[1]
-                    end
-
-                    if isAwakened then
-                        animationName = moveType.."2"
-                    end
-                end
-
-                local moveNumbers: Moveset = CharacterMoveLibrary.Movesets[self.player]
-                if moveNumbers then
-                    local currentMoveNumber = moveNumbers[moveType]
-                    if currentMoveNumber and currentMoveNumber ~= 1 then
-                        animationName = moveType..tostring(moveNumbers[moveType])
                     end
                 end
 
@@ -155,15 +150,10 @@ function ReaperGameplayUI:Connect()
                         return
                     end
 
-                    local moveData = currentClassData.MoveData
-
-                    local currentMoveData = moveData[moveType]
-
                     Events.Client_Server.Moves:FireServer(self.class, moveType, currentMoveData)
                 end
 
-                local noMovement = currentClassData.MoveData[moveType].noMovement
-                self:LockInPlace(noMovement, moveType)
+                self:LockInPlace(noMovement, currentMove)
 
                 self.animationSystem:Play(self.class, animationName, nil, conditionalData, hitBoxCallBack, hasEvent)
             end
@@ -231,8 +221,8 @@ function ReaperGameplayUI:Connect()
         end
     end)
 
-    self.updateNumbers = Events.Server_Client.UpdateMoveNumber.OnClientEvent:Connect(function(moveNumbers: Moveset)
-        CharacterMoveLibrary.Movesets[self.player] = moveNumbers
+    self.updateNumbers = Events.Server_Client.UpdateMoveNumber.OnClientEvent:Connect(function(moveNames: Moveset)
+        CharacterMoveLibrary.Movesets[self.player] = moveNames
     end)
 
     local function getTarget() : Model
