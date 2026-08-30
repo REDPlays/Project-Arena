@@ -90,7 +90,6 @@ function ReaperGameplayUI:Connect()
             end
 
             local isAwakened = self.statsFolder:GetAttribute("Awakened")
-            local isEnshroud = self.statsFolder:GetAttribute("Enshroud")
             
             if self.debounces[moveType] then
                 return
