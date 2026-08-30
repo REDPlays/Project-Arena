@@ -49,7 +49,7 @@ function IndicatorNumberVFX:DisplayVFX()
         return
     end
 
-    self.lifetime = 1
+    self.lifetime = 0.5
     self.amount = self.conditionalData.amount
 
     self.Folder = Instance.new("Folder")

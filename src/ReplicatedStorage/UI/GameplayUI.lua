@@ -34,16 +34,11 @@ local Colors = {
     ["Disabled"] = Color3.fromRGB(255, 90, 90),
 }
 
-
 export type Moveset = {
     ["QMove"]: number, -- 1 or 2
     ["EMove"]: number, -- 1 or 2
     ["FMove"]: number, -- 1 or 2
 }
-
-function round(n)
-    return math.floor(n * 10) / 10
-end
 
 local function CurrentDevice() : "PC" | "Console" | "Mobile"
     if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then

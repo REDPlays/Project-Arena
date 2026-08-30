@@ -692,9 +692,9 @@ ClassData["Judge"] = {
     },
     VisualEffects = {
         ["LMBMove"] = "OniM1",
-        ["QMove"] = "ClubSlam",
-        ["EMove"] = {"SumoRush", "SumoStanceVFX"},
-        ["FMove"] = "EnragedVFX",
+        ["QMove"] = "",
+        ["EMove"] = {"", ""},
+        ["FMove"] = "",
     },
     MoveName = {
         ["LMBMove"] = "M1",
@@ -766,9 +766,9 @@ ClassData["Hydromancer"] = {
     },
     VisualEffects = {
         ["LMBMove"] = "WaterBall",
-        ["QMove"] = "FireBall",
-        ["EMove"] = "Flamethrower",
-        ["FMove"] = "Eruption",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
     MoveName = {
         ["LMBMove"] = "M1",
