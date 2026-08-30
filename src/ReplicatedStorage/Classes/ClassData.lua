@@ -2,13 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ClassMoveData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassMoveData"))
 
 local WalkSpeeds = {
-    ["Tank"] = 20,
+    ["Tank"] = 22,
     ["Burst"] = 24,
     ["Brawler"] = 24,
     ["Summoner"] = 24,
     ["Marksman"] = 24,
-    ["Support"] = 28,
-    ["Assassin"] = 28,
+    ["Support"] = 26,
+    ["Assassin"] = 26,
 }
 
 local ClassData = {}
