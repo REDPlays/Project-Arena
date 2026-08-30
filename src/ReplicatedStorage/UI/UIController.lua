@@ -14,6 +14,8 @@ local ColorSelectionSystem = require(ReplicatedStorage:WaitForChild("RepFiles"):
 local GameplayUI = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("GameplayUI"))
 local SettingsUI = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("UI"):WaitForChild("SettingsUI"))
 
+local ClassGameplayUI: Folder = ReplicatedStorage:WaitForChild("RepFiles").UI.ClassGameplayUI
+
 local TestState = workspace:GetAttribute("TestState")
 
 local InputActions = ReplicatedStorage:WaitForChild("Inputs")
@@ -24,10 +26,9 @@ local UIController = {}
 UIController.__index = UIController
 
 function UIController.new()
-    local newUI = {}
-    setmetatable(newUI, UIController)
+    local self = setmetatable({}, UIController)
 
-    return newUI
+    return self
 end
 
 function UIController:Init(player, character, animationSystem, cameraSystem, ceremonySystem)
@@ -42,13 +43,14 @@ function UIController:Init(player, character, animationSystem, cameraSystem, cer
 
     self.HUD = self.player:WaitForChild("PlayerGui"):WaitForChild("HUD")
     self.HUD.Enabled = true
+    
+    self.ShiftLock = false
 
     self.Indicator = self.HUD:WaitForChild("Indicator")
     self.Leaderboard = self.HUD:WaitForChild("Leaderboard")
     self.Settings = self.HUD:WaitForChild("Settings")
     self.GameplayMobile = self.HUD:WaitForChild("GameplayMobile")
 
-    self.gameplayUI = GameplayUI.new(player, character, self, self.HUD, animationSystem, cameraSystem)
     self.settingsUI = SettingsUI.new(player, character, self.Settings, self.GameplayMobile)
 
     self.IndicatorMenu = self.Indicator:WaitForChild("Menu")
@@ -284,6 +286,14 @@ function UIController:ShowInputButtons(inputType: string)
 end
 
 function UIController:Connect()
+    --Input Action Connections
+    self.IAC = {}
+    self.IAC["ShiftLock"] = UIActions.ShiftLock.Pressed:Connect(function()
+        self.ShiftLock = not self.ShiftLock
+
+        self.cameraSystem:OutsideToggle(self.ShiftLock)
+    end)
+
     self.input = UIActions.Leaderboard.Pressed:Connect(function()
         self:HideLeaderboard()
     end)
@@ -346,6 +356,17 @@ function UIController:Connect()
 end
 
 function UIController:LoadCharacter(class)
+    if not class then return end
+
+    local currentClassGameplayUI = ClassGameplayUI:FindFirstChild(class.."GameplayUI")
+    if not currentClassGameplayUI then
+        currentClassGameplayUI = GameplayUI
+    else
+        currentClassGameplayUI = require(ClassGameplayUI:FindFirstChild(class.."GameplayUI"))
+    end
+
+    self.gameplayUI = currentClassGameplayUI.new(self.player, self.character, self, self.HUD, self.animationSystem, self.cameraSystem)
+
     if self.gameplayUI then
         self.gameplayUI:LoadCharacter(class)
     end
@@ -394,7 +415,11 @@ function UIController:Disconnect()
 end
 
 function UIController:Update(deltaTime)
-    self.gameplayUI:Update(deltaTime)
+    if self.gameplayUI then
+        self.gameplayUI.ShiftLock = self.ShiftLock
+        self.gameplayUI:Update(deltaTime)
+    end
+    
     self.settingsUI:Update(deltaTime)
     self.colorSystem:Update(deltaTime)
 

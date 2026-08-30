@@ -373,16 +373,6 @@ function GameplayUI:Connect()
     self.IAC["LMB_Released"] = GameplayActions.LMBMove.Released:Connect(function()
         self.LMBHeld = false
     end)
-
-    self.IAC["ShiftLock"] = UIActions.ShiftLock.Pressed:Connect(function()
-        self.ShiftLock = not self.ShiftLock
-
-        if self.shiftLockFrame then
-            self.shiftLockFrame.TouchButton.ImageColor3 = self.ShiftLock and Colors.Enabled or not self.ShiftLock and Colors.Disabled
-        end
-
-        self.cameraSystem:OutsideToggle(self.ShiftLock)
-    end)
     
     self.cooldownEvent = Events.Server_Client.Cooldown.OnClientEvent:Connect(function(moveType: string, actionType: string)
         if actionType == "Single" then
@@ -598,6 +588,10 @@ function GameplayUI:removeUICountdown(moveType: string)
 end
 
 function GameplayUI:UpdateUI()
+    if self.shiftLockFrame then
+        self.shiftLockFrame.TouchButton.ImageColor3 = self.ShiftLock and Colors.Enabled or not self.ShiftLock and Colors.Disabled
+    end
+    
     if self.statsFolder then
         local isAwakened =  self.statsFolder:GetAttribute("Awakened")
 
