@@ -366,6 +366,7 @@ function UIController:LoadCharacter(class)
     end
 
     self.gameplayUI = currentClassGameplayUI.new(self.player, self.character, self, self.HUD, self.animationSystem, self.cameraSystem)
+    self.gameplayUI:Init()
 
     if self.gameplayUI then
         self.gameplayUI:LoadCharacter(class)
@@ -419,7 +420,7 @@ function UIController:Update(deltaTime)
         self.gameplayUI.ShiftLock = self.ShiftLock
         self.gameplayUI:Update(deltaTime)
     end
-    
+
     self.settingsUI:Update(deltaTime)
     self.colorSystem:Update(deltaTime)
 

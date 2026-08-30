@@ -1,3 +1,4 @@
+local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
@@ -30,31 +31,24 @@ local mobileOptions = {
     [Enum.UserInputType.Touch] = true,
 }
 
-local Colors = {
-    ["Enabled"] = Color3.fromRGB(104, 229, 154),
-    ["Disabled"] = Color3.fromRGB(255, 90, 90),
-}
-
 export type Moveset = {
     ["QMove"]: number, -- 1 or 2
     ["EMove"]: number, -- 1 or 2
     ["FMove"]: number, -- 1 or 2
 }
 
-local function CurrentDevice() : "PC" | "Console" | "Mobile"
-    if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
-        return "Mobile"
-    end
-
-    if UserInputService.GamepadEnabled and not UserInputService.KeyboardEnabled then
-        return "Console"
-    end
-
-    return "PC"
-end
-
-local ReaperGameplayUI = setmetatable({}, GameplayUI)
+local ReaperGameplayUI = {}
 ReaperGameplayUI.__index = ReaperGameplayUI
+setmetatable(ReaperGameplayUI, GameplayUI)
+
+function ReaperGameplayUI.new(player: Player, character: Model, UIController, HUD: ScreenGui, animationSystem, cameraSystem)
+    local self = setmetatable(
+        GameplayUI.new(player, character, UIController, HUD, animationSystem, cameraSystem), 
+        ReaperGameplayUI
+    )
+
+    return self
+end
 
 function ReaperGameplayUI:Connect()
     self.inputChange = UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
@@ -96,6 +90,7 @@ function ReaperGameplayUI:Connect()
             end
 
             local isAwakened = self.statsFolder:GetAttribute("Awakened")
+            local isEnshroud = self.statsFolder:GetAttribute("Enshroud")
             
             if self.debounces[moveType] then
                 return

@@ -120,8 +120,6 @@ function GameplayUI.new(player: Player, character: Model, UIController, HUD: Scr
         FMove = false,
     }
 
-    self:Init()
-
     return self
 end
 
