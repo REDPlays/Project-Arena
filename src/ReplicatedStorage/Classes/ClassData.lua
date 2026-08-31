@@ -366,7 +366,7 @@ ClassData["Engineer"] = {
     VisualEffects = {
         ["LMBMove"] = "EngineerM1",
         ["QMove"] = "",
-        ["EMove"] = "",
+        ["EMove"] = "Turret",
         ["FMove"] = "",
     },
 }
