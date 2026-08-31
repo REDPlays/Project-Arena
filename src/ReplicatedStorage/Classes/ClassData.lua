@@ -455,64 +455,58 @@ ClassData["Shinobi"] = {
     Cost = 400,
     Description = "Master of the Shadows",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 15,
-        ["EMove"] = 10,
-        ["FMove"] = 25,
+        ["M1"] = {3, 3, 3},
+        ["Quick Dash"] = 15,
+        ["Shuriken Throw"] = 10,
+        ["Retreat"] = 25,
     },
     Cooldowns = {
-        ["LMBMove"] = .4,
-        ["QMove"] = 10,
-        ["EMove"] = 15,
-        ["FMove"] = {0.25, 15},
+        ["M1"] = 0.4,
+        ["Quick Dash"] = 10,
+        ["Shuriken Throw"] = 15,
+        ["Retreat"] = {0.25, 15},
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(8, 6, 6),
             Offset = CFrame.new(0, 4, -4),
         },
-        ["QMove"] = {
+        ["Quick Dash"] = {
             Size = Vector3.new(7, 7, 7),
             Offset = CFrame.new(0, 3.5, 0),
         },
-        ["EMove"] = {
+        ["Shuriken Throw"] = {
             Size = Vector3.new(8, 8, 12),
             Offset = CFrame.new(0, 4, -6),
         },
-        ["FMove"] = {
+        ["Retreat"] = {
             Size = Vector3.new(10, 15, 10),
             Offset = CFrame.new(0, 7.5, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"Slow"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Quick Dash"] = ClassMoveData:SetupModifiers({"Slow"}),
+        ["Shuriken Throw"] = ClassMoveData:SetupModifiers({"hasEvent"}),
+        ["Retreat"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {Slow = 2},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Quick Dash"] = {Slow = 2},
+        ["Shuriken Throw"] = {},
+        ["Retreat"] = {},
     },
     MoveDataAdditional = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Quick Dash"] = {},
+        ["Shuriken Throw"] = {},
+        ["Retreat"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "ShinobiM1",
-        ["QMove"] = "QuickDash",
-        ["EMove"] = "ShurikenThrow",
-        ["FMove"] = "Retreat",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Quick Dash",
-        ["EMove"] = "Shuriken Throw",
-        ["FMove"] = "Retreat",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
@@ -608,66 +602,75 @@ ClassData["Judge"] = {
     Cost = 400,
     Description = "Justice Prevails",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = {15, 30},
-        ["EMove"] = {20, 10},
-        ["FMove"] = 25,
+        ["M1"] = {3, 3, 3},
+        ["Club Slam"] = {15, 30},
+        ["Sumo Rush"] = 20,
+        ["Sumo Stance"] = 10,
+        ["Enraged"] = 25,
     },
     Cooldowns = {
-        ["LMBMove"] = .4,
-        ["QMove"] = 5,
-        ["EMove"] = {15, 15},
-        ["FMove"] = 40,
+        ["M1"] = 0.4,
+        ["Club Slam"] = 5,
+        ["Sumo Rush"] = 15,
+        ["Sumo Stance"] = 15,
+        ["Enraged"] = 40,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(8, 6, 6),
             Size2 = Vector3.new(12, 9, 9),
             Offset = CFrame.new(0, 4, -4),
             Offset2 = CFrame.new(0, 4.5, -5)
         },
-        ["QMove"] = {
+        ["Club Slam"] = {
             Size = Vector3.new(7, 7, 14),
             Offset = CFrame.new(0, 3.5, -7),
         },
-        ["EMove"] = {
+        ["Sumo Rush"] = {
             Size = Vector3.new(8, 16, 16),
             Offset = CFrame.new(0, 2, 0),
         },
-        ["FMove"] = {
+        ["Sumo Stance"] = {
             Size = Vector3.new(10, 15, 10),
             Offset = CFrame.new(0, 7.5, 0),
         },
+        ["Enraged"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
+        },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({}),
-        ["EMove"] = ClassMoveData:SetupModifiers({}),
-        ["FMove"] = ClassMoveData:SetupModifiers({}),
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Club Slam"] = {
+            ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow"}),
+            ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow", "Knockup"})
+        },
+        ["Sumo Rush"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
+        ["Sumo Stance"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
+        ["Enraged"] = ClassMoveData:SetupModifiers({"noMovement"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Club Slam"] = {
+            {Slow = 3,},
+            {Slow = 3, Knockup = 50,},
+        },
+        ["Sumo Rush"] = {Knockup = 35},
+        ["Sumo Stance"] = {Knockup = 70},
+        ["Enraged"] = {},
     },
     MoveDataAdditional = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Club Slam"] = {},
+        ["Sumo Rush"] = {},
+        ["Sumo Stance"] = {},
+        ["Enraged"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "OniM1",
         ["QMove"] = "",
         ["EMove"] = {"", ""},
         ["FMove"] = "",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Club Slam",
-        ["EMove"] = {"Sumo Rush", "Sumo Stance"},
-        ["FMove"] = "Enrage",
     },
 }
 
@@ -684,64 +687,58 @@ ClassData["Hydromancer"] = {
     ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Sustainer of life",
     DamageList = {
-        ["LMBMove"] = {7, 7, 7},
-        ["QMove"] = 4,
-        ["EMove"] = 3,
-        ["FMove"] = 2,
+        ["M1"] = {7, 7, 7},
+        ["Water Wave"] = 4,
+        ["Water Bubble"] = 3,
+        ["Whirlpool"] = 2,
     }, 
     Cooldowns = {
-        ["LMBMove"] = .5,
-        ["QMove"] = 3,
-        ["EMove"] = 7,
-        ["FMove"] = 10,
+        ["M1"] = 0.5,
+        ["Water Wave"] = 3,
+        ["Water Bubble"] = 7,
+        ["Whirlpool"] = 10,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(5, 5, 5),
             Offset = CFrame.new(0, 0, -2),
         },
-        ["QMove"] = {
+        ["Water Wave"] = {
             Size = Vector3.new(8, 9, 3),
             Offset = CFrame.new(0, 0, -1),
         },
-        ["EMove"] = {
+        ["Water Bubble"] = {
             Size = Vector3.new(8, 8, 8),
             Offset = CFrame.new(0, 3, 0),
         },
-        ["FMove"] = {
+        ["Whirlpool"] = {
             Size = Vector3.new(20, 20, 20),
             Offset = CFrame.new(0, 0, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "HydroStack"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"Knockback"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"Slow"}),
+        ["M1"] = ClassMoveData:SetupModifiers({"isProjectile", "HydroStack"}),
+        ["Water Wave"] = ClassMoveData:SetupModifiers({"Knockback"}),
+        ["Water Bubble"] = ClassMoveData:SetupModifiers({}),
+        ["Whirlpool"] = ClassMoveData:SetupModifiers({"Slow"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {Knockback = 50},
-        ["EMove"] = {},
-        ["FMove"] = {Slow = 1},
+        ["M1"] = {},
+        ["Water Wave"] = {Knockback = 50},
+        ["Water Bubble"] = {},
+        ["Whirlpool"] = {Slow = 1},
     },
     MoveDataAdditional = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Water Wave"] = {},
+        ["Water Bubble"] = {},
+        ["Whirlpool"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "WaterBall",
         ["QMove"] = "",
         ["EMove"] = "",
         ["FMove"] = "",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Water Wave",
-        ["EMove"] = "Water Bubble",
-        ["FMove"] = "Whirlpool",
     },
 }
 

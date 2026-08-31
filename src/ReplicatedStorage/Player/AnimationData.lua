@@ -121,9 +121,9 @@ AnimationData["Shinobi"] = {
 
     Block = Animations:WaitForChild("Shinobi"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Shinobi"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Shinobi"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Shinobi"):WaitForChild("FMove"),
+    ["Quick Dash"] = Animations:WaitForChild("Shinobi"):WaitForChild("Quick Dash"),
+    ["Shuriken Throw"] = Animations:WaitForChild("Shinobi"):WaitForChild("Shuriken Throw"),
+    ["Retreat"] = Animations:WaitForChild("Shinobi"):WaitForChild("Retreat"),
 
     Idle = Animations:WaitForChild("Shinobi"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Shinobi"):WaitForChild("Run"),
@@ -156,10 +156,10 @@ AnimationData["Judge"] = {
 
     Block = Animations:WaitForChild("Judge"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Judge"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Judge"):WaitForChild("EMove"),
-    EMove2 = Animations:WaitForChild("Judge"):WaitForChild("EMove2"),
-    FMove = Animations:WaitForChild("Judge"):WaitForChild("FMove"),
+    ["Club Slam"] = Animations:WaitForChild("Oni"):WaitForChild("Club Slam"),
+    ["Sumo Rush"] = Animations:WaitForChild("Oni"):WaitForChild("Sumo Rush"),
+    ["Sumo Stance"] = Animations:WaitForChild("Oni"):WaitForChild("Sumo Stance"),
+    ["Enraged"] = Animations:WaitForChild("Oni"):WaitForChild("Enraged"),
 
     Idle = Animations:WaitForChild("Judge"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Judge"):WaitForChild("Run"),
@@ -174,9 +174,9 @@ AnimationData["Hydromancer"] = {
 
     Block = Animations:WaitForChild("Hydromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Hydromancer"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Hydromancer"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Hydromancer"):WaitForChild("FMove"),
+    ["Water Wave"] = Animations:WaitForChild("Hydromancer"):WaitForChild("Water Wave"),
+    ["Water Bubble"] = Animations:WaitForChild("Hydromancer"):WaitForChild("Water Bubble"),
+    ["Whirlpool"] = Animations:WaitForChild("Hydromancer"):WaitForChild("Whirlpool"),
 
     Idle = Animations:WaitForChild("Hydromancer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Hydromancer"):WaitForChild("Run"),

@@ -46,11 +46,29 @@ CharacterMoveLibrary.BaseMovesets = {
         ["EMove"] = "Net Trap",
         ["FMove"] = "Explosive Arrow",
     },
+    ["Shinobi"] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Quick Dash",
+        ["EMove"] = "Shuriken Throw",
+        ["FMove"] = "Retreat",
+    },
     ["Oni"] = {
         ["LMBMove"] = "M1",
         ["QMove"] = "Club Slam",
         ["EMove"] = "Sumo Rush",
         ["FMove"] = "Enraged",
+    },
+    ["Judge"] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Club Slam",
+        ["EMove"] = "Sumo Rush",
+        ["FMove"] = "Enraged",
+    },
+    ["Hydromancer"] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Water Wave",
+        ["EMove"] = "Water Bubble",
+        ["FMove"] = "Whirlpool",
     },
 
 }

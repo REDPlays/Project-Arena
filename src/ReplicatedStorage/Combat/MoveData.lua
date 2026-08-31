@@ -42,9 +42,9 @@ MoveData["Ranger"] = {
 }
 
 MoveData["Shinobi"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Shinobi:WaitForChild("QuickDash")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Shinobi:WaitForChild("ShurikenThrow")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Shinobi:WaitForChild("Retreat")),
+    ["Quick Dash"] = require(Moves.Shinobi.QuickDash),
+    ["Shuriken Throw"] = require(Moves.Shinobi.ShurikenThrow),
+    ["Retreat"] = require(Moves.Shinobi.Retreat),
 }
 
 MoveData["Oni"] = {
@@ -55,18 +55,16 @@ MoveData["Oni"] = {
 }
 
 MoveData["Judge"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("ClubSlam")),
-    ["EMove"] = {
-        [1] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("SumoRush")),
-        [2] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("SumoStance")),
-    },
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Oni:WaitForChild("Enraged")),
+    ["Club Slam"] = require(Moves.Oni.ClubSlam),
+    ["Sumo Rush"] = require(Moves.Oni.SumoRush),
+    ["Sumo Stance"] = require(Moves.Oni.SumoStance),
+    ["Enraged"] = require(Moves.Oni.Enraged),
 }
 
 MoveData["Hydromancer"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Hydromancer:WaitForChild("WaterWave")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Hydromancer:WaitForChild("WaterBubble")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Hydromancer:WaitForChild("Whirlpool")),
+    ["Water Wave"] = require(Moves.Hydromancer.WaterWave),
+    ["Water Bubble"] = require(Moves.Hydromancer.WaterBubble),
+    ["Whirlpool"] = require(Moves.Hydromancer.Whirlpool),
 }
 
  MoveData["Reaper"] = {

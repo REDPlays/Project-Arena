@@ -20,10 +20,10 @@ local IgnoreFolder = workspace.Ignore
 
 local WaterWave = {}
 
-function WaterWave:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function WaterWave:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -69,7 +69,7 @@ function WaterWave:Activate(player, character, rootPart, placementCFrame, class,
             Hitbox.Transparency = .5
         end
 
-        Hitbox.Size = classData.Hitboxes[moveType].Size
+        Hitbox.Size = classData.Hitboxes[currentMove].Size
         Hitbox.CFrame = wallCFrame * CFrame.new(0, Hitbox.Size.Y/2, 0)
         Hitbox.Anchored = true
         Hitbox.Parent = IgnoreFolder
@@ -176,8 +176,8 @@ function WaterWave:Activate(player, character, rootPart, placementCFrame, class,
                 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType],
-                    classData.MoveDataDurations[moveType],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     parent, 
                     character,
                     additionalData
