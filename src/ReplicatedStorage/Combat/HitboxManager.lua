@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
@@ -78,7 +79,7 @@ function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, targe
     end
 end
 
-function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerClass, moveType: string, moveCount: number, alreadyReflected: boolean)
+function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerClass, moveType: string, currentMove: string, moveCount: number, alreadyReflected: boolean)
     local canReflect = false
 
     if alreadyReflected then
@@ -95,7 +96,7 @@ function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerC
     local targetRoot = target:FindFirstChild("HumanoidRootPart")
     if not targetRoot then return end
 
-    if attackerClass.MoveData[moveType].isProjectile and (moveType == "LMBMove" or ReflectionWhiteList[attackerClass.MoveName[moveType]]) then
+    if attackerClass.MoveData[currentMove].isProjectile and (moveType == "LMBMove" or ReflectionWhiteList[currentMove]) then
         canReflect = true
 
         local attackerCFrame = attackerRoot.CFrame
@@ -107,6 +108,7 @@ function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerC
         HitboxManager:HitboxProjectile(target, attackerClass.ClassName, moveType, moveCount, nil, {
             reflecting = true,
             spawnCFrame = reflectCFrame,
+            currentMove = currentMove,
         })
     else
         canReflect = true
@@ -149,6 +151,10 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
+        return
+    end
+
+    if not CharacterMoveLibrary.Movesets[player] then
         return
     end
 
@@ -311,7 +317,7 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
                     continue
                 end
 
-                local isReflecting = HitboxManager:CheckReflecting(character, parent, currentClassData, moveType, moveCount, conditionalData.conditionalData.reflecting)
+                local isReflecting = HitboxManager:CheckReflecting(character, parent, currentClassData, moveType, currentMove, moveCount, conditionalData.conditionalData.reflecting)
                 if isReflecting and not conditionalData.reflecting then
                     break
                 end
@@ -357,36 +363,50 @@ function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType,
     conditionalData = conditionalData or {}
 
     ignoreList = ignoreList or {}
-    
+
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class and not conditionalData.reflecting then
         warn("Wrong Class Equipped")
         return
     end
-    
+
     local currentClassData = ClassData[class]
     if not currentClassData then
         return
     end
-    
+
     local character = nil
     if player:IsA("Model") then
         character = player
+        player = Players:GetPlayerFromCharacter(character) or character
     else
         character = player.Character
     end
+
+    if player:IsA("Model") then
+        return
+    end
+
     if not character then
         return
     end
-    
+
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
+        return
+    end
+
+    if not CharacterMoveLibrary.Movesets[player] then
         return
     end
 
     local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
     if not currentMove then
         return
+    end
+
+    if conditionalData.reflecting then
+        currentMove = conditionalData.currentMove or currentMove
     end
 
     local projectileId = player.Name..HttpService:GenerateGUID(false)
@@ -490,7 +510,7 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, curre
         return
     end
     
-    local isReflecting = HitboxManager:CheckReflecting(character, target, classData, moveType, moveCount, projectileData.conditionalData.reflecting)
+    local isReflecting = HitboxManager:CheckReflecting(character, target, classData, moveType, currentMove, moveCount, projectileData.conditionalData.reflecting)
     if isReflecting and not projectileData.reflecting then
         return
     end
