@@ -30,15 +30,15 @@ MoveData["Samurai"] = {
 }
 
 MoveData["Engineer"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Engineer:WaitForChild("ConcussiveBomb")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Engineer:WaitForChild("Turret")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Engineer:WaitForChild("ElectroBall")),
+    ["Concussive Mine"] = require(Moves.Engineer.ConcussiveBomb),
+    ["Turret"] = require(Moves.Engineer.Turret),
+    ["Electro Ball"] = require(Moves.Engineer.ElectroBall),
 }
 
 MoveData["Ranger"] = {
-    ["QMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Ranger:WaitForChild("PiecingArrow")),
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Ranger:WaitForChild("NetTrap")),
-    ["FMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Ranger:WaitForChild("ExplosiveArrow")),
+    ["Piercing Arrow"] = require(Moves.Ranger.PiercingArrow),
+    ["Net Trap"] = require(Moves.Ranger.NetTrap),
+    ["Explosive Arrow"] = require(Moves.Ranger.ExplosiveArrow),
 }
 
 MoveData["Shinobi"] = {

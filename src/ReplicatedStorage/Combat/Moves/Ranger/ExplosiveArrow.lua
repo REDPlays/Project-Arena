@@ -19,10 +19,10 @@ local IgnoreFolder = workspace.Ignore
 
 local ExplosiveArrow = {}
 
-function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -54,7 +54,7 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size
+    Hitbox.Size = classData.Hitboxes[currentMove].Size
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = true
     Hitbox.Parent = IgnoreFolder
@@ -136,8 +136,8 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
             
             --check modifiers
             HitboxManager:CheckModifiers(
-                classData.MoveData[moveType],
-                classData.MoveDataDurations[moveType],
+                classData.MoveData[currentMove],
+                classData.MoveDataDurations[currentMove],
                 parent, 
                 character
             )
@@ -161,7 +161,7 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
             Hitbox2.Transparency = .5
         end
 
-        Hitbox2.Size = classData.Hitboxes[moveType].Size2 
+        Hitbox2.Size = classData.Hitboxes[currentMove].Size2 
         Hitbox2.CFrame = Hitbox.CFrame
         Hitbox2.Anchored = true
         Hitbox2.Parent = IgnoreFolder
@@ -248,8 +248,8 @@ function ExplosiveArrow:Activate(player, character, rootPart, placementCFrame, c
             
             --check modifiers
             HitboxManager:CheckModifiers(
-                classData.MoveData[moveType],
-                classData.MoveDataDurations[moveType],
+                classData.MoveData[currentMove],
+                classData.MoveDataDurations[currentMove],
                 parent, 
                 character
             )

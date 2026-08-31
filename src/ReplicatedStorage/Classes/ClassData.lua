@@ -308,19 +308,19 @@ ClassData["Engineer"] = {
     ShotDelay = 0.1, --delay between shots(based on ammo)
     Description = "Master Mechanic",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 10,
-        ["EMove"] = 1,
-        ["FMove"] = {5, 15},
+        ["M1"] = {3, 3, 3},
+        ["Concussive Mine"] = 10,
+        ["Turret"] = 1,
+        ["Electro Ball"] = {5, 15},
     },
     Cooldowns = {
-        ["LMBMove"] = 1.25,
-        ["QMove"] = 4,
-        ["EMove"] = 20,
-        ["FMove"] = 15,
+        ["M1"] = 1.25,
+        ["Concussive Mine"] = 4,
+        ["Turret"] = 20,
+        ["Electro Ball"] = 15,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = {
                 CFrame.new(0, 1, -3),
@@ -328,16 +328,16 @@ ClassData["Engineer"] = {
                 CFrame.new(0, 1, -3),
             },
         },
-        ["QMove"] = {
+        ["Concussive Mine"] = {
             Size = Vector3.new(3, 7, 7),
             Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
-        ["EMove"] = {
+        ["Turret"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = CFrame.new(0, 0, -2),
         },
-        ["FMove"] = {
+        ["Electro Ball"] = {
             Size = {
                 Size1 = Vector3.new(8, 8, 8),
                 Size2 = Vector3.new(20, 20, 20),
@@ -346,34 +346,28 @@ ClassData["Engineer"] = {
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced", "Slow"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock", "isProjectile"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned"}),
+        ["M1"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
+        ["Concussive Mine"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced", "Slow"}),
+        ["Turret"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock", "isProjectile"}),
+        ["Electro Ball"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {Silenced = 2, Slow = 3},
-        ["EMove"] = {},
-        ["FMove"] = {Stunned = 2},
+        ["M1"] = {},
+        ["Concussive Mine"] = {Silenced = 2, Slow = 3},
+        ["Turret"] = {},
+        ["Electro Ball"] = {Stunned = 2},
     },
     MoveDataAdditional = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Concussive Mine"] = {},
+        ["Turret"] = {},
+        ["Electro Ball"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "EngineerM1",
-        ["QMove"] = "ConcussiveBomb",
-        ["EMove"] = "Turret",
-        ["FMove"] = "ElectroBall",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Concussive Mine",
-        ["EMove"] = "Turret",
-        ["FMove"] = "Electro Ball",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
@@ -390,19 +384,19 @@ ClassData["Ranger"] = {
     ShotDelay = 0.1, --delay between shots(based on ammo)
     Description = "Eyes of an Eagle",
     DamageList = {
-        ["LMBMove"] = {5, 5, 5},
-        ["QMove"] = 15,
-        ["EMove"] = 20,
-        ["FMove"] = 10,
+        ["M1"] = {5, 5, 5},
+        ["Piercing Arrow"] = 15,
+        ["Net Trap"] = 20,
+        ["Explosive Arrow"] = 10,
     },
     Cooldowns = {
-        ["LMBMove"] = .75,
-        ["QMove"] = 3,
-        ["EMove"] = 3,
-        ["FMove"] = 10,
+        ["M1"] = 0.75,
+        ["Piercing Arrow"] = 3,
+        ["Net Trap"] = 3,
+        ["Explosive Arrow"] = 10,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = {
                 CFrame.new(1, 1, 0.5),
@@ -410,50 +404,44 @@ ClassData["Ranger"] = {
                 CFrame.new(1, 1, 0.5),
             },
         },
-        ["QMove"] = {
+        ["Piercing Arrow"] = {
             Size = Vector3.new(3, 3, 6),
             Offset = CFrame.new(1, 1, 0.5),
         },
-        ["EMove"] = {
+        ["Net Trap"] = {
             Size = Vector3.new(3, 7, 7),
             Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
-        ["FMove"] = {
+        ["Explosive Arrow"] = {
             Size = Vector3.new(3, 3, 6),
             Size2 = Vector3.new(20, 20, 20),
             Offset = CFrame.new(0, 0, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "isProjectile"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Stunned"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Burn", "isProjectile"}),
+        ["M1"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
+        ["Piercing Arrow"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "isProjectile"}),
+        ["Net Trap"] = ClassMoveData:SetupModifiers({"hasEvent", "Stunned"}),
+        ["Explosive Arrow"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Burn", "isProjectile"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {Stunned = 3},
-        ["FMove"] = {Burn = 3},
+        ["M1"] = {},
+        ["Piercing Arrow"] = {},
+        ["Net Trap"] = {Stunned = 3},
+        ["Explosive Arrow"] = {Burn = 3},
     },
     MoveDataAdditional = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Piercing Arrow"] = {},
+        ["Net Trap"] = {},
+        ["Explosive Arrow"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "RangerM1",
-        ["QMove"] = "PiercingArrow",
-        ["EMove"] = "NetTrap",
-        ["FMove"] = "ExplosiveArrow",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Piercing Arrow",
-        ["EMove"] = "Net Trap",
-        ["FMove"] = "Explosive Arrow",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 

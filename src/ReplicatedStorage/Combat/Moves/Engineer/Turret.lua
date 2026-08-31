@@ -55,7 +55,7 @@ local function TweenPivot(model: Model, startCFrame: CFrame, endCFrame: CFrame, 
     end)
 end
 
-function Turret:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function Turret:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     if not Turret.currentPlayers[player] then
         Turret.currentPlayers[player] = {
             currCount = 0,
@@ -69,7 +69,7 @@ function Turret:Activate(player, character, rootPart, placementCFrame, class, cl
 
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then

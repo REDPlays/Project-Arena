@@ -23,11 +23,11 @@ local IgnoreFolder = workspace.Ignore
 
 local ElectroBall = {}
 
-function ElectroBall:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ElectroBall:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local moveDamage = classData.DamageList[moveType][1]
-    local explodeDamage = classData.DamageList[moveType][2]
+    local moveDamage = classData.DamageList[currentMove][1]
+    local explodeDamage = classData.DamageList[currentMove][2]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -63,7 +63,7 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size.Size1
+    Hitbox.Size = classData.Hitboxes[currentMove].Size.Size1
     Hitbox.CFrame = startCFrame
     Hitbox.Anchored = false
     Hitbox.Massless = true
@@ -151,8 +151,8 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType],
-                    classData.MoveDataDurations[moveType],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     parent, 
                     character
                 )
@@ -230,8 +230,8 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType],
-                    classData.MoveDataDurations[moveType],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     parent, 
                     character
                 )
@@ -281,7 +281,7 @@ function ElectroBall:Activate(player, character, rootPart, placementCFrame, clas
                 task.cancel(thread)
             end
 
-            Hitbox.Size = classData.Hitboxes[moveType].Size.Size2
+            Hitbox.Size = classData.Hitboxes[currentMove].Size.Size2
 
             VisualEffectServer:SpawnEffectsInRange(
                 "ElectroBall",

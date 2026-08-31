@@ -87,9 +87,9 @@ AnimationData["Engineer"] = {
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Engineer"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Engineer"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Engineer"):WaitForChild("FMove"),
+    ["Concussive Mine"] = Animations:WaitForChild("Engineer"):WaitForChild("Concussive Mine"),
+    ["Turret"] = Animations:WaitForChild("Engineer"):WaitForChild("Turret"),
+    ["Electro Ball"] = Animations:WaitForChild("Engineer"):WaitForChild("Electro Ball"),
 
     Idle = Animations:WaitForChild("Engineer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Engineer"):WaitForChild("Run"),
@@ -104,9 +104,9 @@ AnimationData["Ranger"] = {
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Ranger"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Ranger"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Ranger"):WaitForChild("FMove"),
+    ["Piercing Arrow"] = Animations:WaitForChild("Ranger"):WaitForChild("Piercing Arrow"),
+    ["Net Trap"] = Animations:WaitForChild("Ranger"):WaitForChild("Net Trap"),
+    ["Explosive Arrow"] = Animations:WaitForChild("Ranger"):WaitForChild("Explosive Arrow"),
 
     Idle = Animations:WaitForChild("Ranger"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Ranger"):WaitForChild("Run"),

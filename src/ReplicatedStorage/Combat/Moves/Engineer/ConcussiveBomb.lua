@@ -28,10 +28,10 @@ local function predictPosition(part: BasePart, timeInterval)
     return part.Position + part.AssemblyLinearVelocity * timeInterval
 end
 
-function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -50,7 +50,7 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
 
     local lifeTime = 6
 
-    local size = classData.Hitboxes[moveType].Size
+    local size = classData.Hitboxes[currentMove].Size
     local startCFrame = character:GetPivot() + Vector3.new(0, size.Y/4, 0)
     
     local Hitbox: BasePart = Hitboxes.CylinderHitbox:Clone()
@@ -167,8 +167,8 @@ function ConcussiveBomb:Activate(player, character, rootPart, placementCFrame, c
 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType],
-                    classData.MoveDataDurations[moveType],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     entity, 
                     character
                 )

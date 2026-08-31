@@ -34,6 +34,18 @@ CharacterMoveLibrary.BaseMovesets = {
         ["EMove"] = "Rapid Slashes",
         ["FMove"] = "Wind Tornado",
     },
+    ["Engineer"] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Concussive Mine",
+        ["EMove"] = "Turret",
+        ["FMove"] = "Electro Ball",
+    },
+    ["Ranger"] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Piercing Arrow",
+        ["EMove"] = "Net Trap",
+        ["FMove"] = "Explosive Arrow",
+    },
     ["Oni"] = {
         ["LMBMove"] = "M1",
         ["QMove"] = "Club Slam",
