@@ -70,6 +70,12 @@ CharacterMoveLibrary.BaseMovesets = {
         ["EMove"] = "Water Bubble",
         ["FMove"] = "Whirlpool",
     },
+    ["Reaper"] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = "Soul Slice",
+        ["EMove"] = "Reapers Calling",
+        ["FMove"] = "Grim Reaping",
+    },
 
 }
 

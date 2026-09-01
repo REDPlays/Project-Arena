@@ -28,10 +28,10 @@ local CachedCompanions = workspace.CachedCompanions
 
 local ReapersBlight = {}
 
-function ReapersBlight:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ReapersBlight:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType][2]
+    local damage = classData.DamageList[currentMove]
     local maxDistance = 50
 
     local Stats = character:FindFirstChild("Stats")
@@ -160,11 +160,11 @@ function ReapersBlight:Activate(player, character, rootPart, placementCFrame, cl
 
             --check modifiers
             HitboxManager:CheckModifiers(
-                classData.MoveData[moveType][2],
-                classData.MoveDataDurations[moveType][2],
+                classData.MoveData[currentMove],
+                classData.MoveDataDurations[currentMove],
                 RetrieveTarget,
                 character,
-                classData.MoveDataAdditional and classData.MoveDataAdditional[moveType][2]
+                classData.MoveDataAdditional and classData.MoveDataAdditional[currentMove]
             )
 
             HealthManager:Damage(RetrieveTarget, damage, character)

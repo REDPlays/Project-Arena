@@ -191,12 +191,11 @@ AnimationData["Reaper"] = {
 
     Block = Animations:WaitForChild("Reaper"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Reaper"):WaitForChild("QMove"),
-    QMove2 = Animations:WaitForChild("Reaper"):WaitForChild("QMove2"),
-    EMove = Animations:WaitForChild("Reaper"):WaitForChild("EMove"),
-    EMove2 = Animations:WaitForChild("Reaper"):WaitForChild("EMove2"),
-    FMove = Animations:WaitForChild("Reaper"):WaitForChild("FMove"),
-    FMove2 = Animations:WaitForChild("Reaper"):WaitForChild("FMove2"),
+    ["Soul Slice"] = Animations:WaitForChild("Reaper"):WaitForChild("Soul Slice"),
+    ["Reapers Blight"] = Animations:WaitForChild("Reaper"):WaitForChild("Reapers Blight"),
+    ["Reapers Calling"] = Animations:WaitForChild("Reaper"):WaitForChild("Reapers Calling"),
+    ["Grim Reaping"] = Animations:WaitForChild("Reaper"):WaitForChild("Grim Reaping"),
+    ["Enshroud"] = Animations:WaitForChild("Reaper"):WaitForChild("Enshroud"),
 
     Idle = Animations:WaitForChild("Reaper"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Reaper"):WaitForChild("Run"),

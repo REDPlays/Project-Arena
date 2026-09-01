@@ -68,15 +68,11 @@ MoveData["Hydromancer"] = {
 }
 
  MoveData["Reaper"] = {
-    ["QMove"] = {
-        [1] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Reaper:WaitForChild("SoulSlice")),
-        [2] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Reaper:WaitForChild("ReapersBlight")),
-    },
-    ["EMove"] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Reaper:WaitForChild("ReapersCalling")),
-    ["FMove"] = {
-        [1] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Reaper:WaitForChild("GrimReaping")),
-        [2] = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("Moves").Reaper:WaitForChild("Enshroud")),
-    },
+    ["Soul Slice"] = require(Moves.Reaper.SoulSlice),
+    ["Reapers Blight"] = require(Moves.Reaper.ReapersBlight),
+    ["Reapers Calling"] = require(Moves.Reaper.ReapersCalling),
+    ["Grim Reaping"] = require(Moves.Reaper.GrimReaping),
+    ["Enshroud"] = require(Moves.Reaper.Enshroud),
 }
 
 return MoveData

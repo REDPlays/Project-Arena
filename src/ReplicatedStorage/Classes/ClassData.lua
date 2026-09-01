@@ -753,77 +753,82 @@ ClassData["Reaper"] = {
     Cost = 200,
     Description = "Bringer of Death",
     DamageList = {
-        ["LMBMove"] = {4, 4, 4},
-        ["QMove"] = {15, 15},
-        ["EMove"] = 1,
-        ["FMove"] = {25, 1},
+        ["M1"] = {4, 4, 4},
+        ["Soul Slice"] = 15,
+        ["Reapers Blight"] = 15,
+        ["Reapers Calling"] = 1,
+        ["Grim Reaping"] = 25,
+        ["Enshroud"] = 1,
     },
     Cooldowns = {
-        ["LMBMove"] = .5,
-        ["QMove"] = {5, 10},
-        ["EMove"] = {1, 1},
-        ["FMove"] = {2, 10},
+        ["M1"] = 0.5,
+        ["Soul Slice"] = 5,
+        ["Reapers Blight"] = 10,
+        ["Reapers Calling"] = 1,
+        ["Grim Reaping"] = 2,
+        ["Enshroud"] = 10,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(8, 6, 6),
             Offset = CFrame.new(0, 4, -3),
             Size2 = Vector3.new(16, 6, 12),
             Offset2 = CFrame.new(0, 4, -6),
         },
-        ["QMove"] = {
+        ["Soul Slice"] = {
             Size = Vector3.new(18, 6, 10),
             Offset = CFrame.new(0, 3, -4),
         },
-        ["EMove"] = {
+        ["Reapers Blight"] = {
             Size = Vector3.new(12, 8, 12),
             Offset = CFrame.new(0, 4, -6),
         },
-        ["FMove"] = {
+        ["Reapers Calling"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
+        },
+        ["Grim Reaping"] = {
             Size = Vector3.new(14, 6, 14),
             Offset = CFrame.new(0, 3, 0),
         },
+        ["Enshroud"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
+        },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"LifeSteal"}),
-        ["QMove"] = {
-            ClassMoveData:SetupModifiers({"DoubleCooldown", "LifeSteal", "hasEvent"}),
-            ClassMoveData:SetupModifiers({"DoubleCooldown", "Burn"})
-        },
-        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "DoubleCooldown"}),
-        ["FMove"] = {
-            ClassMoveData:SetupModifiers({"DoubleCooldown"}),
-            ClassMoveData:SetupModifiers({"DoubleCooldown", "noMovement", "hasEvent"})
-        },
+        ["M1"] = ClassMoveData:SetupModifiers({"LifeSteal"}),
+        ["Soul Slice"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "LifeSteal", "hasEvent"}),
+        ["Reapers Blight"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Burn"}),
+        ["Reapers Calling"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "DoubleCooldown"}),
+        ["Grim Reaping"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
+        ["Enshroud"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "noMovement", "hasEvent"})
     },
     MoveDataDurations = {
-        ["LMBMove"] = {LifeSteal = 0},
-        ["QMove"] = {{LifeSteal = 0}, {Burn = 3}},
-        ["EMove"] = {},
-        ["FMove"] = {{}, {}},
+        ["M1"] = {LifeSteal = 0},
+        ["Soul Slice"] = {LifeSteal = 0},
+        ["Reapers Blight"] = {Burn = 3},
+        ["Reapers Calling"] = {},
+        ["Grim Reaping"] = {},
+        ["Enshroud"] = {},
     },
     MoveDataAdditional = {
-        ["LMBMove"] = {
+        ["M1"] = {
             LifeSteal = {heal = 0.5},
         },
-        ["QMove"] = {
-            {LifeSteal = {heal = 10},},
-            {}
+        ["Soul Slice"] = {
+            LifeSteal = {heal = 10},
         },
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["Reapers Blight"] = {},
+        ["Reapers Calling"] = {},
+        ["Grim Reaping"] = {},
+        ["Enshroud"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "ReaperM1",
         ["QMove"] = "",
         ["EMove"] = "",
         ["FMove"] = "",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = {"Soul Slice", "Reaper's Blight"},
-        ["EMove"] = "Reaper's Calling",
-        ["FMove"] = {"Grim Reaping", "Enshroud"},
     },
 }
 

@@ -27,10 +27,10 @@ local CachedCompanions = workspace.CachedCompanions
 local Enshroud = {}
 Enshroud.threads = {}
 
-function Enshroud:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function Enshroud:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType][2]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -109,9 +109,10 @@ function Enshroud:Activate(player, character, rootPart, placementCFrame, class, 
         DisableCompanion()
 
         CharacterMoveLibrary.Movesets[player] = {
-            ["QMove"] = 1,
-            ["EMove"] = 1,
-            ["FMove"] = 2,
+            ["LMBMove"] = "M1",
+            ["QMove"] = "Soul Slice",
+            ["EMove"] = "Grim Reaping",
+            ["FMove"] = "Enshroud",
         }
         Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
@@ -184,9 +185,10 @@ function Enshroud:Activate(player, character, rootPart, placementCFrame, class, 
         humanoid.WalkSpeed = classData.Speed
 
         CharacterMoveLibrary.Movesets[player] = {
-            ["QMove"] = 1,
-            ["EMove"] = 1,
-            ["FMove"] = 1,
+            ["LMBMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.LMBMove,
+            ["QMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.QMove,
+            ["EMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.EMove,
+            ["FMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.FMove,
         }
         Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 

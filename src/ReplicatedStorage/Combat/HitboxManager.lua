@@ -137,9 +137,15 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
     local character = nil
     if player:IsA("Model") then
         character = player
+        player = Players:GetPlayerFromCharacter(character) or character
+
+        if conditionalData.isCompanion then
+            player = conditionalData.player
+        end
     else
         character = player.Character
     end
+
     if not character then
         return
     end

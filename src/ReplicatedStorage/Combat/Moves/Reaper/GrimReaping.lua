@@ -21,10 +21,10 @@ local ObstaclesFolder = workspace.Obstacles
 
 local GrimReaping = {}
 
-function GrimReaping:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function GrimReaping:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType][1]
+    local damage = classData.DamageList[currentMove]
     local maxDistance = 50
 
     local Stats = character:FindFirstChild("Stats")
@@ -58,7 +58,7 @@ function GrimReaping:Activate(player, character, rootPart, placementCFrame, clas
         Hitbox.Transparency = .5
     end
 
-    Hitbox.Size = classData.Hitboxes[moveType].Size
+    Hitbox.Size = classData.Hitboxes[currentMove].Size
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
 
@@ -132,8 +132,8 @@ function GrimReaping:Activate(player, character, rootPart, placementCFrame, clas
 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType],
-                    classData.MoveDataDurations[moveType],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     parent, 
                     character
                 )

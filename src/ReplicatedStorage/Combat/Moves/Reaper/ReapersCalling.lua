@@ -19,6 +19,7 @@ local HitboxManager = require(ReplicatedStorage.RepFiles:WaitForChild("Combat"):
 
 local ReaperCompanionHelper = require(ReplicatedStorage.RepFiles.Combat.Companions.ReaperCompanion)
 local CompanionLibrary = require(ReplicatedStorage.RepFiles.Player.CompanionLibrary)
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local IgnoreFolder = workspace.Ignore
 local ObstaclesFolder = workspace.Obstacles
@@ -26,10 +27,10 @@ local CachedCompanions = workspace.CachedCompanions
 
 local ReapersCalling = {}
 
-function ReapersCalling:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function ReapersCalling:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local rigName = player.Name.." Companion"
 
@@ -100,6 +101,14 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
     if not isAwakened then
         if CompanionLibrary.CurrentReapers[player] then return end
 
+        CharacterMoveLibrary.Movesets[player] = {
+            ["LMBMove"] = "M1",
+            ["QMove"] = "Reapers Blight",
+            ["EMove"] = "Reapers Calling",
+            ["FMove"] = "Enshroud",
+        }
+        Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
+
         local restOffset = CFrame.new(shouldDistance, upDistance, backDistance)
         local originOffset = CFrame.new(0, 0, 0)
 
@@ -146,6 +155,14 @@ function ReapersCalling:Activate(player, character, rootPart, placementCFrame, c
         if not CompanionLibrary.CurrentReapers[player] then return end
 
         Stats:SetAttribute("Awakened", false)
+
+        CharacterMoveLibrary.Movesets[player] = {
+            ["LMBMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.LMBMove,
+            ["QMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.QMove,
+            ["EMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.EMove,
+            ["FMove"] = CharacterMoveLibrary.BaseMovesets.Reaper.FMove,
+        }
+        Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
         local tweenTime = 0.25
 

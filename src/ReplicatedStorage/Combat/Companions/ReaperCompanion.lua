@@ -101,7 +101,13 @@ function ReaperCompanion:Init()
     for trackName, track: AnimationTrack in pairs(self.animations) do
         if table.find(m1Tracks, trackName) then
             self.connections[trackName] = track:GetMarkerReachedSignal("Attack"):Connect(function()
-                HitboxManager:HitboxCreateMove(self.companion, self.class, "LMBMove", self.currentM1, self.moveData["LMBMove"], {self.character})
+                HitboxManager:HitboxCreateMove(
+                    self.companion, 
+                    self.class, 
+                    "LMBMove", 
+                    self.currentM1, 
+                    {isCompanion = true, player = self.player}
+                )
             end)
 
             self.connections[trackName.."Stop"] = track.Stopped:Connect(function()

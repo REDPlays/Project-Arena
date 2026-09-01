@@ -103,10 +103,10 @@ function Enraged:Activate(player, character, rootPart, placementCFrame, class, c
         Stats:SetAttribute("Awakened", nil)
 
         CharacterMoveLibrary.Movesets[player] = {
-            ["LMBMove"] = "M1",
-            ["QMove"] = "Club Slam",
-            ["EMove"] = "Sumo Rush",
-            ["FMove"] = "Enraged",
+            ["LMBMove"] = CharacterMoveLibrary.BaseMovesets.Oni.LMBMove,
+            ["QMove"] = CharacterMoveLibrary.BaseMovesets.Oni.QMove,
+            ["EMove"] = CharacterMoveLibrary.BaseMovesets.Oni.EMove,
+            ["FMove"] = CharacterMoveLibrary.BaseMovesets.Oni.FMove,
         }
         Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 

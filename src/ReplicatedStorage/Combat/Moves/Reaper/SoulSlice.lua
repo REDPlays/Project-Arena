@@ -20,10 +20,10 @@ local Dummies = workspace.Dummies
 
 local SoulSlice = {}
 
-function SoulSlice:Activate(player, character, rootPart, placementCFrame, class, classData, moveType)
+function SoulSlice:Activate(player, character, rootPart, placementCFrame, class, classData, moveType, currentMove)
     local ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 
-    local damage = classData.DamageList[moveType]
+    local damage = classData.DamageList[currentMove]
 
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
@@ -39,16 +39,11 @@ function SoulSlice:Activate(player, character, rootPart, placementCFrame, class,
 
     local isAwakened = Stats:GetAttribute("Awakened")
 
-    if not isAwakened then
-        damage = damage[1]
-    end
-
     local damageBoost = Stats:GetAttribute("DamageBoost")
     if damageBoost then
         damage = damage * damageBoost
     end
 
-    --local Heal = classData.MoveDataAdditional[moveType].LifeSteal.heal or 1
     local alreadyHit = {}
     local lifeTime = .1
 
@@ -59,7 +54,7 @@ function SoulSlice:Activate(player, character, rootPart, placementCFrame, class,
     end
 
     Hitbox.Anchored = true
-    Hitbox.Size = classData.Hitboxes[moveType].Size
+    Hitbox.Size = classData.Hitboxes[currentMove].Size
     Hitbox.CFrame = placementCFrame
     Hitbox.Parent = IgnoreFolder
     Debris:AddItem(Hitbox, lifeTime)
@@ -131,17 +126,15 @@ function SoulSlice:Activate(player, character, rootPart, placementCFrame, class,
                 --check modifiers
                 if not isAwakened then
                     HitboxManager:CheckModifiers(
-                        classData.MoveData[moveType][1],
-                        classData.MoveDataDurations[moveType][1],
+                        classData.MoveData[currentMove],
+                        classData.MoveDataDurations[currentMove],
                         parent, 
                         character,
-                        classData.MoveDataAdditional[moveType][1]
+                        classData.MoveDataAdditional[currentMove]
                     )
                 end
 
                 StateManager:AddTarget(parent, "Attacked", 1)
-    
-                --HealthManager:Damage(parent, Heal, character)
             end
             
             task.wait()
