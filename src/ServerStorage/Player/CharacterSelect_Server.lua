@@ -421,6 +421,13 @@ function CharacterSelectServer:SetDummy(dummy: Model, className)
         return
     end
 
+    CharacterMoveLibrary.Movesets[dummy] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = CharacterMoveLibrary.BaseMovesets[className].QMove,
+        ["EMove"] = CharacterMoveLibrary.BaseMovesets[className].EMove,
+        ["FMove"] = CharacterMoveLibrary.BaseMovesets[className].FMove,
+    }
+
     --Equip Appearance
     local Folder = Instance.new("Folder")
     Folder.Name = "Appearance"

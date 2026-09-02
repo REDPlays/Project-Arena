@@ -128,12 +128,12 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
         warn("Wrong Class Equipped")
         return
     end
-
+    
     local currentClassData = ClassData[class]
     if not currentClassData then
         return
     end
-
+    
     local character = nil
     if player:IsA("Model") then
         character = player
@@ -145,30 +145,30 @@ function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType,
     else
         character = player.Character
     end
-
+    
     if not character then
         return
     end
-
+    
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
         return
     end
-
+    
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
         return
     end
-
+    
     if not CharacterMoveLibrary.Movesets[player] then
         return
     end
-
+    
     local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
     if not currentMove then
         return
     end
-
+    
     local isAwakened = Stats:GetAttribute("Awakened")
 
     local damage = 1
@@ -369,48 +369,53 @@ function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType,
     conditionalData = conditionalData or {}
 
     ignoreList = ignoreList or {}
-
+    
     local currentClass = player:GetAttribute("CurrentClass")
     if currentClass ~= class and not conditionalData.reflecting then
         warn("Wrong Class Equipped")
         return
     end
-
+    
     local currentClassData = ClassData[class]
     if not currentClassData then
         return
     end
-
+    
     local character = nil
     if player:IsA("Model") then
         character = player
         player = Players:GetPlayerFromCharacter(character) or character
+
+        if conditionalData.isCompanion then
+            player = conditionalData.player
+        end
     else
         character = player.Character
     end
-
-    if player:IsA("Model") then
-        return
-    end
-
+    
     if not character then
         return
     end
 
+    
+    if not character then
+        return
+    end
+    
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
         return
     end
-
+    
     if not CharacterMoveLibrary.Movesets[player] then
         return
     end
-
+    
     local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
     if not currentMove then
         return
     end
-
+    
     if conditionalData.reflecting then
         currentMove = conditionalData.currentMove or currentMove
     end

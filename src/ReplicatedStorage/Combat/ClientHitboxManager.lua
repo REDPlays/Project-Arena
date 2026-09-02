@@ -27,16 +27,16 @@ function ClientHitboxManager:HitboxProjectile(projectileData: {})
     if projectileData.conditionalData.rootPart then
         rootPart = projectileData.conditionalData.rootPart
     end
-
+    
     if not rootPart then
         return
     end
-
+    
     local currentMove: string = projectileData.currentMove
     if not currentMove then
         return
     end
-
+    
     projectileData.offSet = projectileData.offSet or CFrame.new(0, 0, 0)
 
     local damage = 1

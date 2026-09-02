@@ -44,6 +44,7 @@ Events.Server_Client = {
     ReceiveMessage = Server_Client:WaitForChild("ReceiveMessage") :: RemoteEvent,
     GetTarget = Server_Client:WaitForChild("GetTarget") :: RemoteFunction,
     UpdateMoveNumber = Server_Client:WaitForChild("UpdateMoveNumber") :: RemoteEvent,
+    UpdateDummyMove = Server_Client:WaitForChild("UpdateDummyMove") :: RemoteEvent,
 }
 
 Events.Server_Server = {
