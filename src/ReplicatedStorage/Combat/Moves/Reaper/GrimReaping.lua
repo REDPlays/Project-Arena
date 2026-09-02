@@ -38,7 +38,7 @@ function GrimReaping:Activate(player, character, rootPart, placementCFrame, clas
     end
 
     local dashDuration = 25/60
-    local duration = .25
+    local duration = 0.25
     local currTime = 0
     local alreadyHit = {}
 
@@ -51,6 +51,8 @@ function GrimReaping:Activate(player, character, rootPart, placementCFrame, clas
     )
 
     Stats:SetAttribute("AbilityLocked", true)
+
+    humanoid.WalkSpeed = 0
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
@@ -68,6 +70,8 @@ function GrimReaping:Activate(player, character, rootPart, placementCFrame, clas
     weld.Parent = weld.Part0
 
     task.delay(dashDuration, function()
+        Debris:AddItem(Hitbox, duration * 1.5)
+
         while currTime < duration * 2 do
             local dt = task.wait()
             currTime += dt
@@ -143,17 +147,22 @@ function GrimReaping:Activate(player, character, rootPart, placementCFrame, clas
                 HealthManager:Damage(parent, damage, character)
             end
         end
-
-        Debris:AddItem(Hitbox, duration * 2)
     end)
 
     task.delay(dashDuration + duration, function()
         Stats:SetAttribute("AbilityLocked", false)
+        
+        local isEnshroud = Stats:GetAttribute("Enshroud")
+        if isEnshroud then
+            humanoid.WalkSpeed = classData.Speed * 2
+        else
+            humanoid.WalkSpeed = classData.Speed
+        end
     end)
 
     local dashData = {
         duration = dashDuration,
-        speed = 50,
+        speed = 75,
         isDash = true,
         allowPass = true,
     }
