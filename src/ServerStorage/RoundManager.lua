@@ -76,8 +76,8 @@ function RoundManager:Init(ServerGameManager)
 
     --map selection will be needed later on
     self.availableMaps = {
-        --Maps:WaitForChild("GreatSkyPlatform"),
-        --Maps:WaitForChild("ShanghaiShowdown"),
+        Maps:WaitForChild("GreatSkyPlatform"),
+        Maps:WaitForChild("ShanghaiShowdown"),
         Maps:WaitForChild("Seaside Docks"),
     }
 
