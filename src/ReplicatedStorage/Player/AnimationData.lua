@@ -19,9 +19,9 @@ AnimationData["AngelKnight"] = {
 
     Block = Animations:WaitForChild("AngelKnight"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("AngelKnight"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("AngelKnight"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("AngelKnight"):WaitForChild("FMove"),
+    ["Holy Beam"] = Animations:WaitForChild("AngelKnight"):WaitForChild("Holy Beam"),
+    ["Angelic Charge"] = Animations:WaitForChild("AngelKnight"):WaitForChild("Angelic Charge"),
+    ["Sun Beam"] = Animations:WaitForChild("AngelKnight"):WaitForChild("Sun Beam"),
 
     Idle = Animations:WaitForChild("AngelKnight"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("AngelKnight"):WaitForChild("Run"),
@@ -36,9 +36,9 @@ AnimationData["Pyromancer"] = {
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Pyromancer"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Pyromancer"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Pyromancer"):WaitForChild("FMove"),
+    ["Triple Fire Ball"] = Animations:WaitForChild("Pyromancer"):WaitForChild("Triple Fire Ball"),
+    ["Flame thrower"] = Animations:WaitForChild("Pyromancer"):WaitForChild("Flame thrower"),
+    ["Eruption"] = Animations:WaitForChild("Pyromancer"):WaitForChild("Eruption"),
 
     Idle = Animations:WaitForChild("Pyromancer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Pyromancer"):WaitForChild("Run"),
@@ -53,9 +53,9 @@ AnimationData["ShieldWarrior"] = {
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("ShieldWarrior"):WaitForChild("FMove"),
+    ["Shield Slam"] = Animations:WaitForChild("ShieldWarrior"):WaitForChild("Shield Slam"),
+    ["Shield Jump"] = Animations:WaitForChild("ShieldWarrior"):WaitForChild("Shield Jump"),
+    ["Colosseum"] = Animations:WaitForChild("ShieldWarrior"):WaitForChild("Colosseum"),
 
     Idle = Animations:WaitForChild("Pyromancer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Pyromancer"):WaitForChild("Run"),
@@ -70,9 +70,9 @@ AnimationData["Samurai"] = {
 
     Block = Animations:WaitForChild("Samurai"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Samurai"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Samurai"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Samurai"):WaitForChild("FMove"),
+    ["Shadow Step"] = Animations:WaitForChild("Samurai"):WaitForChild("Shadow Step"),
+    ["Rapid Slashes"] = Animations:WaitForChild("Samurai"):WaitForChild("Rapid Slashes"),
+    ["Wind Tornado"] = Animations:WaitForChild("Samurai"):WaitForChild("Wind Tornado"),
 
     Idle = Animations:WaitForChild("Samurai"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Samurai"):WaitForChild("Run"),
@@ -87,9 +87,9 @@ AnimationData["Engineer"] = {
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Engineer"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Engineer"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Engineer"):WaitForChild("FMove"),
+    ["Concussive Mine"] = Animations:WaitForChild("Engineer"):WaitForChild("Concussive Mine"),
+    ["Turret"] = Animations:WaitForChild("Engineer"):WaitForChild("Turret"),
+    ["Electro Ball"] = Animations:WaitForChild("Engineer"):WaitForChild("Electro Ball"),
 
     Idle = Animations:WaitForChild("Engineer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Engineer"):WaitForChild("Run"),
@@ -104,9 +104,9 @@ AnimationData["Ranger"] = {
 
     Block = Animations:WaitForChild("Pyromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Ranger"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Ranger"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Ranger"):WaitForChild("FMove"),
+    ["Piercing Arrow"] = Animations:WaitForChild("Ranger"):WaitForChild("Piercing Arrow"),
+    ["Net Trap"] = Animations:WaitForChild("Ranger"):WaitForChild("Net Trap"),
+    ["Explosive Arrow"] = Animations:WaitForChild("Ranger"):WaitForChild("Explosive Arrow"),
 
     Idle = Animations:WaitForChild("Ranger"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Ranger"):WaitForChild("Run"),
@@ -121,9 +121,9 @@ AnimationData["Shinobi"] = {
 
     Block = Animations:WaitForChild("Shinobi"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Shinobi"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Shinobi"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Shinobi"):WaitForChild("FMove"),
+    ["Quick Dash"] = Animations:WaitForChild("Shinobi"):WaitForChild("Quick Dash"),
+    ["Shuriken Throw"] = Animations:WaitForChild("Shinobi"):WaitForChild("Shuriken Throw"),
+    ["Retreat"] = Animations:WaitForChild("Shinobi"):WaitForChild("Retreat"),
 
     Idle = Animations:WaitForChild("Shinobi"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Shinobi"):WaitForChild("Run"),
@@ -138,10 +138,10 @@ AnimationData["Oni"] = {
 
     Block = Animations:WaitForChild("Oni"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Oni"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Oni"):WaitForChild("EMove"),
-    EMove2 = Animations:WaitForChild("Oni"):WaitForChild("EMove2"),
-    FMove = Animations:WaitForChild("Oni"):WaitForChild("FMove"),
+    ["Club Slam"] = Animations:WaitForChild("Oni"):WaitForChild("Club Slam"),
+    ["Sumo Rush"] = Animations:WaitForChild("Oni"):WaitForChild("Sumo Rush"),
+    ["Sumo Stance"] = Animations:WaitForChild("Oni"):WaitForChild("Sumo Stance"),
+    ["Enraged"] = Animations:WaitForChild("Oni"):WaitForChild("Enraged"),
 
     Idle = Animations:WaitForChild("Oni"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Oni"):WaitForChild("Run"),
@@ -156,10 +156,10 @@ AnimationData["Judge"] = {
 
     Block = Animations:WaitForChild("Judge"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Judge"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Judge"):WaitForChild("EMove"),
-    EMove2 = Animations:WaitForChild("Judge"):WaitForChild("EMove2"),
-    FMove = Animations:WaitForChild("Judge"):WaitForChild("FMove"),
+    ["Club Slam"] = Animations:WaitForChild("Oni"):WaitForChild("Club Slam"),
+    ["Sumo Rush"] = Animations:WaitForChild("Oni"):WaitForChild("Sumo Rush"),
+    ["Sumo Stance"] = Animations:WaitForChild("Oni"):WaitForChild("Sumo Stance"),
+    ["Enraged"] = Animations:WaitForChild("Oni"):WaitForChild("Enraged"),
 
     Idle = Animations:WaitForChild("Judge"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Judge"):WaitForChild("Run"),
@@ -174,12 +174,31 @@ AnimationData["Hydromancer"] = {
 
     Block = Animations:WaitForChild("Hydromancer"):WaitForChild("Block"),
 
-    QMove = Animations:WaitForChild("Hydromancer"):WaitForChild("QMove"),
-    EMove = Animations:WaitForChild("Hydromancer"):WaitForChild("EMove"),
-    FMove = Animations:WaitForChild("Hydromancer"):WaitForChild("FMove"),
+    ["Water Wave"] = Animations:WaitForChild("Hydromancer"):WaitForChild("Water Wave"),
+    ["Water Bubble"] = Animations:WaitForChild("Hydromancer"):WaitForChild("Water Bubble"),
+    ["Whirlpool"] = Animations:WaitForChild("Hydromancer"):WaitForChild("Whirlpool"),
 
     Idle = Animations:WaitForChild("Hydromancer"):WaitForChild("Idle"),
     Run = Animations:WaitForChild("Hydromancer"):WaitForChild("Run"),
+}
+
+AnimationData["Reaper"] = {
+    LMBMove = {
+        Animations:WaitForChild("Reaper"):WaitForChild("M1_1"),
+        Animations:WaitForChild("Reaper"):WaitForChild("M1_2"),
+        Animations:WaitForChild("Reaper"):WaitForChild("M1_3"),
+    },
+
+    Block = Animations:WaitForChild("Reaper"):WaitForChild("Block"),
+
+    ["Soul Slice"] = Animations:WaitForChild("Reaper"):WaitForChild("Soul Slice"),
+    ["Reapers Blight"] = Animations:WaitForChild("Reaper"):WaitForChild("Reapers Blight"),
+    ["Reapers Calling"] = Animations:WaitForChild("Reaper"):WaitForChild("Reapers Calling"),
+    ["Grim Reaping"] = Animations:WaitForChild("Reaper"):WaitForChild("Grim Reaping"),
+    ["Enshroud"] = Animations:WaitForChild("Reaper"):WaitForChild("Enshroud"),
+
+    Idle = Animations:WaitForChild("Reaper"):WaitForChild("Idle"),
+    Run = Animations:WaitForChild("Reaper"):WaitForChild("Run"),
 }
 
 return AnimationData

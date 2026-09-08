@@ -15,10 +15,10 @@ function VisualEffectClient:SpawnEffects(vfxName, target, sourceUnit, conditiona
     
     local  LocalCharacter = LocalPlayer.Character
     if not LocalCharacter then  return end
-
+    
     local LocalRoot = LocalCharacter:FindFirstChild("HumanoidRootPart")
     if  not LocalRoot then return end
-
+    
     local sourceRoot = sourceUnit:FindFirstChild("HumanoidRootPart")
     if not sourceRoot then return end
 
@@ -26,14 +26,14 @@ function VisualEffectClient:SpawnEffects(vfxName, target, sourceUnit, conditiona
     if distance >= displayRange then
         return
     end
-
+    
     if ActiveVisualEffects[VFX_ID] then
         if runFunction then
             ActiveVisualEffects[VFX_ID].Instance:RunFunction(target, sourceUnit, conditionalData)
         end
         return
     end
-
+    
     local VFX_Instance
     if VisualEffectData[vfxName] and not runFunction then
         VFX_Instance = VisualEffectData[vfxName]:Activate(target, sourceUnit, conditionalData)

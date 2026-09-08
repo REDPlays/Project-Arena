@@ -69,6 +69,22 @@ function PlayerManager:SetColor(player: Player, section, Color)
     PlayerDataManager:SetColor(player, section, Color)
 end
 
+function PlayerManager:SetUIScale(player: Player, scale: number)
+    PlayerDataManager:SetUIScale(player, scale)
+end
+
+function PlayerManager:GetUIScale(player: Player)
+    return PlayerDataManager:GetUIScale(player)
+end
+
+function PlayerManager:SetUIPosition(player: Player, btnName: string, position: UDim2)
+    PlayerDataManager:SetUIPosition(player, btnName, position)
+end
+
+function PlayerManager:GetUIPosition(player: Player, btnName: string)
+    return PlayerDataManager:GetUIPosition(player, btnName)
+end
+
 function PlayerManager:Update(deltaTime)
     
 end

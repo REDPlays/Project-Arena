@@ -9,7 +9,7 @@ local HydroStack = {}
 
 HydroStack.InPassive = {}
 
-local maxStacks = 3
+local maxStacks = 5
 local currTick = 0
 local maxTick = 1
 

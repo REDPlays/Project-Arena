@@ -41,6 +41,11 @@ function SumoStance:DisplayVFX()
     self.stompVFX.CFrame = self.floorCFrame
     self.stompVFX.Transparency = 1
     self.stompVFX.Parent = self.Folder
+
+    self.sfx1 = Sounds.Oni.Stomp:Clone()
+    self.sfx1.Volume = 1
+    self.sfx1._Pitch.Octave = math.random(95,  105) / 100
+    self.sfx1.Parent = self.stompVFX
 end
 
 function SumoStance:RunFunction(target, sourceUnit, conditionalData)
@@ -60,12 +65,14 @@ function SumoStance:Update(deltaTime)
 end
 
 function SumoStance:Stomp()
-    if self.stompVFX then
+    if self.stompVFX and self.sfx1 then
         for _, obj in pairs(self.stompVFX:GetDescendants()) do
             if obj:IsA("ParticleEmitter") then
                 obj:Emit(obj:GetAttribute("EmitCount"))
             end
         end
+
+        self.sfx1:Play()
     end
 end
 

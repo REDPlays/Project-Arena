@@ -28,7 +28,7 @@ function Stunned:AddTarget(target: Model, duration)
         return
     end
 
-    local humanoid = target:FindFirstChild("Humanoid")
+    local humanoid: Humanoid = target:FindFirstChild("Humanoid")
     if not humanoid then
         return
     end
@@ -75,6 +75,7 @@ function Stunned:AddTarget(target: Model, duration)
         currTime = 0,
         stunCount = 1,
         prevSpeed = Stats:GetAttribute("Speed"),
+        prevJump = humanoid.JumpHeight,
         Icon = Icon,
     }
 
@@ -101,6 +102,7 @@ function Stunned:RemoveTarget(target: Model)
 
     if not Stats:GetAttribute("Slowed") then
         humanoid.WalkSpeed = Stunned.InState[target].prevSpeed
+        humanoid.JumpHeight = Stunned.InState[target].prevJump
     end
 
     if Stunned.InState[target] then
@@ -118,6 +120,7 @@ function Stunned:Update(deltaTime)
             local humanoid = data.target:FindFirstChild("Humanoid")
             if humanoid and humanoid.Health > 0 then
                 humanoid.WalkSpeed = 0
+                humanoid.JumpHeight = 0
             end
         end
 

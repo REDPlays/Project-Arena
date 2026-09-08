@@ -80,6 +80,7 @@ function Slow:AddTarget(target: Model, duration, additionalData)
         duration = duration,
         currTime = 0,
         prevSpeed = Stats:GetAttribute("Speed"),
+        prevJump = humanoid.JumpHeight,
         speed = newSpeed,
         Icon = Icon,
     }
@@ -106,6 +107,7 @@ function Slow:RemoveTarget(target: Model)
 
     if not Stats:GetAttribute("Stunned") then
         humanoid.WalkSpeed = Slow.InState[target].prevSpeed
+        humanoid.JumpHeight = Slow.InState[target].prevJump
     end
 
     if Slow.InState[target] then
@@ -129,6 +131,7 @@ function Slow:Update(deltaTime)
             if humanoid and humanoid.Health > 0 then
                 if not Stats:GetAttribute("Stunned") then
                     humanoid.WalkSpeed = data.speed
+                    humanoid.JumpHeight = 0
                 end
             end
         end

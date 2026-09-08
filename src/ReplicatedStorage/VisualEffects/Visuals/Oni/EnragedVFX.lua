@@ -70,6 +70,12 @@ function Enrage:Aura()
     self.vfx.CFrame = self.floorCFrame
     self.vfx.Parent = self.Folder
 
+    local sfx1 = Sounds.Oni.Grow:Clone()
+    sfx1.Volume = 1
+    sfx1._Pitch.Octave = math.random(95,  105) / 100
+    sfx1.Parent = self.vfx
+    sfx1:Play()
+
     self.aura = OniVFX.Enraged.Aura:Clone()
     self.aura.Transparency = 1
 

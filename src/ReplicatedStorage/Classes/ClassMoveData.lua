@@ -9,12 +9,14 @@ local Modifiers = {
     ["Knockup"] = false,
     ["noMovement"] = false,
     ["DoubleCooldown"] = false,
+    ["Knockback"] = false,
 
     --status effects
     ["Stunned"] = false,
     ["Burn"] = false,
     ["Slow"] = false,
     ["Silenced"] = false,
+    ["LifeSteal"] = false,
 
     --passives
     ["HydroStack"] = false,

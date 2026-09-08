@@ -3,17 +3,11 @@ local RunService = game:GetService("RunService")
 
 local States = ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("States")
 
-local states = {
-    HealthRegen = require(States:WaitForChild("HealthRegen")),
-    Stunned = require(States:WaitForChild("Stunned")),
-    Blocking = require(States:WaitForChild("Blocking")),
-    Attacked = require(States:WaitForChild("Attacked")),
-    Burn = require(States:WaitForChild("Burn")),
-    Slow = require(States:WaitForChild("Slow")),
-    Knockup = require(States:WaitForChild("Knockup")),
-    Invulnerable = require(States:WaitForChild("Invulnerable")),
-    Silenced = require(States:WaitForChild("Silenced")),
-}
+local states = {}
+
+for _, stateModule in ipairs(States:GetChildren()) do
+    states[stateModule.Name] = require(stateModule)
+end
 
 local StateManager = {}
 
@@ -26,7 +20,7 @@ function StateManager:CheckState(target: Model, currState)
 end
 
 if RunService:IsServer() then
-    function StateManager:AddTarget(target: Model, currState, stateData, additionalData)
+    function StateManager:AddTarget(target: Model, currState: string, stateData, additionalData)
         if not states[currState] then
             return
         end
@@ -40,6 +34,15 @@ if RunService:IsServer() then
         end
 
         states[currState]:RemoveTarget(target)
+    end
+
+    --Only for reflecting state at the moment
+    function StateManager:ReflectAttack(target: Model, currState: string, attacker: Model, attackName: string)
+        if not states[currState] then
+            return
+        end
+
+        states[currState]:ReflectAttack(target, attacker, attackName)
     end
 
     function StateManager:RemoveAll(target: Model)

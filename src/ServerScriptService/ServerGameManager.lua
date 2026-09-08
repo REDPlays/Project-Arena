@@ -9,6 +9,7 @@ local AnimationData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitFor
 local CharacterSelectServer = require(ServerStorage.ServerFiles.Player.CharacterSelect_Server)
 local InputManager = require(ServerStorage.ServerFiles.Player.InputManager)
 local HitboxManager = require(ReplicatedStorage.RepFiles.Combat.HitboxManager)
+local MoveManager = require(ReplicatedStorage.RepFiles.Combat.MoveManager)
 local StateManager = require(ReplicatedStorage.RepFiles.Combat.StateManager)
 local PassiveManager = require(ReplicatedStorage.RepFiles.Combat.PassiveManager)
 local MoveManager = require(ReplicatedStorage.RepFiles.Combat.MoveManager)
@@ -17,6 +18,7 @@ local RoundManager = require(ServerStorage.ServerFiles.RoundManager)
 local PlayerManager = require(ServerStorage.ServerFiles.Player.PlayerManager)
 local LeaderboardManager = require(ServerStorage.ServerFiles.Player.LeaderboardManager)
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local Lobby = workspace.Lobby
 local Dummies = workspace.Dummies
@@ -37,77 +39,99 @@ function ServerGameManager:Init()
 
     LeaderboardManager:Init(ServerGameManager.playerManager)
 
+    ServerGameManager.dummyTimers = {}
     ServerGameManager:ConfigureDummies()
 end
 
 function ServerGameManager:ConfigureDummies()
-    ServerGameManager.dummyTimers = {}
+    local configurations = {
+        [Dummies.AllyDummy] = {
+            Class = "AngelKnight",
+            MoveType = "LMBMove",
+            currentMove = "M1",
+            currTime = 0,
+            maxTime = 1,
+            MoveCount = 0,
+            Disabled = true,
+            Team = "Ally",
+        },
+
+        [Dummies.Dummy1] = {
+            Class = "AngelKnight",
+            MoveType = "LMBMove",
+            currentMove = "M1",
+            currTime = 0,
+            maxTime = 0.5,
+            MoveCount = 0,
+            Disabled = false,
+            Team = "Dummy",
+        },
+
+        [Dummies.Dummy2] = {
+            Class = "Pyromancer",
+            MoveType = "LMBMove",
+            currentMove = "M1",
+            currTime = 0,
+            maxTime = 0.5,
+            MoveCount = 0,
+            Disabled = false,
+            Team = "Dummy",
+        },
+
+        [Dummies.Dummy3] = {
+            Class = "Ranger",
+            MoveType = "QMove",
+            currentMove = "Piercing Arrow",
+            currTime = 0,
+            maxTime = 3,
+            MoveCount = 0,
+            Disabled = false,
+            Team = "Dummy",
+        },
+
+        [Dummies.Dummy4] = {
+            Class = "Engineer",
+            MoveType = "EMove",
+            currentMove = "Turret",
+            currTime = 0,
+            maxTime = 16,
+            MoveCount = 0,
+            Disabled = false,
+            Team = "Dummy",
+        },
+
+        [Dummies.Dummy5] = {
+            Class = "Hydromancer",
+            MoveType = "EMove",
+            currentMove = "Water Bubble",
+            currTime = 0,
+            maxTime = 8,
+            MoveCount = 0,
+            Disabled = false,
+            Team = "Dummy",
+        },
+    }
     
     for _, dummy in pairs(Dummies:GetChildren()) do
         CharacterSelectServer:DummyJoined(dummy)
+
+        if dummy.Name == "AllyDummy" then
+            dummy:SetAttribute("DummyAlly", true)
+        end
+
+        if configurations[dummy] and not configurations[dummy].Disabled then
+            ServerGameManager.dummyTimers[dummy] = table.clone(configurations[dummy])
+            ServerGameManager.dummyTimers[dummy].dummy = dummy
+
+            dummy:SetAttribute("CurrentClass", configurations[dummy].Class)
+
+            if configurations[dummy].Team == "Dummy" then
+                dummy:SetAttribute("Team", configurations[dummy].Team)
+            end
+
+            CharacterSelectServer:SetDummy(dummy, configurations[dummy].Class)
+        end
     end
-
-    StateManager:AddTarget(Dummies.DummyBlocker, "Blocking")
-
-    ServerGameManager.dummyTimers[Dummies.DummyAttacker] = {
-        dummy = Dummies.DummyAttacker,
-        currTime = 0,
-        maxTime = .5,
-        type = "Attack"
-    }
-
-    ServerGameManager.dummyTimers[Dummies.DummyStunner] = {
-        dummy = Dummies.DummyStunner,
-        currTime = 0,
-        maxTime = 1.5,
-        type = "Attack"
-    }
-
-    ServerGameManager.dummyTimers[Dummies.DummyBurn] = {
-        dummy = Dummies.DummyBurn,
-        currTime = 0,
-        maxTime = .5,
-        type = "Attack"
-    }
-
-    ServerGameManager.dummyTimers[Dummies.DummySlow] = {
-        dummy = Dummies.DummySlow,
-        currTime = 0,
-        maxTime = .5,
-        type = "Attack"
-    }
-
-    ServerGameManager.dummyTimers[Dummies.DummyKnockup] = {
-        dummy = Dummies.DummyKnockup,
-        currTime = 0,
-        maxTime = .5,
-        type = "Attack"
-    }
-    
-    ServerGameManager.dummyTimers[Dummies.DummySilenced] = {
-        dummy = Dummies.DummySilenced,
-        currTime = 0,
-        maxTime = .5,
-        type = "Attack"
-    }
-
-    ServerGameManager.dummyTimers[Dummies.DummyAllForOne] = {
-        dummy = Dummies.DummyAllForOne,
-        currTime = 0,
-        maxTime = 1.5,
-        type = "Attack"
-    }
-
-    ServerGameManager.dummyTimers[Dummies.DummyAbilities] = {
-        dummy = Dummies.DummyAbilities,
-        currTime = 0,
-        maxTime = 5,
-        type = "Abilities",
-        Class = "Engineer",
-        Ability = "EMove",
-    }
-
-    Dummies.DummyAbilities:SetAttribute("CurrentClass", "Engineer")
 end
 
 function ServerGameManager:ConfigureCharacter(player: Player, character: Model)
@@ -156,9 +180,9 @@ function ServerGameManager:PlayerJoin(player: Player)
     ServerGameManager.playerList[player.UserId] = player
     ServerGameManager.playerCount += 1
 
-    CharacterSelectServer:PlayerJoined(player)
-
     ServerGameManager.playerManager:PlayerJoin(player)
+
+    CharacterSelectServer:PlayerJoined(player)
 
     LeaderboardManager:PlayerJoin(player)
 
@@ -186,6 +210,71 @@ function ServerGameManager:PlayerLeave(player: Player)
     LeaderboardManager:PlayerLeave(player)
 end
 
+local updateRate = 3
+local update = 0
+function ServerGameManager:UpdateDummies(deltaTime: number)
+    update += deltaTime
+    if update >= updateRate then
+        update = 0
+        for dummyId, data in pairs(ServerGameManager.dummyTimers) do
+            if not data.dummy then continue end
+            Events.Server_Client.UpdateDummyMove:FireAllClients(data.dummy, CharacterMoveLibrary.Movesets[data.dummy])
+        end
+    end
+
+    for dummyId, data in pairs(ServerGameManager.dummyTimers) do
+        if not data.dummy then continue end
+        data.currTime += deltaTime
+
+        if data.currTime >= data.maxTime then
+            data.currTime = 0
+
+            data.MoveCount += 1
+            if data.MoveCount > 3 then
+                data.MoveCount = 1
+            end
+
+            local class = data.Class
+            local moveType = data.MoveType
+            local currentMove = data.currentMove
+
+            local anim
+            if moveType == "LMBMove" then
+                anim = AnimationData[class][moveType][data.MoveCount]
+            else
+                anim = AnimationData[class][currentMove]
+            end
+
+            local moveCount
+            if moveType == "LMBMove" then
+                moveCount = data.MoveCount
+            else
+                moveCount = nil
+            end
+
+            local currentClassData = ClassData[class]
+
+            local animation: AnimationTrack = data.dummy.Humanoid.Animator:LoadAnimation(anim)
+
+            local hasEvent = ClassData[class].MoveData[currentMove].hasEvent
+
+            if hasEvent or moveType == "LMBMove" then
+                animation:GetMarkerReachedSignal("Attack"):Once(function()
+                    if moveType == "LMBMove" then
+                        Events.Server_Server.DummyHitbox:Fire(data.dummy, class, moveType, moveCount, currentClassData.MoveData[currentMove])
+                    else
+                        MoveManager:Ability(data.dummy, class, moveType, currentClassData.MoveData[currentMove], currentMove)
+                    end
+                end)
+            else
+                MoveManager:Ability(data.dummy, class, moveType, currentClassData.MoveData[currentMove], currentMove)
+            end
+
+            animation:Play()
+        end
+    end
+end
+
 function ServerGameManager:Update(deltaTime)
     HitboxManager:Update(deltaTime)
     StateManager:Update(deltaTime)
@@ -193,75 +282,11 @@ function ServerGameManager:Update(deltaTime)
     PassiveManager:Update(deltaTime)
     ServerGameManager.playerManager:Update(deltaTime)
     ServerGameManager.characterSelect:Update(deltaTime)
+    ServerGameManager:UpdateDummies(deltaTime)
     LeaderboardManager:Update(deltaTime)
 
     if ServerGameManager.roundManager then
         ServerGameManager.roundManager:Update(deltaTime)
-    end
-
-    for dummyId, data in pairs(ServerGameManager.dummyTimers) do
-        data.currTime += deltaTime
-
-        local isStun = false
-        if data.dummy.Name == "DummyStunner" then
-            isStun = true
-        end
-
-        local isBurn = false
-        if data.dummy.Name == "DummyBurn" then
-            isBurn = true
-        end
-
-        local isSlow = false
-        if data.dummy.Name == "DummySlow" then
-            isSlow = true
-        end
-
-        local isKnockup = false
-        if data.dummy.Name == "DummyKnockup" then
-            isKnockup = true
-        end
-
-        local isSilenced = false
-        if data.dummy.Name == "DummySilenced" then
-            isSilenced = true
-        end
-
-        if data.dummy.Name == "DummyAllForOne" then
-            isStun = true
-            isBurn = true
-            isSlow = true
-            --isKnockup = true
-            isSilenced = true
-        end
-
-        if data.currTime >= data.maxTime and data.type == "Attack" then
-            data.currTime = 0
-
-            local animation: AnimationTrack = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData.Base.DummyAttack)
-            animation:Play()
-
-            HitboxManager:HitboxDebugger(data.dummy, isStun, isBurn, isSlow, isKnockup, isSilenced)
-        elseif data.currTime >= data.maxTime and data.type == "Abilities" then
-            data.currTime = 0
-
-            local animation: AnimationTrack = data.dummy.Humanoid.Animator:LoadAnimation(AnimationData[data.Class][data.Ability])
-            animation:Play()
-
-            local hasEvent = ClassData[data.Class].MoveData[data.Ability].hasEvent
-            if hasEvent then
-                local event
-                event = animation:GetMarkerReachedSignal("Attack"):Connect(function()
-                    if event then
-                        event:Disconnect()
-                    end
-
-                    MoveManager:AbilityNonPlayer(data.dummy, data.Class, data.Ability)
-                end)
-            else
-                MoveManager:AbilityNonPlayer(data.dummy, data.Class, data.Ability)
-            end
-        end
     end
 end
 

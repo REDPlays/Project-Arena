@@ -11,7 +11,7 @@ function Knockup:CheckState(target: Model)
     return Knockup.InState[target]
 end
 
-function Knockup:AddTarget(target: Model, Force)
+function Knockup:AddTarget(target: Model, Force: number)
     if not target then
         return
     end
@@ -57,7 +57,7 @@ function Knockup:AddTarget(target: Model, Force)
     Knockup.InState[target] = {
         target = target,
         duration = duration,
-        currTime = 0,
+        currTime = 0, 
     }
 end
 

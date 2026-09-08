@@ -38,18 +38,30 @@ VisualEffectData["QuickDash"] = require(Visuals:WaitForChild("Shinobi"):WaitForC
 VisualEffectData["ShurikenThrow"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("ShurikenThrowVFX"))
 VisualEffectData["Retreat"] = require(Visuals:WaitForChild("Shinobi"):WaitForChild("RetreatVFX"))
 
+VisualEffectData["OniM1"] = require(Visuals:WaitForChild("Oni"):WaitForChild("OniM1VFX"))
 VisualEffectData["ClubSlam"] = require(Visuals:WaitForChild("Oni"):WaitForChild("ClubSlamVFX"))
 VisualEffectData["SumoRush"] = require(Visuals:WaitForChild("Oni"):WaitForChild("SumoRushVFX"))
 VisualEffectData["Enraged"] = require(Visuals:WaitForChild("Oni"):WaitForChild("EnragedVFX"))
 VisualEffectData["SumoStance"] = require(Visuals:WaitForChild("Oni"):WaitForChild("SumoStanceVFX"))
 
-
 VisualEffectData["WaterBall"] = require(Visuals:WaitForChild("Hydromancer"):WaitForChild("WaterBallVFX"))
+VisualEffectData["WaterWall"] = require(Visuals:WaitForChild("Hydromancer"):WaitForChild("WaterWallVFX"))
+VisualEffectData["WaterBubble"] = require(Visuals:WaitForChild("Hydromancer"):WaitForChild("WaterBubbleVFX"))
+VisualEffectData["Whirlpool"] = require(Visuals:WaitForChild("Hydromancer"):WaitForChild("WhirlpoolVFX"))
 
+VisualEffectData["ReaperM1"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("ReaperM1VFX"))
+VisualEffectData["SoulSlice"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("SoulSliceVFX"))
+VisualEffectData["ReapersCalling"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("ReapersCallingVFX"))
+VisualEffectData["ReapersBlight"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("ReapersBlightVFX"))
+VisualEffectData["GrimReaping"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("GrimReapingVFX"))
+VisualEffectData["Enshroud"] = require(Visuals:WaitForChild("Reaper"):WaitForChild("EnshroudVFX"))
+
+VisualEffectData["IndicatorNumber"] = require(Visuals:WaitForChild("Base"):WaitForChild("IndicatorNumberVFX"))
 VisualEffectData["Damage"] = require(Visuals:WaitForChild("Status"):WaitForChild("Damage"))
 VisualEffectData["Blocked"] = require(Visuals:WaitForChild("Status"):WaitForChild("Blocked"))
 VisualEffectData["Burn"] = require(Visuals:WaitForChild("Status"):WaitForChild("Burn"))
 VisualEffectData["RunningVFX"] = require(Visuals:WaitForChild("Base"):WaitForChild("RunningVFX"))
 VisualEffectData["HydroStack"] = require(Visuals:WaitForChild("Passives"):WaitForChild("HydroStackVFX"))
+VisualEffectData["HealthRegen"] = require(Visuals:WaitForChild("Status"):WaitForChild("HealthRegen"))
 
 return VisualEffectData

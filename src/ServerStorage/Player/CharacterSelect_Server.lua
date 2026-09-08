@@ -5,10 +5,14 @@ local Events = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("
 
 local Assets = ReplicatedStorage.Assets
 local CharacterModels = Assets.CharacterModels
+local CharacterCompanionModels = Assets.CharacterCompanions
 local UI = Assets.UI
 local ColorCode = Assets.ColorCode
 
+local CachedCompanions = workspace.CachedCompanions
+
 local ClassData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassData"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local tick = 0
 local maxTick = 0.5
@@ -89,6 +93,39 @@ function CharacterSelectServer:Setup()
     end
 end
 
+function CharacterSelectServer:SetupCompanion(player, className)
+    if not player then
+        return
+    end
+
+    local currentClassData = ClassData[className]
+    if not currentClassData then
+        return
+    end
+
+    if not currentClassData.HasCompanion then
+        return
+    end
+
+    local companionFile = CharacterCompanionModels:FindFirstChild(className)
+    if not companionFile then
+        return
+    end
+
+    local rigName = player.Name.." Companion"
+
+    local oldCompanion = CachedCompanions:FindFirstChild(rigName)
+    if oldCompanion then
+        oldCompanion:Destroy()
+    end
+
+    local newCompanion: Model = companionFile.Companion:Clone()
+    newCompanion.Name = rigName
+    newCompanion:PivotTo(CFrame.new(0, 0, 0))
+    newCompanion.PrimaryPart.Anchored = true
+    newCompanion.Parent = CachedCompanions
+end
+
 function CharacterSelectServer:DummyJoined(dummy)
     local rootPart = dummy:FindFirstChild("HumanoidRootPart")
     if rootPart then
@@ -115,8 +152,10 @@ function CharacterSelectServer:DummyJoined(dummy)
     Stats:SetAttribute("Slowed", false)
     Stats:SetAttribute("Invulnerable", false)
     Stats:SetAttribute("Silenced", false)
+    Stats:SetAttribute("Reflecting", false)
     
     Stats:SetAttribute("HideUI", false)
+    Stats:SetAttribute("M1", 0)
 
     Stats:SetAttribute("Color1", Color3.fromRGB(255, 255, 255))
     Stats:SetAttribute("Color2", Color3.fromRGB(255, 255, 255))
@@ -153,13 +192,19 @@ function CharacterSelectServer:PlayerJoined(player)
     Stats:SetAttribute("Invulnerable", false)
     Stats:SetAttribute("Silenced", false)
 
-    Stats:SetAttribute("Primary", Color3.fromRGB(99, 95, 98))
-    Stats:SetAttribute("Secondary", Color3.fromRGB(163, 162, 165))
-    Stats:SetAttribute("Energy", Color3.fromRGB(255, 255, 255))
+    Stats:SetAttribute("M1", 0)
 
-    player:SetAttribute("Primary", Color3.fromRGB(99, 95, 98))
-    player:SetAttribute("Secondary", Color3.fromRGB(163, 162, 165))
-    player:SetAttribute("Energy", Color3.fromRGB(255, 255, 255))
+    local PrimaryColor = CharacterSelectServer.playerManager:GetColor(player, "Primary") or Color3.fromRGB(99, 95, 98)
+    local SecondaryColor = CharacterSelectServer.playerManager:GetColor(player, "Secondary") or Color3.fromRGB(163, 162, 165)
+    local EnergyColor = CharacterSelectServer.playerManager:GetColor(player, "Energy") or Color3.fromRGB(163, 162, 165)
+
+    Stats:SetAttribute("Primary", PrimaryColor)
+    Stats:SetAttribute("Secondary", SecondaryColor)
+    Stats:SetAttribute("Energy", EnergyColor)
+
+    player:SetAttribute("Primary", PrimaryColor)
+    player:SetAttribute("Secondary", SecondaryColor)
+    player:SetAttribute("Energy", EnergyColor)
 
     CharacterSelectServer:GiveUI(character, Stats)
 
@@ -370,6 +415,64 @@ function CharacterSelectServer:CheckClass(player, className)
     return
 end
 
+function CharacterSelectServer:SetDummy(dummy: Model, className)
+    local classFile = CharacterModels:FindFirstChild(className)
+    if not classFile then
+        return
+    end
+
+    CharacterMoveLibrary.Movesets[dummy] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = CharacterMoveLibrary.BaseMovesets[className].QMove,
+        ["EMove"] = CharacterMoveLibrary.BaseMovesets[className].EMove,
+        ["FMove"] = CharacterMoveLibrary.BaseMovesets[className].FMove,
+    }
+
+    --Equip Appearance
+    local Folder = Instance.new("Folder")
+    Folder.Name = "Appearance"
+    Folder.Parent = dummy
+
+    for _, obj in pairs(dummy:GetChildren()) do
+        if obj:IsA("BasePart") then
+            local piece = classFile:FindFirstChild(obj.Name)
+            if not piece then continue end
+
+            piece = piece:Clone()
+            piece.PrimaryPart.Transparency = 1
+            piece.Parent = Folder
+            piece.PrimaryPart.CFrame = obj.CFrame
+
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = piece.PrimaryPart
+            weld.Part1 = obj
+            weld.Parent = weld.Part0
+        end
+    end
+
+    --Equip Gear
+    local gear = classFile.Gear:Clone()
+    gear.Handle1.CFrame = dummy:WaitForChild("Left Arm").CFrame * CFrame.new(0, -1, 0)
+    gear.Handle2.CFrame = dummy:WaitForChild("Right Arm").CFrame * CFrame.new(0, -1, 0)
+    gear.Handle1.Transparency = 1
+    gear.Handle2.Transparency = 1
+    gear.Parent = dummy
+
+    local leftHandle = Instance.new("Motor6D")
+    leftHandle.Name = "leftHandle"
+    leftHandle.Part0 = dummy:WaitForChild("Left Arm")
+    leftHandle.Part1 = gear.Handle1
+    leftHandle.C0 = CFrame.new(0, -1, 0)
+    leftHandle.Parent = leftHandle.Part0
+
+    local rightHandle = Instance.new("Motor6D")
+    rightHandle.Name = "rightHandle"
+    rightHandle.Part0 = dummy:WaitForChild("Right Arm")
+    rightHandle.Part1 = gear.Handle2
+    rightHandle.C0 = CFrame.new(0, -1, 0)
+    rightHandle.Parent = rightHandle.Part0
+end
+
 function CharacterSelectServer:SetCharacter(player, group, className)
     local currentClass = CharacterSelectServer.ClassList[group][className]
     if not currentClass then
@@ -388,6 +491,19 @@ function CharacterSelectServer:SetCharacter(player, group, className)
     if not classFile then
         return
     end
+
+    if not CharacterMoveLibrary.BaseMovesets[className] then
+        warn(className, "does not have an associated base moveset!!!")
+        return
+    end
+
+    CharacterMoveLibrary.Movesets[player] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = CharacterMoveLibrary.BaseMovesets[className].QMove,
+        ["EMove"] = CharacterMoveLibrary.BaseMovesets[className].EMove,
+        ["FMove"] = CharacterMoveLibrary.BaseMovesets[className].FMove,
+    }
+    Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
     --This way because if someone is somehow stuck but has their class they can step on and teleport still!
     if not isSameClass then
@@ -442,6 +558,11 @@ function CharacterSelectServer:SetCharacter(player, group, className)
         --Set Stats
         CharacterSelectServer:SetStats(player, className)
 
+        --Set Companion(if class has one)
+        CharacterSelectServer:SetupCompanion(player, className)
+
+        Events.Server_Client.Movement:FireClient(player, character, {isNoFalling = true})
+
         if not CharacterSelectServer.hasClass[player] then
             CharacterSelectServer.hasClass[player] = {
                 player = player,
@@ -486,6 +607,14 @@ function CharacterSelectServer:SelectCharacter(player, className, ID)
 
     CharacterSelectServer:SetCharacter(player, group, currentClass)
 
+    CharacterMoveLibrary.Movesets[player] = {
+        ["LMBMove"] = "M1",
+        ["QMove"] = CharacterMoveLibrary.BaseMovesets[className].QMove,
+        ["EMove"] = CharacterMoveLibrary.BaseMovesets[className].EMove,
+        ["FMove"] = CharacterMoveLibrary.BaseMovesets[className].FMove,
+    }
+    Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
+
     if currentClass then
         return true
     else
@@ -510,8 +639,6 @@ function CharacterSelectServer:SendToTraining(character)
 end
 
 function CharacterSelectServer:SendToWaiting(character)
-    
-
     character:PivotTo(CharacterSelectServer.Teleporter.CFrame * CFrame.new(0, 1, 0))
 end
 
@@ -750,7 +877,38 @@ local function SelectCharacter(player, className, ID)
     return CharacterSelectServer:SelectCharacter(player, className, ID)
 end
 
+local function SetUI(player: Player, UIType: string, ...)
+    local args = {...}
+
+    if UIType == "UIPosition" then
+        local btnName = args[1]
+        local position = args[2]
+
+        CharacterSelectServer.playerManager:SetUIPosition(player, btnName, position)
+    elseif UIType == "UIScale" then
+        local scale = args[1]
+
+        CharacterSelectServer.playerManager:SetUIScale(player, scale)
+    end
+end
+
+local function GetUI(player: Player, UIType: string, ...)
+    local args = {...}
+
+    if UIType == "UIPosition" then
+        local btnName = args[1]
+
+        return CharacterSelectServer.playerManager:GetUIPosition(player, btnName)
+    elseif UIType == "UIScale" then
+        return CharacterSelectServer.playerManager:GetUIScale(player)
+    else
+        return
+    end
+end
+
 Events.Client_Server.CharacterSelect.OnServerInvoke = SelectCharacter
 Events.Client_Server.SelectColor.OnServerEvent:Connect(SelectColor)
+Events.Client_Server.SetUI.OnServerEvent:Connect(SetUI)
+Events.Client_Server.GetUI.OnServerInvoke = GetUI
 
 return CharacterSelectServer

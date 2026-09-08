@@ -108,11 +108,11 @@ function ShinobiM1:Hit(target)
     weld.Part1 = targetRoot
     weld.Parent = weld.Part0
 
-    self.sfx2 = Sounds.Base.SwordHit:Clone()
-    self.sfx2.Volume = .25
-    self.sfx2._Pitch.Octave = math.random(95,  105) / 100
-    self.sfx2.Parent = HitVFX
-    self.sfx2:Play()
+    local sfx2 = Sounds.Base.SwordHit:Clone()
+    sfx2.Volume = .25
+    sfx2._Pitch.Octave = math.random(95,  105) / 100
+    sfx2.Parent = HitVFX
+    sfx2:Play()
 
     for _, particle in pairs(HitVFX:GetDescendants()) do
         if particle:IsA("ParticleEmitter") then

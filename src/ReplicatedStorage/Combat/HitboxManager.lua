@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
@@ -13,6 +14,7 @@ local StateManager
 local HealthManager
 local PassiveManager
 local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("VisualEffects"):WaitForChild("VisualEffectServer"))
+local CharacterMoveLibrary = require(ReplicatedStorage.RepFiles.Player.CharacterMoveLibrary)
 
 local CombatFiles = ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat")
 local PassiveFiles = CombatFiles:WaitForChild("Passives")
@@ -28,24 +30,47 @@ if RunService:IsServer() then
     PassiveManager = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Combat"):WaitForChild("PassiveManager"))
 end
 
+local ReflectionWhiteList = {
+    ["Triple Fire Ball"] = true,
+    ["Turret"] = true,
+}
+
 local HitboxManager = {}
 HitboxManager.projectiles = {}
 
-function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, target: Model, attacker: Model)
+local function predictPosition(part: BasePart, timeInterval)
+    return part.Position + part.AssemblyLinearVelocity * timeInterval
+end
+
+function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, target: Model, attacker: Model, additionalData: {})
     for mod, enabled in pairs(moveData) do
         if enabled then
             local isStatus = StatusFiles:FindFirstChild(mod)
             local isPassive = PassiveFiles:FindFirstChild(mod)
 
             if isStatus then
-                StateManager:AddTarget(
-                    target, 
-                    mod, 
-                    moveDataDurations[mod] or 1
-                )
+                if mod == "LifeSteal" then
+                    local modAdditional = additionalData and additionalData[mod] or {}
+                    modAdditional.target = target
+
+                    StateManager:AddTarget(
+                        attacker,
+                        mod,
+                        moveDataDurations[mod],
+                        modAdditional
+                    )
+                else
+                    StateManager:AddTarget(
+                        target, 
+                        mod, 
+                        moveDataDurations[mod] or 1,
+                        additionalData
+                    )
+                end
             end
 
             if isPassive then
+                --can check if the mod is stackable?
                 if mod == "HydroStack" then
                     PassiveManager:AddStack(attacker, mod, {})
                 end
@@ -54,190 +79,112 @@ function HitboxManager:CheckModifiers(moveData: {}, moveDataDurations: {}, targe
     end
 end
 
-function HitboxManager:HitboxDebugger(character, isStun, isBurn, isSlow, isKnockup, isSilenced)
-    local currentClassData = ClassData["Base"]
-    if not currentClassData then
-        return
+function HitboxManager:CheckReflecting(attacker: Model, target: Model, attackerClass, moveType: string, currentMove: string, moveCount: number, alreadyReflected: boolean)
+    local canReflect = false
+
+    if alreadyReflected then
+        return canReflect
     end
 
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
-    if not rootPart then
-        return
+    if not StateManager:CheckState(target, "Reflecting") then
+        return canReflect
     end
 
-    local damage = 2
-    if character.Name == "DummyAttacker" then
-        damage = 10
+    local attackerRoot = attacker:FindFirstChild("HumanoidRootPart")
+    if not attackerRoot then return end
+
+    local targetRoot = target:FindFirstChild("HumanoidRootPart")
+    if not targetRoot then return end
+
+    if attackerClass.MoveData[currentMove].isProjectile and (moveType == "LMBMove" or ReflectionWhiteList[currentMove]) then
+        canReflect = true
+
+        local attackerCFrame = attackerRoot.CFrame
+        local targetCFrame = targetRoot.CFrame
+        local direction: Vector3 = (predictPosition(attackerRoot, 0.25) - targetCFrame.Position).Unit
+
+        local reflectCFrame = CFrame.new(targetRoot.Position, targetRoot.Position + direction)
+
+        HitboxManager:HitboxProjectile(target, attackerClass.ClassName, moveType, moveCount, nil, {
+            reflecting = true,
+            spawnCFrame = reflectCFrame,
+            currentMove = currentMove,
+        })
+    else
+        canReflect = true
     end
 
-    local placementCFrame = character:GetPivot() * currentClassData.Hitboxes["LMBMove"].Offset
-
-    local hitboxLifeTime = .5
-
-    local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
-    Hitbox.Transparency = 1
-    if ShowHitboxes then
-        Hitbox.Transparency = .5
-    end
-
-    Hitbox.Size = currentClassData.Hitboxes["LMBMove"].Size
-    Hitbox.CFrame = placementCFrame
-    Hitbox.Parent = IgnoreFolder
-    Debris:AddItem(Hitbox, .25)
-
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = Hitbox
-    weld.Part1 = rootPart
-    weld.Parent = weld.Part0
-
-    local alreadyHit = {}
-
-    local hitDetect = coroutine.create(function()
-        while true do
-            if not Hitbox then
-                break
-            end
-
-            local touched = Hitbox.Touched:Connect(function() end)
-            local touchedObjects = Hitbox:GetTouchingParts()
-
-            if touched then
-                touched:Disconnect()
-            end
-
-            for i=1, #touchedObjects do
-                local object = touchedObjects[i]
-                local parent = object.Parent
-
-                if not parent:IsA("Model") then
-                    continue
-                end
-
-                if parent == character then
-                    continue
-                end
-
-                --ignoreTargets
-                if CollectionService:HasTag(parent, "Ignore") or CollectionService:HasTag(parent, "Dummies") then
-                    continue
-                end
-
-                if CollectionService:HasTag(parent, "Invulnerable") then
-                    continue
-                end
-
-                local enemyHum = parent:FindFirstChild("Humanoid")
-                if not enemyHum then
-                    continue
-                end
-
-                local enemyRoot = parent:FindFirstChild("HumanoidRootPart")
-                if not enemyRoot then
-                    continue
-                end
-
-                if alreadyHit[parent.Name] then
-                    continue
-                end
-
-                local Stats = parent:FindFirstChild("Stats")
-                if not Stats then
-                    continue
-                end
-
-                local isUserStun = StateManager:CheckState(character, "Stunned")
-                if isUserStun then
-                    return
-                end
-
-                local myTeam = character:GetAttribute("Team")
-                local theirTeam = parent:GetAttribute("Team")
-
-                if (myTeam and theirTeam) and myTeam == theirTeam then
-                    continue
-                end
-
-                alreadyHit[parent.Name] = true
-
-                local isBlocking = StateManager:CheckState(parent, "Blocking")
-                if isBlocking then
-                    --Block Indication
-                    HealthManager:Block(parent, damage, character)
-                    continue
-                end
-
-                if isStun then
-                    StateManager:AddTarget(parent, "Stunned", 1)
-                end
-
-                if isBurn then
-                    StateManager:AddTarget(parent, "Burn", 3)
-                end
-
-                if isSlow then
-                    StateManager:AddTarget(parent, "Slow", 2)
-                end
-
-                if isKnockup then
-                    StateManager:AddTarget(parent, "Knockup", 50)
-                end
-
-                if isSilenced then
-                    StateManager:AddTarget(parent, "Silenced", 2)
-                end
-
-                StateManager:AddTarget(parent, "Attacked", 1)
-
-                HealthManager:Damage(parent, damage, character)
-            end
-
-            task.wait()
-        end
-    end)
-
-    coroutine.resume(hitDetect)
-
-    task.delay(hitboxLifeTime, function()
-        if hitDetect then
-            coroutine.close(hitDetect)
-        end
-    end)
+    return canReflect
 end
 
-function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, conditionalData)
+function HitboxManager:HitboxCreateMove(player: Player | Model, class, moveType, moveCount, conditionalData, ignoreList)
+    conditionalData = conditionalData or {}
+    conditionalData.conditionalData = conditionalData.conditionalData or {}
+
+    ignoreList = ignoreList or {}
+
     local currentClass = player:GetAttribute("CurrentClass")
-    if currentClass ~= class then
+    if currentClass ~= class and not conditionalData.reflecting then
         warn("Wrong Class Equipped")
         return
     end
-
+    
     local currentClassData = ClassData[class]
     if not currentClassData then
         return
     end
+    
+    local character = nil
+    if player:IsA("Model") then
+        character = player
+        player = Players:GetPlayerFromCharacter(character) or character
 
-    local character = player.Character
+        if conditionalData.isCompanion then
+            player = conditionalData.player
+        end
+    else
+        character = player.Character
+    end
+    
     if not character then
         return
     end
-
+    
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
         return
     end
-
+    
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
         return
     end
-
+    
+    if not CharacterMoveLibrary.Movesets[player] then
+        return
+    end
+    
+    local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
+    if not currentMove then
+        return
+    end
+    
     local isAwakened = Stats:GetAttribute("Awakened")
 
     local damage = 1
     if not moveCount then
-        damage = currentClassData.DamageList[moveType]
+        damage = currentClassData.DamageList[currentMove]
+
+        Stats:SetAttribute("M1", 0)
     else
-        damage = currentClassData.DamageList[moveType][moveCount]
+        damage = currentClassData.DamageList[currentMove][moveCount]
+
+        Stats:SetAttribute("M1", moveCount)
+    end
+
+    local damageBoost = Stats:GetAttribute("DamageBoost")
+    if damageBoost then
+        damage = damage * damageBoost
     end
 
     local VisualID = character.Name.." "..HttpService:GenerateGUID(false)
@@ -255,19 +202,19 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
     local HitboxSize
 
     if not isAwakened then
-        Offset = currentClassData.Hitboxes[moveType].Offset
-        HitboxSize = currentClassData.Hitboxes[moveType].Size
+        Offset = currentClassData.Hitboxes[currentMove].Offset
+        HitboxSize = currentClassData.Hitboxes[currentMove].Size
     elseif isAwakened then
-        if currentClassData.Hitboxes[moveType].Offset2 then
-            Offset = currentClassData.Hitboxes[moveType].Offset2
+        if currentClassData.Hitboxes[currentMove].Offset2 then
+            Offset = currentClassData.Hitboxes[currentMove].Offset2
         else
-            Offset = currentClassData.Hitboxes[moveType].Offset
+            Offset = currentClassData.Hitboxes[currentMove].Offset
         end
 
-        if currentClassData.Hitboxes[moveType].Size2 then
-            HitboxSize = currentClassData.Hitboxes[moveType].Size2
+        if currentClassData.Hitboxes[currentMove].Size2 then
+            HitboxSize = currentClassData.Hitboxes[currentMove].Size2
         else
-            HitboxSize = currentClassData.Hitboxes[moveType].Size
+            HitboxSize = currentClassData.Hitboxes[currentMove].Size
         end
     end
 
@@ -277,7 +224,7 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
 
     local placementCFrame = character:GetPivot() * Offset
 
-    local hitboxLifeTime = .5
+    local hitboxLifeTime = .35
 
     local Hitbox: BasePart = Hitboxes.Hitbox:Clone()
     Hitbox.Transparency = 1
@@ -319,6 +266,11 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
                 end
         
                 if parent == character then
+                    continue
+                end
+
+                --ignore Targets in IgnoreList
+                if table.find(ignoreList, parent) then
                     continue
                 end
         
@@ -371,12 +323,18 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
                     continue
                 end
 
+                local isReflecting = HitboxManager:CheckReflecting(character, parent, currentClassData, moveType, currentMove, moveCount, conditionalData.conditionalData.reflecting)
+                if isReflecting and not conditionalData.reflecting then
+                    break
+                end
+
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    currentClassData.MoveData[moveType],
-                    currentClassData.MoveDataDurations[moveType],
+                    currentClassData.MoveData[currentMove],
+                    currentClassData.MoveDataDurations[currentMove],
                     parent, 
-                    character
+                    character,
+                    currentClassData.MoveDataAdditional and currentClassData.MoveDataAdditional[currentMove]
                 )
         
                 VisualEffectServer:SpawnEffectsInRange(
@@ -407,47 +365,76 @@ function HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, cond
     end)
 end
 
-function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet, conditionalData)
+function HitboxManager:HitboxProjectile(player: Player | Model, class, moveType, moveCount, offSet, conditionalData, ignoreList)
+    conditionalData = conditionalData or {}
+
+    ignoreList = ignoreList or {}
+    
     local currentClass = player:GetAttribute("CurrentClass")
-    if currentClass ~= class then
+    if currentClass ~= class and not conditionalData.reflecting then
         warn("Wrong Class Equipped")
         return
     end
-
+    
     local currentClassData = ClassData[class]
     if not currentClassData then
         return
     end
-
+    
     local character = nil
     if player:IsA("Model") then
         character = player
+        player = Players:GetPlayerFromCharacter(character) or character
+
+        if conditionalData.isCompanion then
+            player = conditionalData.player
+        end
     else
         character = player.Character
     end
+    
     if not character then
         return
     end
 
+    
+    if not character then
+        return
+    end
+    
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
         return
     end
-
-    conditionalData = conditionalData or {}
+    
+    if not CharacterMoveLibrary.Movesets[player] then
+        return
+    end
+    
+    local currentMove: string = CharacterMoveLibrary.Movesets[player][moveType]
+    if not currentMove then
+        return
+    end
+    
+    if conditionalData.reflecting then
+        currentMove = conditionalData.currentMove or currentMove
+    end
 
     local projectileId = player.Name..HttpService:GenerateGUID(false)
 
     local projectileData = {
+        player = player,
         ID = projectileId,
         character = character,
         speed = currentClassData.ProjectileSpeed or 50,
         duration = currentClassData.ProjectileDuration or 1,
         classData = currentClassData,
         moveType = moveType,
+        currentMove = currentMove,
         moveCount = moveCount,
         offSet = offSet,
-        conditionalData = conditionalData
+        conditionalData = conditionalData,
+        ignoreList = ignoreList,
     }
 
     HitboxManager.projectiles[projectileId] = projectileData
@@ -456,7 +443,7 @@ function HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offS
 end
 
 local function HitboxCreateMove(player, class, moveType, moveCount, moveData, conditionalData)
-    if moveData.isProjectile then
+    if moveData.isProjectile and moveType == "LMBMove" then
         if not moveData.isMultiShot then
             HitboxManager:HitboxProjectile(player, class, moveType, moveCount, conditionalData)
         elseif moveData.isMultiShot then
@@ -473,56 +460,69 @@ local function HitboxCreateMove(player, class, moveType, moveCount, moveData, co
                 task.wait(currentClassData.ShotDelay)
             end
         end
-    elseif moveData.isAOE then
-        warn("AOE")
     else
         HitboxManager:HitboxCreateMove(player, class, moveType, moveCount, conditionalData)
     end
 end
 
-local function ProjectileHitboxTarget(player, target, classData, moveType, moveCount, projectileId)
+local function ProjectileHitboxTarget(player, target, classData, moveType, currentMove, moveCount, projectileId, projectileData)
     if not HitboxManager.projectiles[projectileId] then
         return
     end
-
+    
     if not target then
         return
     end
 
-    local character = player.Character
+    local character = player.Character == target and projectileData.character or player.Character
     if not character then
         return
     end
 
+    --ignore Targets in IgnoreList
+    if table.find(projectileData.ignoreList, target) then
+        return
+    end
+    
     if character ~= HitboxManager.projectiles[projectileId].character then
         return
     end
-
+    
     local damage = 1
     if not moveCount then
-        damage = classData.DamageList[moveType]
+        damage = classData.DamageList[currentMove]
     else
-        damage = classData.DamageList[moveType][moveCount]
+        damage = classData.DamageList[currentMove][moveCount]
     end
 
     local Stats = target:FindFirstChild("Stats")
     if not Stats then
         return
     end
-
+    
     local isUserStun = StateManager:CheckState(character, "Stunned")
     if isUserStun then
         return
     end
-
+    
     if CollectionService:HasTag(target, "Invulnerable") then
         return
     end
 
+    local damageBoost = Stats:GetAttribute("DamageBoost")
+    if damageBoost then
+        damage = damage * damageBoost
+    end
+    
     local isBlocking = StateManager:CheckState(target, "Blocking")
     if isBlocking then
         --Block Indication
         HealthManager:Block(target, damage, character)
+        return
+    end
+    
+    local isReflecting = HitboxManager:CheckReflecting(character, target, classData, moveType, currentMove, moveCount, projectileData.conditionalData.reflecting)
+    if isReflecting and not projectileData.reflecting then
         return
     end
 
@@ -535,10 +535,11 @@ local function ProjectileHitboxTarget(player, target, classData, moveType, moveC
 
     --check modifiers
     HitboxManager:CheckModifiers(
-        classData.MoveData[moveType],
-        classData.MoveDataDurations[moveType],
+        classData.MoveData[currentMove],
+        classData.MoveDataDurations[currentMove],
         target, 
-        character
+        character,
+        classData.MoveDataAdditional and classData.MoveDataAdditional[currentMove]
     )
 
     StateManager:AddTarget(target, "Attacked", 1)
@@ -550,12 +551,13 @@ local function HitboxProjectile(player, class, moveType, moveCount, offSet, cond
     HitboxManager:HitboxProjectile(player, class, moveType, moveCount, offSet, conditionalData)
 end
 
-function HitboxManager:Update(deltaTime)
+function HitboxManager:Update(deltaTime: number)
     ShowHitboxes = workspace:GetAttribute("ShowHitboxes")
 end
 
 Events.Client_Server.Hitbox.OnServerEvent:Connect(HitboxCreateMove)
 Events.Client_Server.ProjectileTarget.OnServerEvent:Connect(ProjectileHitboxTarget)
 Events.Server_Server.Hitbox.Event:Connect(HitboxProjectile)
+Events.Server_Server.DummyHitbox.Event:Connect(HitboxCreateMove)
 
 return HitboxManager

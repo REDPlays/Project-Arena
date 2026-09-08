@@ -2,13 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ClassMoveData = require(ReplicatedStorage:WaitForChild("RepFiles"):WaitForChild("Classes"):WaitForChild("ClassMoveData"))
 
 local WalkSpeeds = {
-    ["Tank"] = 20,
+    ["Tank"] = 22,
     ["Burst"] = 24,
     ["Brawler"] = 24,
     ["Summoner"] = 24,
     ["Marksman"] = 24,
-    ["Support"] = 28,
-    ["Assassin"] = 28,
+    ["Support"] = 26,
+    ["Assassin"] = 26,
 }
 
 local ClassData = {}
@@ -35,6 +35,7 @@ ClassData["Base"] = {
 }
 
 ClassData["AngelKnight"] = {
+    ClassName = "AngelKnight",
     Health = 125,
     Defense = 100,
     Speed = WalkSpeeds.Support,
@@ -42,62 +43,63 @@ ClassData["AngelKnight"] = {
     Cost = 200,
     Description = "Agressive Healer",
     DamageList = {
-        ["LMBMove"] = {8, 8, 8},
-        ["QMove"] = 25,
-        ["EMove"] = 10,
-        ["FMove"] = 5,
+        ["M1"] = {8, 8, 8},
+        ["Holy Beam"] = 25,
+        ["Angelic Charge"] = 10,
+        ["Sun Beam"] = 5,
     },
     Cooldowns = {
-        ["LMBMove"] = .5,
-        ["QMove"] = 7 ,
-        ["EMove"] = 5,
-        ["FMove"] = 10,
+        ["M1"] = 0.5,
+        ["Holy Beam"] = 7,
+        ["Angelic Charge"] = 5,
+        ["Sun Beam"] = 10,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(12, 5, 7),
             Offset = CFrame.new(0, 4, -4),
         },
-        ["QMove"] = {
-            Size = Vector3.new(5, 5, 5),
-            Offset = CFrame.new(0, 2.5, -2.5),
+        ["Holy Beam"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
         },
-        ["EMove"] = {
+        ["Angelic Charge"] = {
             Size = Vector3.new(7, 7, 7),
             Offset = CFrame.new(0, 3.5, 0),
         },
-        ["FMove"] = {
+        ["Sun Beam"] = {
             Size = Vector3.new(6, 6, 20),
             Offset = CFrame.new(0, 3, -12),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"Slow"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"CameraLock"}),
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Holy Beam"] = ClassMoveData:SetupModifiers({}),
+        ["Angelic Charge"] = ClassMoveData:SetupModifiers({"Slow"}),
+        ["Sun Beam"] = ClassMoveData:SetupModifiers({"CameraLock"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {Slow = 2},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Holy Beam"] = {},
+        ["Angelic Charge"] = {Slow = 2},
+        ["Sun Beam"] = {},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Holy Beam"] = {},
+        ["Angelic Charge"] = {},
+        ["Sun Beam"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "AngelKnightM1",
-        ["QMove"] = "HolyBeam",
-        ["EMove"] = "AngelicCharge",
-        ["FMove"] = "SunBeam",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Holy Beam",
-        ["EMove"] = "Angelic Charge",
-        ["FMove"] = "Sun Beam",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
 ClassData["Pyromancer"] = {
+    ClassName = "Pyromancer",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Burst,
@@ -109,62 +111,63 @@ ClassData["Pyromancer"] = {
     ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Fire Connoisseur",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 4,
-        ["EMove"] = 3,
-        ["FMove"] = 20,
+        ["M1"] = {3, 3, 3},
+        ["Triple Fire Ball"] = 4,
+        ["Flame thrower"] = 3,
+        ["Eruption"] = 25,
     },
     Cooldowns = {
-        ["LMBMove"] = .5,
-        ["QMove"] = 3,
-        ["EMove"] = 7,
-        ["FMove"] = 10,
+        ["M1"] = 0.5,
+        ["Triple Fire Ball"] = 3,
+        ["Flame thrower"] = 7,
+        ["Eruption"] = 10,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(4, 4, 4),
             Offset = CFrame.new(0, 0, -2),
         },
-        ["QMove"] = {
+        ["Triple Fire Ball"] = {
             Size = Vector3.new(3, 3, 3),
             Offset = CFrame.new(0, 0, -1),
         },
-        ["EMove"] = {
+        ["Flame thrower"] = {
             Size = Vector3.new(6, 6, 20),
             Offset = CFrame.new(0, 3, -12),
         },
-        ["FMove"] = {
+        ["Eruption"] = {
             Size = Vector3.new(20, 20, 20),
             Offset = CFrame.new(0, 0, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "Burn"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"Burn"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"Burn", "CameraLock"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"Burn"}),
+        ["M1"] = ClassMoveData:SetupModifiers({"isProjectile", "Burn"}),
+        ["Triple Fire Ball"] = ClassMoveData:SetupModifiers({"Burn", "isProjectile"}),
+        ["Flame thrower"] = ClassMoveData:SetupModifiers({"Burn", "CameraLock"}),
+        ["Eruption"] = ClassMoveData:SetupModifiers({"Burn"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {Burn = 3},
-        ["QMove"] = {Burn = 3},
-        ["EMove"] = {Burn = 3},
-        ["FMove"] = {Burn = 3},
+        ["M1"] = {Burn = 3},
+        ["Triple Fire Ball"] = {Burn = 3},
+        ["Flame thrower"] = {Burn = 3},
+        ["Eruption"] = {Burn = 3},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Triple Fire Ball"] = {},
+        ["Flame thrower"] = {},
+        ["Eruption"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "FireBall",
         ["QMove"] = "FireBall",
-        ["EMove"] = "Flamethrower",
-        ["FMove"] = "Eruption",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Triple Fire Ball",
-        ["EMove"] = "Flame thrower",
-        ["FMove"] = "Eruption",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
 ClassData["ShieldWarrior"] = {
+    ClassName = "ShieldWarrior",
     Health = 250,
     Defense = 150,
     Speed = WalkSpeeds.Tank,
@@ -172,46 +175,52 @@ ClassData["ShieldWarrior"] = {
     Cost = 200,
     Description = "Shield Hero",
     DamageList = {
-        ["LMBMove"] = {8, 8, 8},
-        ["QMove"] = 20,
-        ["EMove"] = 25,
-        ["FMove"] = 0,
+        ["M1"] = {8, 8, 8},
+        ["Shield Slam"] = 20,
+        ["Shield Jump"] = 25,
+        ["Colosseum"] = 0,
     },
     Cooldowns = {
-        ["LMBMove"] = .5,
-        ["QMove"] = 3.5,
-        ["EMove"] = 7,
-        ["FMove"] = 15,
+        ["M1"] = 0.5,
+        ["Shield Slam"] = 3.5,
+        ["Shield Jump"] = 7,
+        ["Colosseum"] = 15,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(7, 5, 5),
             Offset = CFrame.new(0, 4, -4),
         },
-        ["QMove"] = {
+        ["Shield Slam"] = {
             Size = Vector3.new(6, 6, 6),
             Offset = CFrame.new(0, 3, -6),
         },
-        ["EMove"] = {
+        ["Shield Jump"] = {
             Size = Vector3.new(5, 20, 20),
             Offset = CFrame.new(0, 2.5, 0) * CFrame.Angles(0, 0, math.rad(-90)),
         },
-        ["FMove"] = {
+        ["Colosseum"] = {
             Size = Vector3.new(20, 20, 20),
             Offset = CFrame.new(0, 0, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Knockup"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Stunned"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement"}),
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Shield Slam"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Knockup"}),
+        ["Shield Jump"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Stunned"}),
+        ["Colosseum"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {Knockup = 50},
-        ["EMove"] = {Stunned = 3},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Shield Slam"] = {Knockup = 50},
+        ["Shield Jump"] = {Stunned = 3},
+        ["Colosseum"] = {},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Shield Slam"] = {},
+        ["Shield Jump"] = {},
+        ["Colosseum"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "ShieldWarriorM1",
@@ -219,15 +228,10 @@ ClassData["ShieldWarrior"] = {
         ["EMove"] = "ShieldJump",
         ["FMove"] = "Colosseum",
     },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Shield Slam",
-        ["EMove"] = "Shield Jump",
-        ["FMove"] = "Colosseum",
-    },
 }
 
 ClassData["Samurai"] = {
+    ClassName = "Samurai",
     ignoreLMBMoveCD = false,
     Health = 150,
     Defense = 100,
@@ -236,66 +240,67 @@ ClassData["Samurai"] = {
     Cost = 200,
     Description = "The way of the blade",
     DamageList = {
-        ["LMBMove"] = {4, 4, 4},
-        ["QMove"] = 15,
-        ["EMove"] = 1,
-        ["FMove"] = 25,
+        ["M1"] = {4, 4, 4},
+        ["Shadow Step"] = 15,
+        ["Rapid Slashes"] = 1,
+        ["Wind Tornado"] = 25,
     },
     Cooldowns = {
-        ["LMBMove"] = .5,
-        ["QMove"] = 10,
-        ["EMove"] = 7,
-        ["FMove"] = 15,
+        ["M1"] = 0.5,
+        ["Shadow Step"] = 10,
+        ["Rapid Slashes"] = 7,
+        ["Wind Tornado"] = 15,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(8, 6, 6),
             Offset = CFrame.new(0, 4, -4),
         },
-        ["QMove"] = {
+        ["Shadow Step"] = {
             Size = Vector3.new(6, 6, 6),
             Offset = CFrame.new(0, 3, -6),
         },
-        ["EMove"] = {
+        ["Rapid Slashes"] = {
             Size = Vector3.new(12, 8, 12),
             Offset = CFrame.new(0, 4, -6),
         },
-        ["FMove"] = {
+        ["Wind Tornado"] = {
             Size = Vector3.new(10, 15, 10),
             Offset = CFrame.new(0, 7.5, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"Slow", "noMovement"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Slow", "Knockup"}),
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Shadow Step"] = ClassMoveData:SetupModifiers({}),
+        ["Rapid Slashes"] = ClassMoveData:SetupModifiers({"Slow", "noMovement"}),
+        ["Wind Tornado"] = ClassMoveData:SetupModifiers({"hasEvent", "Slow", "Knockup"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {Slow = 2},
-        ["FMove"] = {Knockup = 50, Slow = 2},
+        ["M1"] = {},
+        ["Shadow Step"] = {},
+        ["Rapid Slashes"] = {Slow = 2},
+        ["Wind Tornado"] = {Knockup = 50, Slow = 2},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Shadow Step"] = {},
+        ["Rapid Slashes"] = {},
+        ["Wind Tornado"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "SamuraiM1",
-        ["QMove"] = "ShadowStep",
-        ["EMove"] = "RapidSlashes",
-        ["FMove"] = "WindTornado",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Shadow Step",
-        ["EMove"] = "Rapid Slashes",
-        ["FMove"] = "Wind Tornado",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
 ClassData["Engineer"] = {
+    ClassName = "Engineer",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Summoner,
-    ProjectileSpeed = 150,
+    ProjectileSpeed = 100,
     ProjectileDuration = 1,
     Role = "Summoner",
     Cost = 200,
@@ -303,19 +308,19 @@ ClassData["Engineer"] = {
     ShotDelay = 0.1, --delay between shots(based on ammo)
     Description = "Master Mechanic",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 10,
-        ["EMove"] = 1,
-        ["FMove"] = {5, 15},
+        ["M1"] = {3, 3, 3},
+        ["Concussive Mine"] = 10,
+        ["Turret"] = 1,
+        ["Electro Ball"] = {5, 15},
     },
     Cooldowns = {
-        ["LMBMove"] = 1.25,
-        ["QMove"] = 4,
-        ["EMove"] = 20,
-        ["FMove"] = 15,
+        ["M1"] = 1.25,
+        ["Concussive Mine"] = 4,
+        ["Turret"] = 20,
+        ["Electro Ball"] = 15,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = {
                 CFrame.new(0, 1, -3),
@@ -323,16 +328,16 @@ ClassData["Engineer"] = {
                 CFrame.new(0, 1, -3),
             },
         },
-        ["QMove"] = {
-            Size = Vector3.new(1, 1, 1),
+        ["Concussive Mine"] = {
+            Size = Vector3.new(3, 7, 7),
             Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
-        ["EMove"] = {
+        ["Turret"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = CFrame.new(0, 0, -2),
         },
-        ["FMove"] = {
+        ["Electro Ball"] = {
             Size = {
                 Size1 = Vector3.new(8, 8, 8),
                 Size2 = Vector3.new(20, 20, 20),
@@ -341,56 +346,57 @@ ClassData["Engineer"] = {
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned"}),
+        ["M1"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
+        ["Concussive Mine"] = ClassMoveData:SetupModifiers({"hasEvent", "Silenced", "Slow"}),
+        ["Turret"] = ClassMoveData:SetupModifiers({"noMovement", "CameraLock", "isProjectile"}),
+        ["Electro Ball"] = ClassMoveData:SetupModifiers({"noMovement", "Stunned"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {Silenced = 2},
-        ["EMove"] = {},
-        ["FMove"] = {Stunned = 2},
+        ["M1"] = {},
+        ["Concussive Mine"] = {Silenced = 2, Slow = 3},
+        ["Turret"] = {},
+        ["Electro Ball"] = {Stunned = 2},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Concussive Mine"] = {},
+        ["Turret"] = {},
+        ["Electro Ball"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "EngineerM1",
-        ["QMove"] = "ConcussiveBomb",
+        ["QMove"] = "",
         ["EMove"] = "Turret",
-        ["FMove"] = "ElectroBall",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Concussive Bomb",
-        ["EMove"] = "Turret",
-        ["FMove"] = "Electro Ball",
+        ["FMove"] = "",
     },
 }
 
 ClassData["Ranger"] = {
+    ClassName = "Ranger",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Marksman,
-    ProjectileSpeed = 150,
+    ProjectileSpeed = 100,
     ProjectileDuration = 1,
     Role = "Marksman",
     Cost = 200,
-    Ammo = 2, --number of shots per LMB
+    Ammo = 1, --number of shots per LMB
     ShotDelay = 0.1, --delay between shots(based on ammo)
     Description = "Eyes of an Eagle",
     DamageList = {
-        ["LMBMove"] = {5, 5, 5},
-        ["QMove"] = 15,
-        ["EMove"] = 10,
-        ["FMove"] = 10,
+        ["M1"] = {5, 5, 5},
+        ["Piercing Arrow"] = 15,
+        ["Net Trap"] = 20,
+        ["Explosive Arrow"] = 10,
     },
     Cooldowns = {
-        ["LMBMove"] = .75,
-        ["QMove"] = 3,
-        ["EMove"] = 3,
-        ["FMove"] = 10,
+        ["M1"] = 0.75,
+        ["Piercing Arrow"] = 3,
+        ["Net Trap"] = 3,
+        ["Explosive Arrow"] = 10,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(2, 2, 4),
             Offset = {
                 CFrame.new(1, 1, 0.5),
@@ -398,48 +404,49 @@ ClassData["Ranger"] = {
                 CFrame.new(1, 1, 0.5),
             },
         },
-        ["QMove"] = {
+        ["Piercing Arrow"] = {
             Size = Vector3.new(3, 3, 6),
             Offset = CFrame.new(1, 1, 0.5),
         },
-        ["EMove"] = {
-            Size = Vector3.new(2, 2, 2),
+        ["Net Trap"] = {
+            Size = Vector3.new(3, 7, 7),
             Size2 = Vector3.new(15, 15, 15),
             Offset = CFrame.new(0, 0, -1),
         },
-        ["FMove"] = {
+        ["Explosive Arrow"] = {
             Size = Vector3.new(3, 3, 6),
             Size2 = Vector3.new(20, 20, 20),
             Offset = CFrame.new(0, 0, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent", "Stunned"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Burn"}),
+        ["M1"] = ClassMoveData:SetupModifiers({"isProjectile", "isMultiShot"}),
+        ["Piercing Arrow"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "isProjectile"}),
+        ["Net Trap"] = ClassMoveData:SetupModifiers({"hasEvent", "Stunned"}),
+        ["Explosive Arrow"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Burn", "isProjectile"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {Stunned = 2},
-        ["FMove"] = {Burn = 3},
+        ["M1"] = {},
+        ["Piercing Arrow"] = {},
+        ["Net Trap"] = {Stunned = 3},
+        ["Explosive Arrow"] = {Burn = 3},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Piercing Arrow"] = {},
+        ["Net Trap"] = {},
+        ["Explosive Arrow"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "RangerM1",
-        ["QMove"] = "PiercingArrow",
-        ["EMove"] = "NetTrap",
-        ["FMove"] = "ExplosiveArrow",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Piercing Arrow",
-        ["EMove"] = "Net Trap",
-        ["FMove"] = "Explosive Arrow",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
 ClassData["Shinobi"] = {
+    ClassName = "Shinobi",
     ignoreLMBMoveCD = false,
     Health = 125,
     Defense = 100,
@@ -448,62 +455,63 @@ ClassData["Shinobi"] = {
     Cost = 400,
     Description = "Master of the Shadows",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 15,
-        ["EMove"] = 10,
-        ["FMove"] = 25,
+        ["M1"] = {3, 3, 3},
+        ["Quick Dash"] = 15,
+        ["Shuriken Throw"] = 10,
+        ["Retreat"] = 25,
     },
     Cooldowns = {
-        ["LMBMove"] = .4,
-        ["QMove"] = 10,
-        ["EMove"] = 15,
-        ["FMove"] = {0.25, 15},
+        ["M1"] = 0.4,
+        ["Quick Dash"] = 10,
+        ["Shuriken Throw"] = 15,
+        ["Retreat"] = {0.25, 15},
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(8, 6, 6),
             Offset = CFrame.new(0, 4, -4),
         },
-        ["QMove"] = {
+        ["Quick Dash"] = {
             Size = Vector3.new(7, 7, 7),
             Offset = CFrame.new(0, 3.5, 0),
         },
-        ["EMove"] = {
+        ["Shuriken Throw"] = {
             Size = Vector3.new(8, 8, 12),
             Offset = CFrame.new(0, 4, -6),
         },
-        ["FMove"] = {
+        ["Retreat"] = {
             Size = Vector3.new(10, 15, 10),
             Offset = CFrame.new(0, 7.5, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({"Slow"}),
-        ["EMove"] = ClassMoveData:SetupModifiers({"hasEvent"}),
-        ["FMove"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Quick Dash"] = ClassMoveData:SetupModifiers({"Slow"}),
+        ["Shuriken Throw"] = ClassMoveData:SetupModifiers({"hasEvent"}),
+        ["Retreat"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {Slow = 2},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Quick Dash"] = {Slow = 2},
+        ["Shuriken Throw"] = {},
+        ["Retreat"] = {},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Quick Dash"] = {},
+        ["Shuriken Throw"] = {},
+        ["Retreat"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "ShinobiM1",
-        ["QMove"] = "QuickDash",
-        ["EMove"] = "ShurikenThrow",
-        ["FMove"] = "Retreat",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Quick Dash",
-        ["EMove"] = "Shuriken Throw",
-        ["FMove"] = "Retreat",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
 ClassData["Oni"] = {
+    ClassName = "Oni",
     ignoreLMBMoveCD = false,
     Health = 175,
     Defense = 100,
@@ -512,70 +520,80 @@ ClassData["Oni"] = {
     Cost = 400,
     Description = "The strongest of warriors",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = {15, 30},
-        ["EMove"] = {20, 10},
-        ["FMove"] = 25,
+        ["M1"] = {3, 3, 3},
+        ["Club Slam"] = {15, 30},
+        ["Sumo Rush"] = 20,
+        ["Sumo Stance"] = 10,
+        ["Enraged"] = 25,
     },
     Cooldowns = {
-        ["LMBMove"] = .4,
-        ["QMove"] = 5,
-        ["EMove"] = {15, 15},
-        ["FMove"] = 40,
+        ["M1"] = 0.4,
+        ["Club Slam"] = 5,
+        ["Sumo Rush"] = 15,
+        ["Sumo Stance"] = 15,
+        ["Enraged"] = 40,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(8, 6, 6),
             Size2 = Vector3.new(12, 9, 9),
             Offset = CFrame.new(0, 4, -4),
             Offset2 = CFrame.new(0, 4.5, -5)
         },
-        ["QMove"] = {
+        ["Club Slam"] = {
             Size = Vector3.new(7, 7, 14),
             Offset = CFrame.new(0, 3.5, -7),
         },
-        ["EMove"] = {
+        ["Sumo Rush"] = {
             Size = Vector3.new(8, 16, 16),
             Offset = CFrame.new(0, 2, 0),
         },
-        ["FMove"] = {
+        ["Sumo Stance"] = {
             Size = Vector3.new(10, 15, 10),
             Offset = CFrame.new(0, 7.5, 0),
         },
+        ["Enraged"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
+        },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = {
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Club Slam"] = {
             ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow"}),
             ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow", "Knockup"})
         },
-        ["EMove"] = {
-            ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
-            ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"})
-        },
-        ["FMove"] = ClassMoveData:SetupModifiers({"noMovement"}),
+        ["Sumo Rush"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
+        ["Sumo Stance"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
+        ["Enraged"] = ClassMoveData:SetupModifiers({"noMovement"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {{Slow = 3}, {Slow = 3, Knockup = 50}},
-        ["EMove"] = {{Knockup = 35}, {Knockup = 70}},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Club Slam"] = {
+            {Slow = 3,},
+            {Slow = 3, Knockup = 50,},
+        },
+        ["Sumo Rush"] = {Knockup = 35},
+        ["Sumo Stance"] = {Knockup = 70},
+        ["Enraged"] = {},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Club Slam"] = {},
+        ["Sumo Rush"] = {},
+        ["Sumo Stance"] = {},
+        ["Enraged"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "OniM1",
-        ["QMove"] = "ClubSlam",
-        ["EMove"] = {"SumoRush", "SumoStanceVFX"},
-        ["FMove"] = "EnragedVFX",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Club Slam",
-        ["EMove"] = {"Sumo Rush", "Sumo Stance"},
-        ["FMove"] = "Enrage",
+        ["QMove"] = "",
+        ["EMove"] = {"", ""},
+        ["FMove"] = "",
     },
 }
 
 ClassData["Judge"] = {
+    ClassName = "Judge",
     ignoreLMBMoveCD = false,
     Health = 100,
     Defense = 100,
@@ -584,129 +602,234 @@ ClassData["Judge"] = {
     Cost = 400,
     Description = "Justice Prevails",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = {15, 30},
-        ["EMove"] = {20, 10},
-        ["FMove"] = 25,
+        ["M1"] = {3, 3, 3},
+        ["Club Slam"] = {15, 30},
+        ["Sumo Rush"] = 20,
+        ["Sumo Stance"] = 10,
+        ["Enraged"] = 25,
     },
     Cooldowns = {
-        ["LMBMove"] = .4,
-        ["QMove"] = 5,
-        ["EMove"] = {15, 15},
-        ["FMove"] = 40,
+        ["M1"] = 0.4,
+        ["Club Slam"] = 5,
+        ["Sumo Rush"] = 15,
+        ["Sumo Stance"] = 15,
+        ["Enraged"] = 40,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(8, 6, 6),
             Size2 = Vector3.new(12, 9, 9),
             Offset = CFrame.new(0, 4, -4),
             Offset2 = CFrame.new(0, 4.5, -5)
         },
-        ["QMove"] = {
+        ["Club Slam"] = {
             Size = Vector3.new(7, 7, 14),
             Offset = CFrame.new(0, 3.5, -7),
         },
-        ["EMove"] = {
+        ["Sumo Rush"] = {
             Size = Vector3.new(8, 16, 16),
             Offset = CFrame.new(0, 2, 0),
         },
-        ["FMove"] = {
+        ["Sumo Stance"] = {
             Size = Vector3.new(10, 15, 10),
             Offset = CFrame.new(0, 7.5, 0),
         },
+        ["Enraged"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
+        },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({}),
-        ["QMove"] = ClassMoveData:SetupModifiers({}),
-        ["EMove"] = ClassMoveData:SetupModifiers({}),
-        ["FMove"] = ClassMoveData:SetupModifiers({}),
+        ["M1"] = ClassMoveData:SetupModifiers({}),
+        ["Club Slam"] = {
+            ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow"}),
+            ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "Slow", "Knockup"})
+        },
+        ["Sumo Rush"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
+        ["Sumo Stance"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Knockup"}),
+        ["Enraged"] = ClassMoveData:SetupModifiers({"noMovement"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Club Slam"] = {
+            {Slow = 3,},
+            {Slow = 3, Knockup = 50,},
+        },
+        ["Sumo Rush"] = {Knockup = 35},
+        ["Sumo Stance"] = {Knockup = 70},
+        ["Enraged"] = {},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Club Slam"] = {},
+        ["Sumo Rush"] = {},
+        ["Sumo Stance"] = {},
+        ["Enraged"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "OniM1",
-        ["QMove"] = "ClubSlam",
-        ["EMove"] = {"SumoRush", "SumoStanceVFX"},
-        ["FMove"] = "EnragedVFX",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Club Slam",
-        ["EMove"] = {"Sumo Rush", "Sumo Stance"},
-        ["FMove"] = "Enrage",
+        ["QMove"] = "",
+        ["EMove"] = {"", ""},
+        ["FMove"] = "",
     },
 }
 
 ClassData["Hydromancer"] = {
+    ClassName = "Hydromancer",
     Health = 100,
     Defense = 100,
     Speed = WalkSpeeds.Support,
-    ProjectileSpeed = 60,
-    ProjectileDuration = 2,
+    ProjectileSpeed = 75,
+    ProjectileDuration = 1,
     Role = "Burst",
     Cost = 200,
     Ammo = 1, --number of shots per LMB
     ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Sustainer of life",
     DamageList = {
-        ["LMBMove"] = {3, 3, 3},
-        ["QMove"] = 4,
-        ["EMove"] = 3,
-        ["FMove"] = 20,
+        ["M1"] = {7, 7, 7},
+        ["Water Wave"] = 4,
+        ["Water Bubble"] = 3,
+        ["Whirlpool"] = 2,
     }, 
     Cooldowns = {
-        ["LMBMove"] = .5,
-        ["QMove"] = 3,
-        ["EMove"] = 7,
-        ["FMove"] = 10,
+        ["M1"] = 0.5,
+        ["Water Wave"] = 3,
+        ["Water Bubble"] = 7,
+        ["Whirlpool"] = 10,
     },
     Hitboxes = {
-        ["LMBMove"] = {
+        ["M1"] = {
             Size = Vector3.new(5, 5, 5),
             Offset = CFrame.new(0, 0, -2),
         },
-        ["QMove"] = {
-            Size = Vector3.new(3, 3, 3),
+        ["Water Wave"] = {
+            Size = Vector3.new(8, 9, 3),
             Offset = CFrame.new(0, 0, -1),
         },
-        ["EMove"] = {
-            Size = Vector3.new(6, 6, 20),
-            Offset = CFrame.new(0, 3, -12),
+        ["Water Bubble"] = {
+            Size = Vector3.new(8, 8, 8),
+            Offset = CFrame.new(0, 3, 0),
         },
-        ["FMove"] = {
+        ["Whirlpool"] = {
             Size = Vector3.new(20, 20, 20),
             Offset = CFrame.new(0, 0, 0),
         },
     },
     MoveData = {
-        ["LMBMove"] = ClassMoveData:SetupModifiers({"isProjectile", "HydroStack"}),
-        ["QMove"] = ClassMoveData:SetupModifiers({}),
-        ["EMove"] = ClassMoveData:SetupModifiers({}),
-        ["FMove"] = ClassMoveData:SetupModifiers({}),
+        ["M1"] = ClassMoveData:SetupModifiers({"isProjectile", "HydroStack"}),
+        ["Water Wave"] = ClassMoveData:SetupModifiers({"Knockback"}),
+        ["Water Bubble"] = ClassMoveData:SetupModifiers({}),
+        ["Whirlpool"] = ClassMoveData:SetupModifiers({"Slow"}),
     },
     MoveDataDurations = {
-        ["LMBMove"] = {},
-        ["QMove"] = {},
-        ["EMove"] = {},
-        ["FMove"] = {},
+        ["M1"] = {},
+        ["Water Wave"] = {Knockback = 50},
+        ["Water Bubble"] = {},
+        ["Whirlpool"] = {Slow = 1},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {},
+        ["Water Wave"] = {},
+        ["Water Bubble"] = {},
+        ["Whirlpool"] = {},
     },
     VisualEffects = {
         ["LMBMove"] = "WaterBall",
-        ["QMove"] = "FireBall",
-        ["EMove"] = "Flamethrower",
-        ["FMove"] = "Eruption",
-    },
-    MoveName = {
-        ["LMBMove"] = "M1",
-        ["QMove"] = "Triple Fire Ball",
-        ["EMove"] = "Flame thrower",
-        ["FMove"] = "Eruption",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
     },
 }
 
+ClassData["Reaper"] = {
+    ClassName = "Reaper",
+    HasCompanion = true,
+    ignoreLMBMoveCD = false,
+    Health = 150,
+    Defense = 100,
+    Speed = WalkSpeeds.Summoner,
+    Role = "Summoner",
+    Cost = 200,
+    Description = "Bringer of Death",
+    DamageList = {
+        ["M1"] = {4, 4, 4},
+        ["Soul Slice"] = 15,
+        ["Reapers Blight"] = 15,
+        ["Reapers Calling"] = 1,
+        ["Grim Reaping"] = 25,
+        ["Enshroud"] = 1,
+    },
+    Cooldowns = {
+        ["M1"] = 0.5,
+        ["Soul Slice"] = 5,
+        ["Reapers Blight"] = 10,
+        ["Reapers Calling"] = 1,
+        ["Grim Reaping"] = 2,
+        ["Enshroud"] = 10,
+    },
+    Hitboxes = {
+        ["M1"] = {
+            Size = Vector3.new(8, 6, 6),
+            Offset = CFrame.new(0, 4, -3),
+            Size2 = Vector3.new(16, 6, 12),
+            Offset2 = CFrame.new(0, 4, -6),
+        },
+        ["Soul Slice"] = {
+            Size = Vector3.new(18, 6, 10),
+            Offset = CFrame.new(0, 3, -4),
+        },
+        ["Reapers Blight"] = {
+            Size = Vector3.new(12, 8, 12),
+            Offset = CFrame.new(0, 4, -6),
+        },
+        ["Reapers Calling"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
+        },
+        ["Grim Reaping"] = {
+            Size = Vector3.new(14, 6, 14),
+            Offset = CFrame.new(0, 3, 0),
+        },
+        ["Enshroud"] = {
+            Size = Vector3.new(0, 0, 0),
+            Offset = CFrame.new(0, 0, 0),
+        },
+    },
+    MoveData = {
+        ["M1"] = ClassMoveData:SetupModifiers({"LifeSteal"}),
+        ["Soul Slice"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "LifeSteal", "hasEvent"}),
+        ["Reapers Blight"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "Burn"}),
+        ["Reapers Calling"] = ClassMoveData:SetupModifiers({"hasEvent", "noMovement", "DoubleCooldown"}),
+        ["Grim Reaping"] = ClassMoveData:SetupModifiers({"DoubleCooldown"}),
+        ["Enshroud"] = ClassMoveData:SetupModifiers({"DoubleCooldown", "noMovement", "hasEvent"})
+    },
+    MoveDataDurations = {
+        ["M1"] = {LifeSteal = 0},
+        ["Soul Slice"] = {LifeSteal = 0},
+        ["Reapers Blight"] = {Burn = 3},
+        ["Reapers Calling"] = {},
+        ["Grim Reaping"] = {},
+        ["Enshroud"] = {},
+    },
+    MoveDataAdditional = {
+        ["M1"] = {
+            LifeSteal = {heal = 0.5},
+        },
+        ["Soul Slice"] = {
+            LifeSteal = {heal = 10},
+        },
+        ["Reapers Blight"] = {},
+        ["Reapers Calling"] = {},
+        ["Grim Reaping"] = {},
+        ["Enshroud"] = {},
+    },
+    VisualEffects = {
+        ["LMBMove"] = "ReaperM1",
+        ["QMove"] = "",
+        ["EMove"] = "",
+        ["FMove"] = "",
+    },
+}
 
 return ClassData

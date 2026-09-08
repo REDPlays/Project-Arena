@@ -134,7 +134,7 @@ function Burn:RemoveTarget(target: Model)
     end
 end
 
-function Burn:Update(deltaTime)
+function Burn:Update(deltaTime: number)
     currTick += deltaTime
     if currTick < maxTick then
         return
@@ -157,7 +157,7 @@ function Burn:Update(deltaTime)
 
         local humanoid = data.target:FindFirstChild("Humanoid")
         if humanoid and humanoid.Health > 0 then
-            HealthManager:Damage(data.target, burnDamage * data.burnCount, nil)
+            HealthManager:Damage(data.target, burnDamage * data.burnCount, nil, {isBurn = true})
         end
     end
 end

@@ -9,7 +9,9 @@ local VisualEffectServer = require(ReplicatedStorage:WaitForChild("RepFiles"):Wa
 
 local HealthManager = {}
 
-function HealthManager:Damage(character, damage, attacker)
+function HealthManager:Damage(character, damage, attacker, conditionalData)
+    conditionalData = conditionalData or {}
+
     local Stats = character:FindFirstChild("Stats")
     if not Stats then
         return
@@ -42,6 +44,19 @@ function HealthManager:Damage(character, damage, attacker)
         character,
         {},
         50
+    )
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "IndicatorNumber",
+        nil,
+        character,
+        {
+            isDamage = true,
+            isHeal = false,
+            isBurn = conditionalData.isBurn,
+            amount = damage,
+        },
+        75
     )
 
     if currentHealth - damage <= 0 then
@@ -90,6 +105,29 @@ function HealthManager:Heal(character, health)
     humanoid.Health = newHealth
     Stats:SetAttribute("Health", humanoid.Health)
     Stats:SetAttribute("MaxHealth", maxHealth)
+
+    if newHealth >= maxHealth then
+        return
+    end
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "HealthRegen",
+        nil,
+        character,
+        {},
+        1000
+    )
+
+    VisualEffectServer:SpawnEffectsInRange(
+        "IndicatorNumber",
+        nil,
+        character,
+        {
+            isHeal = true,
+            amount = health,
+        },
+        75
+    )
 end
 
 return HealthManager

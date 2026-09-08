@@ -66,6 +66,12 @@ function ClubSlam:Slam(spawnCFrame, isAwakened)
     SlamVFX.Transparency = 1
     SlamVFX.Parent = self.Folder
 
+    local sfx1 = Sounds.Oni.ClubSlam:Clone()
+    sfx1.Volume = 1
+    sfx1._Pitch.Octave = math.random(95,  105) / 100
+    sfx1.Parent = SlamVFX
+    sfx1:Play()
+
     for _, particle in pairs(SlamVFX:GetDescendants()) do
         if particle:IsA("ParticleEmitter") then
             if particle:GetAttribute("EmitCount") then
