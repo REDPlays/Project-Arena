@@ -174,16 +174,16 @@ function ClubSlam:Activate(player, character, rootPart, placementCFrame, class, 
                         --check modifiers
                         if not isAwakened then
                             HitboxManager:CheckModifiers(
-                                classData.MoveData[moveType][1],
-                                classData.MoveDataDurations[moveType][1],
+                                classData.MoveData[currentMove][1],
+                                classData.MoveDataDurations[currentMove][1],
                                 parent, 
                                 character
                             )
 
                         elseif isAwakened then
                             HitboxManager:CheckModifiers(
-                                classData.MoveData[moveType][2],
-                                classData.MoveDataDurations[moveType][2],
+                                classData.MoveData[currentMove][2],
+                                classData.MoveDataDurations[currentMove][2],
                                 parent, 
                                 character
                             )

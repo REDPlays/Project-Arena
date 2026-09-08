@@ -49,24 +49,6 @@ function MoveManager:Ability(player: Player | Model, class, moveType, moveData, 
 
     local isAwakened = Stats:GetAttribute("Awakened")
 
-    --[==[
-    if typeof(currentMoveData) == "table" and currentMoveData[1] and currentMoveData[2] then
-        if not isAwakened then
-            currentMoveData = currentMoveData[1]
-
-            --If you have a move that would unawaken you but still be able to be toggled off you can pick and choose which moves are active
-            if CharacterMoveLibrary.Movesets[player] then
-                local activeMoveNumber = CharacterMoveLibrary.Movesets[player][moveType]
-                if activeMoveNumber then
-                    currentMoveData = MoveData[class][moveType][activeMoveNumber]
-                end
-            end
-        else
-            currentMoveData = currentMoveData[2]
-        end
-    end
-    ]==]
-
     local placementCFrame = character:GetPivot() * currentClassData.Hitboxes[currentMove].Offset
     currentMoveData:Activate(player, character, rootPart, placementCFrame, class, currentClassData, moveType, currentMove)
 end

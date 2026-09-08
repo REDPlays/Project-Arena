@@ -125,30 +125,6 @@ function ColorSelectionSystem:BuildColorSliders()
         click.MaxActivationDistance = 75
         click.Parent = button
 
-        --[==[
-        self.connections["Click"..direction] = click.MouseClick:Connect(function()
-            if direction == "Left" then
-                self.groupNum -= 1
-
-                if self.groupNum < 1 then
-                    self.groupNum = #ColorGroups
-                end
-            elseif direction == "Right" then
-                self.groupNum += 1
-
-                if self.groupNum > #ColorGroups then
-                    self.groupNum = 1
-                end
-            end
-
-            self.currentColorGroup = string.upper(ColorGroups[self.groupNum])
-            self.sectionDisplay.Text = self.currentColorGroup
-
-            self.currentDisplay.Color = self.player:GetAttribute(ColorGroups[self.groupNum])
-            self.sectionDisplay.TextColor3 = self.player:GetAttribute(ColorGroups[self.groupNum])
-        end)
-        ]==]
-
         self.connections["Enter"..direction] = click.MouseHoverEnter:Connect(function()
             if not self.canHoldSlider then
                 self.canHoldSlider = true
@@ -192,41 +168,6 @@ function ColorSelectionSystem:BuildColorSliders()
             click.Name = "Click"
             click.MaxActivationDistance = 75
             click.Parent = button
-
-            --[==[
-            self.connections["Slider"..direction..colorSection] = click.MouseClick:Connect(function()
-                local section: "Primary" | "Secondary" | "Energy" = ColorGroups[self.groupNum]
-                local oldColor = self.playerColors[section]
-
-                local NewValues = {
-                    ["R"] = oldColor.R * 255,
-                    ["G"] = oldColor.G * 255,
-                    ["B"] = oldColor.B * 255
-                }
-
-                if NewValues[colorSection] then
-                    if direction == "Left" then
-                        NewValues[colorSection] -= 1
-                        if NewValues[colorSection] < 0 then
-                            NewValues[colorSection] = 255
-                        end
-                    elseif direction == "Right" then
-                        NewValues[colorSection] += 1
-                        if NewValues[colorSection] > 255 then
-                            NewValues[colorSection] = 0
-                        end
-                    end
-                end
-
-                local RGBColor = Color3.fromRGB(
-                    NewValues.R, 
-                    NewValues.G, 
-                    NewValues.B
-                )
-
-                Events.Client_Server.SelectColor:FireServer(section, RGBColor)
-            end)
-            ]==]
 
             self.connections["SliderEnter"..direction.. colorSection] = click.MouseHoverEnter:Connect(function()
                 if not self.canHoldSlider then
@@ -313,19 +254,6 @@ function ColorSelectionSystem:BuildColors()
         click.Parent = colorpart
 
         self.colorConnections[colorpart] = {}
-
-        --[==[self.colorConnections[colorpart].Click = click.MouseClick:Connect(function()
-            local section = ColorGroups[self.groupNum]
-            if section then
-                local RGBColor = Color3.fromRGB(
-                    colordata.color.R * 255, 
-                    colordata.color.G * 255,
-                    colordata.color.B * 255
-                )
-
-                Events.Client_Server.SelectColor:FireServer(section, RGBColor)
-            end
-        end)]==]
 
         self.colorConnections[colorpart].Enter = click.MouseHoverEnter:Connect(function()
             if not self.canHoldSlider then

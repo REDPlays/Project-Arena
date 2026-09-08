@@ -287,7 +287,10 @@ function GameplayUI:Connect()
             if canAttack then
                 self.debounces[moveType] = true
                 local currentClassData = ClassData[self.class]
+                if not currentClassData then return end
+
                 local currentMoveData = currentClassData.MoveData[currentMove]
+                if not currentMoveData then return end
 
                 local animationName = currentMove
                 
@@ -308,7 +311,7 @@ function GameplayUI:Connect()
                     end
                 end
 
-                if typeof(DoubleCooldown) == "table" and DoubleCooldown[1] then
+                if typeof(cooldownDuration) == "table" then
                     if self.character:GetAttribute("DoubleCooldown") == moveType then
                         cooldownDuration = cooldownDuration[2]
                     else
@@ -403,10 +406,6 @@ function GameplayUI:Connect()
         end
     end)
 
-    self.updateNumbers = Events.Server_Client.UpdateMoveNumber.OnClientEvent:Connect(function(moveNames: Moveset)
-        CharacterMoveLibrary.Movesets[self.player] = moveNames
-    end)
-
     local function getTarget() : Model
         local Closest = {math.huge, nil}
         local MousePos = Vector2.new(self.mouse.X, self.mouse.Y)
@@ -471,6 +470,10 @@ function GameplayUI:M1()
     local canAttack = Events.Client_Server.Input:InvokeServer(self.class, "LMBMove", self.LMBs)
     if canAttack then
         local currentClassData = ClassData[self.class]
+        
+        if not CharacterMoveLibrary.Movesets[self.player] then
+            return
+        end
 
         local currentMove: string = CharacterMoveLibrary.Movesets[self.player]["LMBMove"]
         if not currentMove then
@@ -517,6 +520,10 @@ end
 
 function GameplayUI:toggleUICountdown(moveType: string, duration: number)
     if not moveType then
+        return
+    end
+
+    if typeof(duration) ~= "number" then
         return
     end
     
@@ -625,10 +632,6 @@ function GameplayUI:Disconnect()
 
     if self.animationEvent then
         self.animationEvent:Disconnect()
-    end
-
-    if self.updateNumbers then
-        self.updateNumbers:Disconnect()
     end
 end
 

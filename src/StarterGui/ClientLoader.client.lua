@@ -43,7 +43,12 @@ local function UpdateDummyMove(dummy: Model, moveNames: Moveset)
     CharacterMoveLibrary.Movesets[dummy] = moveNames
 end
 
+local function UpdateMoveset(moveNames: Moveset)
+    CharacterMoveLibrary.Movesets[Players.LocalPlayer] = moveNames
+end
+
 Events.Server_Client.PlayerLoaded.OnClientEvent:Connect(PlayerAdded)
 Events.Server_Client.Death.OnClientEvent:Connect(Respawn)
 Events.Server_Client.ReceiveMessage.OnClientEvent:Connect(ServerMessage)
 Events.Server_Client.UpdateDummyMove.OnClientEvent:Connect(UpdateDummyMove)
+Events.Server_Client.UpdateMoveNumber.OnClientEvent:Connect(UpdateMoveset)

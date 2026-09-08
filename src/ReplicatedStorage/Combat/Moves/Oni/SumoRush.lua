@@ -1,3 +1,4 @@
+
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -140,8 +141,8 @@ function SumoRush:Activate(player, character, rootPart, placementCFrame, class, 
 
                 --check modifiers
                 HitboxManager:CheckModifiers(
-                    classData.MoveData[moveType][1],
-                    classData.MoveDataDurations[moveType][1],
+                    classData.MoveData[currentMove],
+                    classData.MoveDataDurations[currentMove],
                     parent, 
                     character
                 )
