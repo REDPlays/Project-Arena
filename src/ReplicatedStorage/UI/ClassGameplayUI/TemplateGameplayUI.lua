@@ -38,14 +38,14 @@ export type Moveset = {
     ["FMove"]: string,
 }
 
-local ReaperGameplayUI = {}
-ReaperGameplayUI.__index = ReaperGameplayUI
-setmetatable(ReaperGameplayUI, GameplayUI)
+local TemplateGameplayUI = {}
+TemplateGameplayUI.__index = TemplateGameplayUI
+setmetatable(TemplateGameplayUI, GameplayUI)
 
-function ReaperGameplayUI.new(player: Player, character: Model, UIController, HUD: ScreenGui, animationSystem, cameraSystem)
+function TemplateGameplayUI.new(player: Player, character: Model, UIController, HUD: ScreenGui, animationSystem, cameraSystem)
     local self = setmetatable(
         GameplayUI.new(player, character, UIController, HUD, animationSystem, cameraSystem), 
-        ReaperGameplayUI
+        TemplateGameplayUI
     )
 
     return self
@@ -264,4 +264,4 @@ function GameplayUI:Connect()
     Events.Server_Client.GetTarget.OnClientInvoke = getTarget
 end
 
-return ReaperGameplayUI
+return TemplateGameplayUI
