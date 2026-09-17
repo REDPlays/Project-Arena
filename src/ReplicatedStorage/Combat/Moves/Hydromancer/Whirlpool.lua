@@ -59,8 +59,8 @@ function Whirlpool:Activate(player, character, rootPart, placementCFrame, class,
         return
     end
 
-    local duration = 5
-    local damageTick = 0.25
+    local duration = 4
+    local damageTick = 0.2
     local TeamHeal = 1
     local healTick = 0.25
 
@@ -70,7 +70,7 @@ function Whirlpool:Activate(player, character, rootPart, placementCFrame, class,
     if hydroStacks and hydroStacks.stack >= 5 then
         maxStacks = true
         damage *= 0.8
-        duration = 7
+        duration = 6
         TeamHeal = 1.25
         damageTick = 0.2
         PassiveManager:ClearStack(character, "HydroStack")

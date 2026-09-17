@@ -1,5 +1,6 @@
 local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local Debris = game:GetService("Debris")
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
@@ -19,8 +20,8 @@ local IgnoreFolder = workspace.Ignore
 local ObstaclesFolder = workspace.Obstacles
 local Dummies = workspace.Dummies
 
-local StartupTime = 2
-local Range = 10
+local StartupTime = 1.5
+local Range = 16
 
 local Eruption = {}
 
@@ -155,8 +156,97 @@ function Eruption:Activate(player, character, rootPart, placementCFrame, class, 
         end
     end
 
+    local function IgniteTargets()
+        local explosionOrigin = rootPart.Position
+
+        local targets = GetTargets(player)
+        for _, target: Model in targets do
+            local targetRoot = target:FindFirstChild("HumanoidRootPart")
+            if targetRoot then
+                local distance = (targetRoot.Position - explosionOrigin).Magnitude
+                if distance < Range then
+                    --ignoreTargets
+                    if CollectionService:HasTag(target, "Ignore") then
+                        continue
+                    end
+
+                    local enemyHum = target:FindFirstChild("Humanoid")
+                    if not enemyHum then
+                        continue
+                    end
+
+                    local enemyRoot = target:FindFirstChild("HumanoidRootPart")
+                    if not enemyRoot then
+                        continue
+                    end
+
+                    if CollectionService:HasTag(target, "Invulnerable") then
+                        continue
+                    end
+
+                    local isUserStun = StateManager:CheckState(character, "Stunned")
+                    if isUserStun then
+                        return
+                    end
+
+                    local myTeam = character:GetAttribute("Team")
+                    local theirTeam = target:GetAttribute("Team")
+
+                    if (myTeam and theirTeam) and myTeam == theirTeam then
+                        continue
+                    end
+
+                    local isBlocking = StateManager:CheckState(target, "Blocking")
+                    if isBlocking then
+                        --Block Indication
+                        HealthManager:Block(target, damage, character)
+                        continue
+                    end
+
+                    --check modifiers
+                    HitboxManager:CheckModifiers(
+                        classData.MoveData[currentMove],
+                        classData.MoveDataDurations[currentMove],
+                        target, 
+                        character
+                    )
+
+                    StateManager:AddTarget(target, "Attacked", 1)
+
+                    HealthManager:Damage(target, damage * 0.1, character)
+                end
+            end
+        end
+    end
+
+    local connection
+    local currentTime = 0
+    local maxHits = 3
+    local _tick = 0
+    local maxTick = StartupTime / maxHits
+    connection = RunService.Heartbeat:Connect(function(deltaTime: number)
+        currentTime += deltaTime
+        _tick += deltaTime
+
+        if currentTime >= StartupTime then
+            if connection then
+                connection:Disconnect()
+            end
+            return
+        end
+
+        if _tick >= maxTick then
+            _tick = 0
+            IgniteTargets()
+        end
+    end)
+
     task.delay(StartupTime, function()
         DetectTargets()
+
+        if connection then
+            connection:Disconnect()
+        end
 
         VisualEffectServer:TerminateVFX(
             "Eruption",

@@ -54,15 +54,25 @@ function Eruption:DisplayVFX()
     self.Folder.Name = "EruptionVFX"
     self.Folder.Parent = workspace.VFX
 
-    self.erupt = PyromancerVFX.Eruption.Eruption3:Clone()
+    self.erupt = PyromancerVFX.Eruption.Eruption:Clone()
     self.erupt.CFrame = self.sourceUnit:GetPivot() + Vector3.new(0, .1, 0)
+    self.erupt.Size = Vector3.new(self.range * 2, 0.1, self.range * 2)
     self.erupt.Transparency = 1
     self.erupt.Anchored = true
     self.erupt.Parent = self.Folder
 
     local newLifetime = NumberRange.new(self.startupTime, self.startupTime)
     self.erupt.Indicator.Floor.Lifetime = newLifetime
+    self.erupt.Indicator.Floor.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(1, self.range + 2)
+    })
+
     self.erupt.Indicator.Floor2.Lifetime = newLifetime
+    self.erupt.Indicator.Floor2.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, self.range + 2),
+        NumberSequenceKeypoint.new(1, self.range + 2)
+    })
 
     self.erupt.Indicator.Floor:Emit(1)
     self.erupt.Indicator.Floor2:Emit(1)

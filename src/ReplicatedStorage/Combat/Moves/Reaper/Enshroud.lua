@@ -45,7 +45,8 @@ function Enshroud:Activate(player, character, rootPart, placementCFrame, class, 
     local healthLossPerTick = damage
     local tickRate = 0.5 --every second
     local _tick = 0
-    local damageBonus = 2 --multiplier
+    local damageBonus = 1.25 --multiplier
+    local movementMultiplier = 1.5
 
     local rigName = player.Name.." Companion"
 
@@ -117,7 +118,7 @@ function Enshroud:Activate(player, character, rootPart, placementCFrame, class, 
         Events.Server_Client.UpdateMoveNumber:FireClient(player, CharacterMoveLibrary.Movesets[player])
 
         Stats:SetAttribute("Enshroud", true)
-        humanoid.WalkSpeed = classData.Speed * 2
+        humanoid.WalkSpeed = classData.Speed * movementMultiplier
 
         StateManager:AddTarget(character, "DamageBoost", damageBonus)
 
@@ -151,8 +152,8 @@ function Enshroud:Activate(player, character, rootPart, placementCFrame, class, 
             while true do
                 local deltaTime = task.wait()
 
-                local humanoid = character:FindFirstChild("Humanoid")
-                if not humanoid or humanoid and humanoid.Health <= 0 then
+                local _humanoid = character:FindFirstChild("Humanoid")
+                if not _humanoid or _humanoid and _humanoid.Health <= 0 then
                     cleanup()
                     break
                 end

@@ -111,7 +111,7 @@ ClassData["Pyromancer"] = {
     ShotDelay = 0.15, --delay between shots(based on ammo)
     Description = "Fire Connoisseur",
     DamageList = {
-        ["M1"] = {3, 3, 3},
+        ["M1"] = {4, 4, 4},
         ["Triple Fire Ball"] = 4,
         ["Flame thrower"] = 3,
         ["Eruption"] = 25,
@@ -147,10 +147,10 @@ ClassData["Pyromancer"] = {
         ["Eruption"] = ClassMoveData:SetupModifiers({"Burn"}),
     },
     MoveDataDurations = {
-        ["M1"] = {Burn = 3},
-        ["Triple Fire Ball"] = {Burn = 3},
-        ["Flame thrower"] = {Burn = 3},
-        ["Eruption"] = {Burn = 3},
+        ["M1"] = {Burn = 5},
+        ["Triple Fire Ball"] = {Burn = 5},
+        ["Flame thrower"] = {Burn = 5},
+        ["Eruption"] = {Burn = 5},
     },
     MoveDataAdditional = {
         ["M1"] = {},
@@ -690,13 +690,13 @@ ClassData["Hydromancer"] = {
         ["M1"] = {7, 7, 7},
         ["Water Wave"] = 4,
         ["Water Bubble"] = 3,
-        ["Whirlpool"] = 2,
+        ["Whirlpool"] = 1,
     }, 
     Cooldowns = {
         ["M1"] = 0.5,
         ["Water Wave"] = 3,
-        ["Water Bubble"] = 7,
-        ["Whirlpool"] = 10,
+        ["Water Bubble"] = 8,
+        ["Whirlpool"] = 12,
     },
     Hitboxes = {
         ["M1"] = {
@@ -753,12 +753,12 @@ ClassData["Reaper"] = {
     Cost = 200,
     Description = "Bringer of Death",
     DamageList = {
-        ["M1"] = {4, 4, 4},
-        ["Soul Slice"] = 15,
-        ["Reapers Blight"] = 15,
+        ["M1"] = {3, 3, 3},
+        ["Soul Slice"] = 10,
+        ["Reapers Blight"] = 10,
         ["Reapers Calling"] = 1,
         ["Grim Reaping"] = 25,
-        ["Enshroud"] = 1,
+        ["Enshroud"] = 5,
     },
     Cooldowns = {
         ["M1"] = 0.5,
@@ -770,7 +770,7 @@ ClassData["Reaper"] = {
     },
     Hitboxes = {
         ["M1"] = {
-            Size = Vector3.new(8, 6, 6),
+            Size = Vector3.new(12, 6, 6),
             Offset = CFrame.new(0, 4, -3),
             Size2 = Vector3.new(16, 6, 12),
             Offset2 = CFrame.new(0, 4, -6),
